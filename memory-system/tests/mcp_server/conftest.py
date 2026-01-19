@@ -27,7 +27,7 @@ def ensure_test_collections():
         "devops",
         "scrum-master",
         "tech-leader",
-        "azerol"
+        "other-role"
     ]
 
     # Create event loop to run async code
