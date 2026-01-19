@@ -58,7 +58,7 @@ All samples follow consistent format:
 ```bash
 Container qdrant-memory-packaging  Started
 Health check: PASSED
-Endpoint: http://localhost:16333/healthz
+Endpoint: http://localhost:16333/health
 ```
 
 ---

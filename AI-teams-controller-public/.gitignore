@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+.next/
+dist/
+build/
+out/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.python-version
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+.env.test
+.env.development
+.env.production
+.env.staging
+
+# Logs
+*.log
+npm-debug.log*
+
+# Cache
+.cache/
+.turbo/
+
+# Lock files in subdirs (keep root ones)
+# frontend/pnpm-lock.yaml  # Keep this
+# backend/uv.lock  # Keep this
+.playwright
+
+# TTS cache files
+backend/cache/tts/
+
+# Reference code (Android sample projects)
+sample_codes/
+.playwright-mcp/
+
+# Claude Code conversation history
+*.jsonl
+history.jsonl
+.claude/projects/

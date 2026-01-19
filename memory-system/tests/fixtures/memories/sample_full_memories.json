@@ -1,0 +1,127 @@
+{
+  "description": "Full memory documents for 5 representative memories covering different roles and memory types",
+  "extraction_date": "2026-01-19",
+  "source": "mcp__memory__batch_get_memories",
+  "total_samples": 5,
+  "backend_example": {
+    "doc_id": "0a3d4b66-6e04-4178-bc8c-68a69f245a76",
+    "document": "**Title:** Pattern 2: SQLite UUID Compatibility in Hybrid Database Testing\n**Description:** Technical solution for cross-database UUID compatibility when mixing SQLite (dev/test) and PostgreSQL (production) in SQLAlchemy ORM models.\n\n**Content:** ## Content\n\n### Problem Context\nTask 2.1.2 backend used PostgreSQL `UUID(as_uuid=True)` type. Tests used SQLite in-memory database. SQLite compiler doesn't support PostgreSQL UUID type:\n\n```\nsqlalchemy.exc.CompileError: Compiler can't render element of type UUID\n```\n\n### Root Cause\nPostgreSQL-specific UUID type is not compatible with SQLite. Development/testing often uses SQLite for speed (no server), production uses PostgreSQL. Models need to support both.\n\n### Solution: Database-Agnostic UUID Implementation\n\n```python\n# ❌ PostgreSQL-only (FAILS in SQLite tests):\nfrom sqlalchemy.dialects.postgresql import UUID\nfrom uuid import uuid4\n\nclass Model(Base):\n    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)\n\n# ✅ Cross-database compatible (WORKS in both SQLite + PostgreSQL):\nfrom sqlalchemy import String\nfrom uuid import uuid4\n\nclass Model(Base):\n    id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))\n```\n\n**Tags:** #database #sqlalchemy #sqlite #postgresql #testing #cross-compatibility #uuid #orm #hard-learned",
+    "metadata": {
+      "memory_type": "procedural",
+      "role": "backend",
+      "tags": [
+        "database",
+        "sqlalchemy",
+        "sqlite",
+        "postgresql",
+        "testing",
+        "cross-compatibility",
+        "uuid",
+        "orm",
+        "hard-learned"
+      ],
+      "title": "SQLite UUID Compatibility in Hybrid Database Testing",
+      "confidence": "high",
+      "frequency": 1,
+      "created_at": "2025-12-26T06:13:24.208678",
+      "last_synced": "2025-12-26T06:13:24.208678",
+      "description": "When developing SQLAlchemy ORM models for applications that use PostgreSQL in production but SQLite for faster development and testing, a CompileError arises because SQLite cannot render PostgreSQL's native UUID type, leading to compatibility issues with UUID primary keys. The solution involves replacing the PostgreSQL-specific UUID(as_uuid=True) column with a String(36) type and using a lambda default like lambda: str(uuid4()) to generate UUIDs as strings, ensuring seamless operation across both databases with only minor storage overhead. This pattern applies to hybrid database setups in FastAPI projects, microservices, or CI/CD pipelines requiring cross-database ORM compatibility."
+    }
+  },
+  "frontend_example": {
+    "doc_id": "13c300ee-b658-44f4-8a59-7deaa57b2774",
+    "document": "**Title:** TDD Integration Gap - Component Tested But Never Wired\n\n**Description:** TDD tests pass but component never integrated into actual UI, causing \"feature doesn't work\" despite green tests. Unit test coverage does not verify that the component is actually imported and rendered in the parent page/layout.\n\n**Content:**\nClassic TDD failure mode where component works in isolation but isn't actually used:\n\n**Problem**: DataSourceToggle component created with 100% test coverage, all tests passing. But user reports feature doesn't work - Settings page still shows hardcoded \"Mock Data\" badge.\n\n**Root Cause**: TDD tests verify component works in isolation (unit tests), but don't verify the component is actually imported and rendered in the parent page/layout.\n\n**Detection**: User reports feature doesn't work despite tests passing. Code review shows component file exists but is never imported.\n\n**Fix - Integration Checklist after TDD Green Phase**:\n1. Component tests pass\n2. Component imported in parent page/layout\n3. Component actually rendered (not commented out)\n4. Manual verification in browser\n5. E2E test covers the flow (if available)\n\n**Tags:** #frontend #tdd #testing #integration #failure-pattern #strong-signal",
+    "metadata": {
+      "memory_type": "semantic",
+      "role": "frontend",
+      "title": "TDD Integration Gap - Component Tested But Never Wired",
+      "description": "In Test-Driven Development (TDD), a common integration gap arises when a component is fully unit-tested in isolation and passes all checks, but remains unconnected to the actual UI, leading to features that don't function despite green tests—such as a DataSourceToggle component existing but never imported into the Settings page. The key insight is that unit tests only verify isolated functionality and fail to ensure the component is imported, rendered, and wired correctly, requiring an explicit post-TDD checklist for integration verification, manual browser checks, and E2E tests to catch this oversight. This pattern applies during the transition from TDD's green phase to feature completion in frontend development, particularly when developers prioritize isolated testing over holistic UI integration.",
+      "tags": [
+        "frontend",
+        "tdd",
+        "testing",
+        "integration",
+        "failure-pattern",
+        "strong-signal",
+        "unit-testing",
+        "component-wiring"
+      ],
+      "confidence": 0.95,
+      "frequency": 1,
+      "created_at": "2025-12-29T12:13:55.207141",
+      "last_synced": "2025-12-29T12:13:55.207141"
+    }
+  },
+  "qa_example": {
+    "doc_id": "abcdee57-c44f-4a9b-ba4c-7c1e5aed35d5",
+    "document": "# Internal Test Suite False Confidence - The Green Checkmark Illusion\n\n## Description\nInternal test suites can show 100% pass rates with high coverage yet completely miss critical production blockers that independent blackbox testing catches in seconds. This creates dangerous false confidence where teams believe code is production-ready based on green test outputs alone.\n\n## Core Problem\nInternal tests validate **implementation against specifications** but systematically miss:\n- Integration failures between components\n- Validation logic bugs that allow invalid data\n- Real-world user scenarios and edge cases  \n- API contract mismatches with external systems\n- Browser/runtime environment issues\n\n**Tags:** #qa #testing #false-confidence #integration-testing #blackbox #independent-validation #production-blocker #test-coverage #quality-gates #mock-testing #semantic #strong-signal",
+    "metadata": {
+      "memory_type": "semantic",
+      "role": "qa",
+      "tags": [
+        "qa",
+        "testing",
+        "false-confidence",
+        "integration-testing",
+        "blackbox",
+        "independent-validation",
+        "production-blocker",
+        "test-coverage",
+        "quality-gates",
+        "mock-testing",
+        "semantic",
+        "strong-signal"
+      ],
+      "title": "Internal Test Suite False Confidence - The Green Checkmark Illusion",
+      "created_at": "2026-01-03",
+      "context": "Pattern derived from Sprint 20 and Sprint 21 incidents where 100% passing internal tests missed critical production blockers",
+      "applicability": "universal",
+      "confidence": "high",
+      "last_synced": "2026-01-03T16:10:42.424243"
+    }
+  },
+  "devops_example": {
+    "doc_id": "227c2e10-788e-4aeb-9671-dd93a24ecbeb",
+    "document": "**Title:** Detecting Background Process Success in Deployment Scripts\n**Description:** When starting services with nohup in SSH scripts, verify process is running via port check or pidfile, not exit code.\n\n**Content:** Starting background processes in SSH deployment scripts with `nohup command &` returns immediately with exit code of the SSH session, not the background process. Using `lsof -ti:PORT` to check if port is listening is more reliable than checking exit codes. Wait 2-3 seconds after starting process before port check to allow startup time. Real incident: deploy script showed exit code 1 (failure) but server logs showed \"✓ Ready in 1419ms\" and `lsof` confirmed port 19301 was listening - server actually started successfully. Failed approach: trusting SSH heredoc exit code for background processes gives false negatives. Better: explicit runtime verification (port check, HTTP health endpoint, pidfile existence).\n\n**Tags:** #procedural #deployment #ssh #background-process #verification #success",
+    "metadata": {
+      "memory_type": "procedural",
+      "role": "devops",
+      "tags": [
+        "deployment",
+        "ssh",
+        "background-process",
+        "verification",
+        "success"
+      ],
+      "title": "Detecting Background Process Success in Deployment Scripts",
+      "created_at": "2025-11-08T14:00:33.240211Z",
+      "last_synced": "2025-11-30T16:22:06.589045",
+      "description": "In deployment scripts executed via SSH, starting background processes with `nohup command &` causes the script to return immediately with the SSH session's exit code, which does not reflect the actual success or failure of the long-running process, leading to false negatives in verification. The key insight is to implement explicit runtime checks, such as using `lsof -ti:PORT` after a brief 2-3 second delay to confirm the process is listening, or verifying pidfile existence or HTTP health endpoints, rather than relying on exit codes. This pattern applies specifically to automated SSH-based deployments involving background services where immediate feedback on process startup is critical to avoid undetected failures."
+    }
+  },
+  "universal_example": {
+    "doc_id": "18076497-d468-45d7-be61-2335552a7477",
+    "document": "Title: Check Production Database FIRST When Reference Code is Marked Broken\n\nDescription: When explicitly told a reference implementation is bullshit or needs redesign, NEVER use it as ground truth for design. Always check production data/database first to find actual implemented design. Reference code can be outdated, experimental, or intentionally broken for redesign - the actual system state lives in production data, not reference code.\n\nContent:\nINCIDENT: Sprint 4 Research Rejection\n- PO assigned Sprint 4 to analyze MCP server design\n- DEV read reference project code (/home/hungson175/dev/deploy-memory-tools/) to understand architecture\n- Boss REJECTED approach: \"Reference is bullshit, look at actual data in Qdrant database first\"\n- DEV then queried Qdrant database (port 16333) and found actual Sprint 2 implementation\n- FINDING: Actual production design was completely different and much simpler than reference code\n\nKEY LESSON:\nWhen told reference implementation is broken, experimental, or needs redesign:\n1. NEVER assume reference code represents actual system design\n2. Check production database FIRST (in this case: Qdrant at port 16333)\n3. Production data is the source of truth for what's actually running\n4. Reference code may be outdated exploration, bullshit, or intentionally broken\n5. Query production to find ACTUAL implementation details",
+    "metadata": {
+      "memory_type": "episodic",
+      "role": "universal",
+      "title": "Check Production Database FIRST When Reference Code is Marked Broken",
+      "description": "When explicitly told a reference implementation is bullshit or needs redesign, NEVER use it as ground truth for design. Always check production data/database first to find actual implemented design. Reference code can be outdated, experimental, or intentionally broken for redesign - the actual system state lives in production data, not reference code.",
+      "tags": [
+        "#production-data",
+        "#source-of-truth",
+        "#reference-code",
+        "#database-query",
+        "#design-failure",
+        "#qdrant",
+        "#failure-lesson",
+        "#sprint4",
+        "#strong-signal"
+      ],
+      "confidence": "high",
+      "frequency": 1,
+      "created_at": "2026-01-19T23:06:15.343798",
+      "last_synced": "2026-01-19T23:06:15.343798"
+    }
+  }
+}

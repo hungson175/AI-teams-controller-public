@@ -1,0 +1,46 @@
+[project]
+name = "tmux-team-controller-backend"
+version = "0.1.0"
+description = "FastAPI backend for TMUX Team Controller"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic>=2.0.0",
+    "websockets>=12.0",
+    "httpx>=0.27.0",
+    "python-multipart>=0.0.6", # Required for multipart/form-data file uploads
+    "langchain>=0.3.0",
+    "langchain-xai>=0.1.0",
+    "openai>=1.0.0",
+    "python-dotenv>=1.2.1",
+    "celery[redis]>=5.3.0",
+    "redis>=5.0.0",
+    # Database (Sprint 25)
+    "sqlalchemy[asyncio]>=2.0.0",
+    "asyncpg>=0.30.0",
+    "alembic>=1.14.0",
+    # Auth (Sprint 25)
+    "passlib[bcrypt]>=1.7.0",
+    "python-jose[cryptography]>=3.3.0",
+    "email-validator>=2.0.0",
+    "bcrypt>=4.1.0,<5.0.0", # Pin to 4.x - bcrypt 5.x incompatible with passlib 1.7.x
+    "google-cloud-texttospeech>=2.33.0",
+    "pyyaml>=6.0.0", # Team Creator Epic - YAML template parsing
+    "playwright>=1.57.0",
+    "pydub>=0.25.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "httpx>=0.27.0",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.0.0",
+    "httpx>=0.27.0",
+]

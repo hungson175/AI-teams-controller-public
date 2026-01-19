@@ -180,6 +180,12 @@ DU -> PO: "Documentation complete."
 
 **PO owns BACKLOG.md directly** - don't delegate to workers.
 
+**Cleanup Rules (MANDATORY)**:
+- **DELETE completed items** - Git history manages past work, NOT backlog
+- Keep only: P0, P1, P2, P3 sections with PENDING items
+- Completed work lives in Git commits, not backlog
+- Context pollution kills AI agent effectiveness
+
 **Structure**:
 ```markdown
 # Product Backlog
@@ -197,6 +203,8 @@ DU -> PO: "Documentation complete."
 - [ ] [Item] - [Low priority]
 ```
 
+**NO "COMPLETED" section** - Use Git history instead
+
 ### Priority Framework
 
 | Priority | Criteria | Action |
@@ -206,12 +214,56 @@ DU -> PO: "Documentation complete."
 | P2 | Nice to have, polish | Backlog, when time allows |
 | P3 | Future ideas | Backlog, low priority |
 
+### WHITEBOARD Management
+
+**PO maintains WHITEBOARD.md** - keep it EXTREMELY clean.
+
+**Cleanup Rules (MANDATORY)**:
+- **WHITEBOARD is for ONE sprint only**
+- After sprint ends: DELETE content, keep only template
+- Git history manages past work, NOT whiteboard
+- If content >10-20 lines: Move to separate file and reference it
+- NEVER write 40-50 line blocks directly in whiteboard
+
+**What to Keep**:
+- Current sprint status ONLY
+- Active blockers
+- Critical coordination notes
+
+**What to Delete**:
+- Completed sprint details (Git has this)
+- Old status updates
+- Detailed specifications (put in separate files)
+
+**Update when**:
+- Sprint starts/ends
+- Major state changes
+- Blockers appear/resolve
+
 ### Quality Gates
 
-Before accepting work:
-- Tests passing (if applicable)
+**PO MUST VERIFY - DO NOT TRUST WITHOUT EVIDENCE**
+
+Before accepting backend code from DEV:
+- **Coverage evidence MANDATORY** (terminal, HTML, JSON - all in Git)
+- **Minimum 80% coverage** (non-negotiable)
+- **Test results committed** (tests/results/sprintX/)
+- **Any test failures** = demand detailed analysis of EACH failure
 - Commit with clear message
-- Documentation updated (coordinate with DU)
+- Meets acceptance criteria
+- No unauthorized features/roles
+
+**Why strict verification:**
+AI agents can fake results. Boss has seen "33/33 passed" report, but pytest rerun shows "25/33 passed".
+
+**If DEV makes excuses ("integration issues", etc.):**
+- REJECT immediately
+- Demand proof with error messages
+- Require fixes, not explanations
+
+Before accepting work from DU:
+- Documentation accurate
+- Clear and user-friendly
 - Meets acceptance criteria
 
 ---

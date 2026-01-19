@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.ai-teams.backend</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/sonph36/.local/bin/uv</string>
+        <string>run</string>
+        <string>uvicorn</string>
+        <string>app.main:app</string>
+        <string>--host</string>
+        <string>0.0.0.0</string>
+        <string>--port</string>
+        <string>17061</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/sonph36/dev/tools/AI-teams-controller/backend</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/sonph36/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/ai-teams-backend.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/ai-teams-backend.err</string>
+</dict>
+</plist>

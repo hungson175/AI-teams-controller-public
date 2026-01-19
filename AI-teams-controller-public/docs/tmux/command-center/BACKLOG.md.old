@@ -1,0 +1,2871 @@
+# Product Backlog - AI Teams Controller
+
+**Owner:** Product Owner (PO)
+**Last Updated:** 2026-01-05
+**Purpose:** Prioritized list of features, enhancements, and fixes. PO owns this backlog.
+
+---
+
+## Priority Legend
+
+| Priority | Meaning | When to Work |
+|----------|---------|--------------|
+| **P0** | Critical | Current/Next Sprint |
+| **P1** | High | Soon (1-2 sprints) |
+| **P2** | Medium | When capacity allows |
+| **P3** | Low | Nice to have |
+
+---
+
+## P0 - Current Sprint Priorities
+
+### CRITICAL: Voice Feedback Reading Old Messages (10-15 Min Delay)
+**Status:** TODO (URGENT - Boss Escalation 2026-01-11 07:40)
+**Size:** S (Investigation + fix)
+**Priority:** P0 (CRITICAL - Voice feedback broken again)
+
+**Boss Report:**
+"The voice is okay now, not garbled (Google TTS working). However, there's now an error that happened before. It keeps reading old messages instead of new ones. The notification goes back to the exact moment the stop hook is called, and the stop hook is still being called. But somehow, the stop hook outputs a message from way back. It's like it's delayed. 10, 15 minutes or something."
+
+**Symptoms:**
+- Voice feedback reads messages from 10-15 minutes ago
+- Stop hook is being called (working)
+- But stop hook outputs OLD content, not current
+- Notification timing is correct, but content is stale
+
+**Timeline:**
+- **3-4 days ago:** Voice feedback working perfectly (reading current messages)
+- **Now:** Voice feedback broken (reading old messages with 10-15 min delay)
+
+**Investigation Needed:**
+- [ ] What changed in voice feedback code in last 3-4 days?
+- [ ] Git log: Compare working state (3-4 days ago) vs broken state (now)
+- [ ] Check Redis cache - is it serving stale Celery results?
+- [ ] Check Celery task queue - are old tasks being executed instead of new?
+- [ ] Check task_done_listener.py - is debounce causing issue?
+- [ ] Check celery_tasks.py - is caching broken?
+
+**Boss Directive:** "Fix this damn error no matter what."
+
+**Acceptance Criteria:**
+- [ ] Voice feedback reads CURRENT messages only (no 10-15 min delay)
+- [ ] Stop hook outputs fresh content every time
+- [ ] No stale cache serving old messages
+- [ ] Consistent behavior (doesn't regress)
+
+**Priority:** P0 (Voice feedback is critical feature, currently broken)
+
+---
+
+### Make Voice Feedback Robust Against Claude Code Prompt Changes
+**Status:** TODO (Boss Request 2026-01-11 09:29)
+**Size:** S (Small - improve prompt detection)
+**Priority:** P2
+
+**Problem:**
+Our voice feedback relies on detecting Claude Code's prompt character (`>` or `❯`) to find last message boundary. When Claude Code changed from `>` to `❯` (Unicode), our voice feedback broke - reading old messages from 10-15 minutes ago.
+
+**Risk:**
+- We have NO control over when Claude Code changes its prompt format
+- Software goes "rogue" when external tool behavior changes
+- Current fix detects both `>` and `❯`, but what if Claude Code changes to something else?
+
+**As a** system maintainer
+**I want** voice feedback to work regardless of Claude Code prompt changes
+**So that** our software doesn't break when external tools update
+
+**Possible Solutions:**
+- [ ] Dynamic prompt detection (scan for common patterns: `>`, `❯`, `$`, `#`, etc.)
+- [ ] Fallback mechanism if prompt not found (use time-based boundary)
+- [ ] Alternative trimming strategy that doesn't rely on prompt character
+- [ ] Document as known dependency risk (accept the limitation)
+
+**Acceptance Criteria:**
+- [ ] Voice feedback continues working even if Claude Code changes prompt format
+- [ ] OR: Clear monitoring/alerting when prompt format changes
+- [ ] OR: Documented risk with manual fix procedure
+
+**Priority:** P2 (Dependency risk, but not blocking - current fix handles both `>` and `❯`)
+
+---
+
+### Terminal File Popup Closes Unexpectedly
+**Status:** TODO (Boss Request 2026-01-11 06:56)
+**Size:** TBD (Need more details from Boss)
+**Priority:** P2
+
+**Problem:**
+When clicking terminal file path link, the popup that appears sometimes closes unexpectedly while loading or viewing. No clear reason - probably UI updating during that time causes popup to close suddenly.
+
+**As a** user viewing terminal output
+**I want** the file popup to stay open while I'm viewing it
+**So that** I can read the file content without it closing unexpectedly
+
+**Acceptance Criteria:**
+- TBD (Boss will provide more details when we work on this)
+
+**Note:** Ask Boss for more details when starting this work.
+
+**Priority:** P2
+
+---
+
+### Research: Replace tmux with zellij
+**Status:** TODO (Boss Request 2026-01-10 21:38)
+**Size:** XS (Research task)
+**Priority:** P2 (Research and recommendation)
+
+**Boss Directive:**
+"tmux works like shit, I want to replace (in this project) with zellij: https://github.com/zellij-org/zellij. Tell TL to research that (in context of this project) and tell me his suggestions."
+
+**Research Scope:**
+- [ ] What is zellij? (features, capabilities)
+- [ ] How does zellij compare to tmux for our use case?
+- [ ] Feasibility: Can we replace tmux with zellij?
+- [ ] Migration effort: How much work to switch?
+- [ ] Benefits for AI Teams Controller multi-agent system
+- [ ] Drawbacks or limitations
+- [ ] Recommendation: Should we switch?
+
+**Context:**
+Our project uses tmux for:
+- Multi-agent team sessions (command-center, jarvis, wife_tts, trading-bot)
+- Pane-based role separation (PO, SM, TL, FE, BE, QA)
+- tm-send command for cross-pane/cross-session messaging
+- Backend API integration (reading pane output, sending commands)
+
+**Deliverable:**
+- Research document with TL's findings and recommendation
+- Present to Boss for decision
+
+**Priority:** P2 (Research first, implement if Boss approves)
+
+---
+
+### CRITICAL: Voice Feedback Regression - Inconsistent Voice Gender
+**Status:** BLOCKED - External HD-TTS API Bug (Boss finding 2026-01-10 20:55)
+**Size:** N/A (External dependency - HD-TTS team must fix)
+**Priority:** P0 → BLOCKED (Cannot fix ourselves, must report to HD-TTS team)
+
+**Boss Report (2026-01-10 20:45 + 20:51):**
+"I don't understand why the voice feedback is now glitching and reading messages from some shit time ago... But now it's eating shit. This is also a P0. I'm so fed up, I don't want to touch it anymore."
+
+"Why does the voice feedback sometimes use this deep male voice that's slow like a turtle? It's so stupid as hell. Sometimes it's male voice, sometimes female, I don't understand at all... Ever since we fixed the voice problem for Jarvis to have its own voice, now even the command center sometimes mixes in that deep male voice that's slow like a turtle, and it's all frustrating, I don't understand what the hell you guys are doing anymore."
+
+**Symptoms:**
+1. **Voice gender inconsistency:** Randomly switches between MALE (deep, slow) and FEMALE voices
+2. **Possibly reading old messages:** Boss suspects old content (needs confirmation)
+
+**Timeline:**
+- **3-4 days ago:** Voice feedback working perfectly, no issues
+- **This morning (before Jarvis fixes):** Voice feedback still perfect
+- **This afternoon (after Jarvis voice fixes):** Voice feedback broken
+  - Random male voice (deep, slow like turtle) appearing
+  - Should always be female voice (like before)
+
+**ROOT CAUSE RE-EVALUATION (Boss finding 2026-01-10 21:28):**
+**LIKELY OUR CODE BUG** - Not HD-TTS infrastructure
+
+**Boss Analysis (2026-01-10 21:28):**
+"Don't switch to CUDA [providers], I've been using it normally for 34 days. It was fine until Jarvis came in and demanded different config for southern voice, then they fixed that damn thing, and most likely the code is WRONG in this command center."
+
+**Timeline Evidence:**
+- **34 days:** HD-TTS working perfectly with command-center
+- **Jarvis requested:** Southern voice config (different from command-center)
+- **After Jarvis fix:** Command-center voice broke (random male/female)
+- **Hypothesis:** Our code changes for Jarvis broke command-center
+
+**HD-TTS Technical Findings (2026-01-10 21:32):**
+
+**Why HD-TTS worked for 34 days:**
+- Command-center config: female+northern+neutral+news
+- This combo has deterministic voice sample path (no random noise)
+
+**Why it broke with Jarvis:**
+- Southern voice config doesn't have saved voice sample
+- Falls through to random noise path (ONNX RandomNormalLike operator)
+- Random noise = non-deterministic audio (male/female random)
+
+**Root Cause:**
+- ONNX operator's seed only sets initial RNG state
+- Subsequent runs advance state (non-deterministic)
+- External seeds (onnxruntime, torch, numpy) don't affect internal ONNX ops
+
+**Investigation Needed (Future Sprint):**
+- [ ] Review Jarvis voice config changes - what did we modify?
+- [ ] Why is command-center NOW using southern voice (Jarvis config)?
+- [ ] Session-specific voice routing - is isolation broken?
+- [ ] Test: Does reverting Jarvis changes fix command-center?
+- [ ] Proper fix: Ensure each session uses independent voice config
+- [ ] Alternative: Use only voice configs that have saved samples (no random noise path)
+
+**DO NOT switch TTS providers** - HD-TTS was working fine, our code bug when handling Jarvis config
+
+**Acceptance Criteria:**
+- [ ] **Voice gender ALWAYS female** (no random male voice)
+- [ ] Voice speed consistent (no slow "turtle" voice)
+- [ ] Voice feedback reads CURRENT messages only (no old messages)
+- [ ] Consistent behavior across all sessions (command-center, jarvis, etc.)
+- [ ] Permanent fix (doesn't break again after other voice fixes)
+- [ ] Boss can trust voice feedback: correct gender, correct speed, fresh content
+
+**Priority:** P0 (Boss fed up, doesn't want to deal with voice issues anymore)
+
+---
+
+### ✅ COMPLETED: Standardize Service Restart Mechanism
+**Status:** COMPLETE (Committed 005ddf06 - 2026-01-10)
+**Size:** M (Medium - infrastructure design + implementation)
+**Priority:** P0 → COMPLETE
+
+**Problem:**
+Service restart chaos causes port conflicts and wastes hours debugging:
+- Sometimes systemd, sometimes bash, sometimes scripts
+- Duplicate Celery workers (2 groups running)
+- Multiple frontend instances on port 3334
+- 30+ minutes debugging port issues
+
+**Boss Quote:**
+"Standardize the start/restart process. Tell the tech leader to design it properly and review. Issues with duplicate Celery workers, two or three frontend instances on same port 3334. That's stupid. The issues with server restart scripts and ports need to be redone."
+
+**Root Causes:**
+1. No standardized restart scripts
+2. Mix of systemd + bash + manual commands
+3. No verification that old processes killed
+4. Port conflict detection missing
+
+**Requirements:**
+- ONE standardized way to restart each service
+- Automated scripts (not ad-hoc commands)
+- Verify old processes killed before starting new
+- Detect port conflicts automatically
+- Document in CLAUDE.md
+
+**Services to Standardize:**
+- Frontend (Next.js, port 3334)
+- Backend (FastAPI, port 17061)
+- Terminal Service (Node.js, port 17071)
+- Celery workers (Redis queue)
+
+**Deliverables:**
+- [ ] TL design: Standardized restart mechanism
+- [ ] Scripts: `restart-frontend.sh`, `restart-backend.sh`, `restart-celery.sh`, `restart-terminal.sh`
+- [ ] Verification: Check ports free before starting
+- [ ] Kill logic: Ensure old processes terminated
+- [ ] Documentation: Update CLAUDE.md with ONE correct way
+- [ ] Testing: Verify no port conflicts after restart
+
+**Acceptance Criteria:**
+- [ ] ONE script per service (no more ad-hoc commands)
+- [ ] Scripts verify port free before starting
+- [ ] Scripts kill old processes automatically
+- [ ] No duplicate workers/instances possible
+- [ ] CLAUDE.md updated with correct restart commands
+- [ ] Boss can restart any service without debugging port conflicts
+
+**Priority:** P0 (Fix once, prevent hours of future debugging)
+
+**Note:** Complete current sprint/epic before starting this.
+
+---
+
+### ✅ COMPLETED: Terminal Clickable File Paths
+**Status:** COMPLETE (Committed 005ddf06 - 2026-01-10)
+**Size:** S (Small - path resolution + click handling)
+**Priority:** P1 → COMPLETE
+
+**Problem:**
+Terminal pane output shows file paths that should be clickable but currently don't work properly ("File not found" errors).
+
+**As a** user viewing terminal output
+**I want** to click file paths in terminal panes
+**So that** I can quickly view file content in a popup
+
+**Acceptance Criteria:**
+- [ ] File paths in terminal output are clickable (blue links)
+- [ ] Clicking path opens file content popup
+- [ ] Handles partial paths (e.g., "workflow.md" → find full path)
+- [ ] Handles ambiguous matches (multiple files same name)
+- [ ] No "File not found" errors for valid paths
+
+**Priority:** P1 (Incomplete work from Simple File Search epic - Boss tired of it)
+
+---
+
+### EPIC: Simple File Search + Terminal Click Integration (CLOSED)
+**Status:** CLOSED (Boss directive 2026-01-09 - search works, clickable moved to backlog)
+**Size:** L (2 sprints)
+**Priority:** Completed (partial - search works, terminal paths incomplete)
+
+**Epic Goal:**
+Build simple file indexing system that powers BOTH file browser word search AND terminal clickable paths.
+
+**Result:**
+- ✅ File search working (Boss verified)
+- ❌ Terminal clickable paths NOT working (moved to P1 backlog)
+
+**Boss Requirements:**
+1. **NO fancy algorithms** - keep it simple
+2. **Index all files** - exclude .gitignore and library files
+3. **Word search** - current search doesn't have this
+4. **TDD fully** - testable first
+5. **Reuse for terminal** - same index powers terminal path click
+6. **In-memory cache on backend** - NOT re-indexing every time
+7. **Auto-invalidation** - when search fails/errors, invalidate cache and re-index automatically
+8. **Auto-recovery** - handle errors without manual intervention
+
+**Why This Order:**
+- Search algorithm first = testable with TDD
+- After testing works, apply same indexing to terminal click feature
+
+---
+
+#### Sprint 1: Simple File Indexing + Word Search (File Browser)
+**Goal:** Build simple file index, enable word search in file browser
+**Size:** M
+**Team:** FE (+ BE if needed for indexing)
+
+**Deliverables:**
+- [ ] File indexing system (exclude .gitignore, node_modules, etc.)
+- [ ] Word search in file browser (search file CONTENTS, not just names)
+- [ ] TDD - full test coverage
+- [ ] Simple algorithm - NO fancy stuff
+
+**Acceptance Criteria:**
+- [ ] Index excludes .gitignore files
+- [ ] Index excludes library directories (node_modules, .next, etc.)
+- [ ] Word search finds text INSIDE files
+- [ ] Search results show matching files with context
+- [ ] Fast enough for project size (< 500ms)
+- [ ] Boss can search for any word and find it
+
+**Technical Approach:**
+- Simple file indexing (NOT fancy algorithms like Elasticsearch)
+- **In-memory cache on backend** (faster, not re-indexing every time)
+- **Auto-invalidation** - on search errors, invalidate cache and rebuild automatically
+- **Auto-recovery** - handle errors without manual intervention
+- Backend endpoint to search indexed content
+- Frontend UI to display results
+
+**Caching Strategy:**
+- Index stored in backend memory
+- Cache invalidates on errors (file not found, read errors, etc.)
+- Automatic re-indexing when cache invalidated
+- No manual intervention required
+
+---
+
+#### Sprint 2: Apply Index to Terminal Clickable Paths
+**Goal:** Use same file index to resolve partial terminal paths
+**Size:** S
+**Team:** FE
+
+**Deliverables:**
+- [ ] Terminal shows clickable file paths (partial or full)
+- [ ] Click uses indexed search to find full path
+- [ ] Popup shows file content
+- [ ] Handles ambiguous matches (multiple files with same name)
+
+**Acceptance Criteria:**
+- [ ] Terminal paths are clickable
+- [ ] Partial paths (e.g., "workflow.md") resolve to full path
+- [ ] Uses same index from Sprint 1
+- [ ] Popup shows file content
+- [ ] Boss can click terminal paths and see files
+
+**Dependency:** Sprint 1 must complete first (provides the index)
+
+---
+
+**Epic Priority:** P0 (Start Sprint 1 NOW)
+
+---
+
+### Intelligent File Path Search + Click Popup
+**Status:** RESEARCH PHASE (New - Boss Request 2026-01-08)
+**Size:** M (Medium - research + algorithm + UI)
+**Priority:** P0 (Boss wants immediately)
+
+**Problem:**
+In Terminal tab, Claude Code outputs file paths that are often incomplete (e.g., `workflow.md` instead of full path `docs/tmux/command-center/workflow.md`). Boss needs to click these paths to view file content in a popup, but naive path matching fails for partial paths.
+
+**User Story:**
+As a user viewing terminal output,
+I want to click on any file path (even incomplete ones like `workflow.md`),
+So that I can see the file content in a popup without manually searching for it.
+
+**Challenges:**
+1. **Incomplete paths**: Claude Code often returns relative/partial paths without full directory structure
+2. **Long paths wrap**: Full paths break across multiple lines (skip for now - focus on search algorithm)
+3. **Ambiguous names**: Multiple files could have same name (e.g., `README.md` in different directories)
+
+**Progressive Development Phases:**
+
+**Phase 1 (This Sprint)**: Research + Propose Solution
+- [ ] TL uses `quick-research` skill to find file search algorithms (fuzzy matching, indexing strategies)
+- [ ] TL uses `github-research` skill to find similar projects (VSCode Cmd+P, fuzzy finders, file search UIs)
+- [ ] Document findings in `docs/research/file-search-and-popup.md` (or similar)
+- [ ] Propose solution architecture for Boss review
+- [ ] **NO IMPLEMENTATION YET** - Boss reviews proposal first
+
+**Phase 2 (Future Sprint)**: Implement Search Algorithm
+- [ ] Build file search/indexing system (based on approved research)
+- [ ] Make terminal paths clickable
+- [ ] Clicking path → search for file → show popup with file content
+
+**Phase 3 (Future Sprint)**: Edit in Popup
+- [ ] Add edit capability in popup
+- [ ] Save changes from popup
+- [ ] Close popup workflow
+
+**Research Questions for TL:**
+1. What's the best algorithm for matching incomplete paths to full project files?
+   - Fuzzy matching (fuse.js, similar)?
+   - Full-text filename indexing?
+   - Directory tree traversal with caching?
+2. How do similar tools solve this? (VSCode, GitHub, fuzzy finders)
+3. How to handle ambiguous matches (multiple `README.md` files)?
+4. Performance considerations for large codebases?
+
+**Acceptance Criteria (Phase 1 - Research):**
+- [ ] TL completes research using `quick-research` and `github-research` skills
+- [ ] Research documented in `docs/research/file-search-and-popup.md`
+- [ ] Findings include:
+  - Recommended algorithm with rationale
+  - Reference implementations from GitHub
+  - Performance considerations
+  - UI/UX recommendations for ambiguous matches
+  - Proof-of-concept code (if applicable)
+- [ ] Boss reviews and approves approach before implementation
+
+**Priority:** P0 (Boss directive - research immediately, implement after approval)
+
+---
+
+### CRITICAL: Fix Cmd+P File Search in File Browser
+**Status:** ✅ RESOLVED (Boss verified working 2026-01-09)
+**Size:** S (Small - existing feature broken)
+**Priority:** P0 → COMPLETE
+
+**Problem:**
+Cmd+P search in File Browser is completely broken and unusable. Boss reports it NEVER finds the files he needs.
+
+**Boss Quote:** "the search feature (Cmd +P) inside File Browser DOES NOT WORK! it works like shit, never found a file that I need"
+
+**Root Cause Analysis Needed:**
+- Does popup open when Cmd+P pressed?
+- Does search execute but return no results?
+- Is uFuzzy algorithm too strict?
+- Is file list cache broken/empty?
+- Are results ranked poorly (right file exists but not shown)?
+
+**Acceptance Criteria:**
+- [ ] Cmd+P triggers file search popup
+- [ ] Search FINDS files Boss searches for (test with real examples)
+- [ ] Results ranked by relevance (fuzzy matching works)
+- [ ] Selecting file opens it in editor
+- [ ] Boss can actually use it to find files
+
+**Next Step:** TL/FE diagnose root cause, fix immediately
+
+---
+
+### Add Interactive Terminal Tab (3rd Tab)
+**Status:** COMPLETE ✅ (Completed 2026-01-08 - Terminal Integration Sprint)
+**Size:** S (Small - reuse BE's xterm.js POC)
+**Priority:** P0 (Boss wants immediately)
+
+**Problem:**
+Current UI has 2 tabs per role (Monitor, Browse). Boss needs a way to run commands directly in the project directory without the tmux scrolling issues.
+
+**User Story:**
+As a user,
+I want a 3rd "Terminal" tab next to Monitor and Browse,
+So that I can run shell commands in the project directory with full terminal interactivity.
+
+**Current Tabs:**
+1. **Monitor** - tmux pane output (read-only text display) - KEEP
+2. **Browse** - file browser - KEEP
+3. **Terminal** - NEW interactive shell (xterm.js)
+
+**NOT Replacing Monitor Tab:**
+Boss specifically does NOT want to replace Monitor tab (tmux pane display) because:
+- Tmux has annoying mouse scrolling issues (focuses input stupidly)
+- Current Monitor tab scrolls well like normal web content
+- Keep Monitor tab for viewing tmux output, add Terminal tab for running commands
+
+**Architecture (Reuse BE's SSH POC):**
+- Frontend: Add "Terminal" tab, integrate xterm.js (./sample_codes/web-ssh-terminal/)
+- Backend: WebSocket + node-pty spawning `/bin/bash` in project directory
+- Scope: Project directory only (not system-wide shell access)
+
+**Technology Stack:**
+- xterm.js (from BE's SSH terminal POC)
+- WebSocket connection to backend
+- node-pty for PTY session
+- Shell: `/bin/bash` or `/bin/zsh` in project working directory
+
+**Effort Estimate:**
+- ~4-6 hours (reuse BE's existing POC structure)
+- Frontend: Add tab, integrate xterm.js component
+- Backend: Modify SSH POC to spawn local shell instead of SSH
+
+**Acceptance Criteria:**
+- [ ] 3rd tab "Terminal" appears next to Monitor and Browse
+- [ ] Clicking Terminal tab shows xterm.js interactive shell
+- [ ] Shell opens in project directory (not home directory)
+- [ ] User can run commands (ls, git, npm, etc.)
+- [ ] Terminal has full features (colors, cursor, history)
+- [ ] Each role has its own terminal session
+- [ ] Terminal scrolling works properly (no tmux issues)
+
+**Security Considerations:**
+- Authenticate WebSocket before allowing shell access
+- Restrict to project directory only (no cd to /etc, /home, etc.)
+- Rate limit command execution
+- Audit log all commands run
+
+**Priority:** P0 (Boss wants this immediately)
+
+---
+
+### CRITICAL: Fix Recurring Frontend 500 Errors on Static Chunks
+**Status:** TODO (URGENT - Boss Escalation 2026-01-10)
+**Size:** M (Medium - systemic debugging required)
+**Priority:** P0 (CRITICAL - Boss extremely frustrated, occurred 20+ times)
+
+**Boss Directive (2026-01-10):**
+"It's driving me fucking crazy, I don't know how many times already. Tell TL to research it properly, figure out the root cause, and suggest a solution to me. They can even run tests repeatedly to check. In summary, both read about it online and do hands-on practice to see what's causing it, then give me a full suggestion. I don't want to keep waiting and cursing every time we update the UI and restart—I'm tired of it."
+
+**Required Approach:**
+1. **Research online:** Next.js static chunks, production build issues, common 500 error patterns
+2. **Hands-on testing:** Repeatedly reproduce issue, test different scenarios
+3. **Root cause analysis:** Don't guess - find the ACTUAL cause
+4. **Full solution:** Permanent fix, not band-aids
+
+**Problem:**
+Frontend repeatedly serves HTTP 500 errors on static chunks (CSS/JS files) after rebuild, even with `rm -rf .next` clean build. This is a RECURRING systemic issue, not a one-time bug.
+
+**Pattern (20-30 occurrences across sprints):**
+1. Frontend code changes made
+2. Frontend rebuilt: `cd frontend && rm -rf .next && pnpm build`
+3. Frontend restarted: `systemctl --user restart ai-teams-frontend.service` OR `PORT=3334 pnpm start &`
+4. Browser loads page successfully (HTTP 200)
+5. **Static chunks fail:** `GET /_next/static/chunks/app/layout-xxx.js` returns HTTP 500
+6. Page breaks, QA blocked
+
+**Current "Fix" (Band-aid, not solution):**
+- Multiple rebuild/restart cycles eventually work
+- No clear understanding WHY it works after N tries
+- Wastes hours every sprint
+
+**Boss Directive:**
+"Make this P0 and escalate to the PO. This has happened 20-30 times."
+
+**Impact:**
+- Blocks QA testing EVERY sprint
+- Wastes 1-3 hours per occurrence
+- No permanent solution despite multiple attempts
+- Boss frustrated with recurring issue
+
+**Root Cause Analysis Needed:**
+1. **Build Cache Issues:**
+   - Does `.next` directory have stale/corrupted files despite `rm -rf`?
+   - Are there other Next.js caches? (webpack cache, node_modules/.cache, etc.)
+   - Is build ID mismatching between server and static files?
+
+2. **Service Restart Issues:**
+   - Is old frontend process not fully killed?
+   - Multiple processes serving different builds?
+   - Race condition in systemd restart?
+
+3. **Next.js Configuration:**
+   - Production mode caching strategy
+   - Static file generation timing
+   - Webpack build configuration
+
+4. **File System Issues:**
+   - Permissions on .next directory
+   - NFS/network mount issues (if applicable)
+   - File system caching
+
+**Acceptance Criteria:**
+- [ ] Thorough root cause analysis documented
+- [ ] Identify exact conditions that cause 500 errors
+- [ ] Implement permanent fix (not band-aid)
+- [ ] Test fix across multiple rebuild cycles
+- [ ] Document reliable rebuild/restart procedure
+- [ ] Verify fix prevents recurrence (test 10+ rebuild cycles)
+- [ ] Update CLAUDE.md with corrected restart command if needed
+
+**Success Metrics:**
+- 10 consecutive rebuild/restart cycles with ZERO 500 errors
+- QA can test immediately after frontend rebuild (no retries needed)
+- Procedure documented and repeatable
+
+**Priority:** P0 (CRITICAL - Systemic issue blocking every sprint)
+
+---
+
+
+### Full Security Audit
+**Status:** TODO (Boss Request 2026-01-03)
+**Size:** M (Medium - comprehensive review)
+**Priority:** P2 (Deferred per Boss directive 2026-01-10)
+
+**Problem:**
+System has evolved to have FULL machine access (sudo password, file system, tmux control). Current "loose" security model was acceptable for hobby project but is now "deadly" for production use.
+
+**User Story:**
+As the system owner,
+I want a comprehensive security audit and hardening,
+So that the system is secure against attacks despite having full machine access.
+
+**Scope - Security Review Areas:**
+
+1. **Authentication & Authorization**
+   - [ ] Review JWT secret (hardcoded vs environment variable)
+   - [ ] Token expiration policies
+   - [ ] Session management
+   - [ ] Password hashing strength (bcrypt rounds)
+   - [ ] Rate limiting on login attempts
+
+2. **Command Injection Risks**
+   - [ ] Review tmux_service.py for command injection (KNOWN ISSUE)
+   - [ ] Review file_routes.py for path traversal (partially addressed)
+   - [ ] Review all places where user input goes to shell commands
+   - [ ] Sanitize/validate ALL user inputs before shell execution
+
+3. **API Security**
+   - [ ] CORS configuration (currently wildcard * - TOO PERMISSIVE)
+   - [ ] API token validation on all endpoints
+   - [ ] Input validation with Pydantic schemas
+   - [ ] SQL injection risks (if using raw queries)
+
+4. **File System Access**
+   - [ ] Restrict file browser to project directories only (no /etc, /home/.ssh, etc.)
+   - [ ] Block access to sensitive files (.env, credentials, private keys)
+   - [ ] Validate all file paths before operations
+   - [ ] Prevent symlink attacks
+
+5. **Environment Variables & Secrets**
+   - [ ] Review .env file access (currently accessible via file browser - RISK)
+   - [ ] Ensure API keys not exposed via endpoints
+   - [ ] Sudo password storage and access control
+   - [ ] Consider secrets management solution (e.g., HashiCorp Vault)
+
+6. **Network Security**
+   - [ ] HTTPS enforced (Cloudflare tunnel handles this)
+   - [ ] WebSocket security (authentication, authorization)
+   - [ ] Firewall rules (if opening to external access)
+
+7. **Deployment Security**
+   - [ ] Review LaunchAgent configurations
+   - [ ] Service user permissions (running as which user?)
+   - [ ] Log file permissions and sensitive data logging
+
+**Deliverables:**
+- [ ] Security audit document listing all vulnerabilities found
+- [ ] Prioritized fix list (P0 critical, P1 high, P2 medium)
+- [ ] Implementation plan for fixing critical issues
+- [ ] Security best practices documentation for future development
+
+**Acceptance Criteria:**
+- [ ] All P0 vulnerabilities fixed
+- [ ] Command injection risks eliminated or mitigated
+- [ ] CORS restricted to specific origins (not wildcard)
+- [ ] File browser cannot access sensitive system files
+- [ ] .env file blocked from file browser access
+- [ ] All user inputs validated before shell execution
+- [ ] Documentation: Security policies and best practices
+
+**Why P0:**
+System has sudo password, file system control, and tmux command execution. Single vulnerability = complete machine compromise. Must harden before any production use or external access.
+
+**Notes:**
+This is a COMPREHENSIVE audit - may uncover issues requiring multiple sprints to fix. Prioritize based on risk severity.
+
+---
+
+### Native Android App - Lite Version (Hands-Free Focus)
+**Status:** PAUSED (Sprint 11 stopped 2026-01-03 17:35 - Boss switched to Mini IDE)
+**Size:** XL (Extra Large - new platform)
+**Priority:** P1 (High - paused indefinitely, Boss will decide when to resume)
+
+**Problem:** Web version has critical limitations for hands-free operation:
+1. **Hardware buttons don't work** - Headphone play/pause/power buttons not supported in web
+2. **Screen must stay on** - Browser suspends when screen locks, mic capture stops
+3. **Can't background** - Must keep app visible, can't put phone in pocket and talk
+4. **No true background service** - Web Wake Lock API insufficient for real hands-free use
+
+**User Story:**
+As a mobile user controlling AI teams via voice,
+I want a native Android app that runs in the background,
+So that I can turn off the screen, put the phone in my pocket, and continue using voice commands with headphone button controls.
+
+**Vision:** Lite Android app focused on hands-free voice operation - not feature parity with web version.
+
+**Core Requirements (Lite Version):**
+
+1. **Background Voice Service (CRITICAL)**
+   - Android foreground service that continues running when screen is off
+   - Microphone access maintained in background
+   - Voice recording works with screen locked
+   - App continues running when phone is in pocket
+   - Persistent notification shows "AI Teams - Listening" status
+
+2. **Headphone Hardware Button Support (CRITICAL)**
+   - Play/pause button: Toggle voice recording on/off
+   - Power button: Stop current recording
+   - Media session integration (Android MediaSession API)
+   - Works with all Bluetooth headphones (standard play/pause controls)
+
+3. **Voice Command Flow**
+   - Press play button → Start recording
+   - Speak command
+   - Press pause button → Stop recording, send to backend
+   - Voice feedback plays through headphones
+   - Repeat
+
+4. **Minimal UI**
+   - Simple activity with start/stop button
+   - Current team/role selector (dropdown)
+   - Voice feedback history (last 5 commands)
+   - Settings: Backend URL, API token, TTS volume
+   - **NO file browser** (use web version for that)
+   - **NO terminal display** (use web version for that)
+
+**Out of Scope for Lite Version:**
+- File browser/editor
+- Terminal output display
+- Team creation/management
+- Full feature parity with web version
+- Fancy UI/animations
+
+**Technical Stack:**
+
+**Recommended:**
+- **Kotlin** (modern Android development)
+- **Jetpack Compose** (UI - simple, declarative)
+- **Retrofit** (HTTP client for backend API)
+- **MediaRecorder** (audio recording)
+- **MediaPlayer** (TTS audio playback)
+- **Foreground Service** (background operation)
+- **MediaSession** (headphone button handling)
+
+**Architecture:**
+```
+MainActivity (Compose UI)
+    ↓
+VoiceService (Foreground Service)
+    ↓
+MediaButtonReceiver → MediaSession
+    ↓
+BackendRepository (Retrofit)
+    ↓
+Backend API (voice_routes.py)
+```
+
+**Acceptance Criteria:**
+
+**P0 (Must Have for MVP):**
+- [ ] App runs as foreground service with persistent notification
+- [ ] Voice recording continues when screen is off/locked
+- [ ] Headphone play/pause button toggles recording on/off
+- [ ] Recorded audio sent to backend API (`POST /api/voice/transcribe`)
+- [ ] Voice feedback TTS received from backend and played through headphones
+- [ ] Basic UI: Start/Stop service, team/role selector, connection status
+- [ ] Settings: Backend URL, API token configuration
+- [ ] App works with phone in pocket (screen off, background service)
+
+**P1 (Nice to Have):**
+- [ ] Voice feedback history (last 5-10 commands)
+- [ ] Notification shows current status (Idle, Recording, Processing)
+- [ ] Volume control for TTS playback
+- [ ] Battery optimization handling (prevent system kill)
+
+**P2 (Future):**
+- [ ] Multiple teams support (switch teams via voice command)
+- [ ] Offline queue (store commands when network unavailable)
+- [ ] Wake word detection ("Hey Commander" to start recording)
+
+**Backend Changes Needed:**
+
+Current backend already supports voice:
+- ✅ `POST /api/voice/transcribe` - Accepts audio, returns transcription
+- ✅ `POST /api/send/{team}/{role}` - Sends command to tmux
+- ✅ WebSocket feedback (voice_feedback.py) - Returns TTS audio
+- ✅ `GET /api/teams` - List available teams
+- ✅ `GET /api/teams/{team}/roles` - List roles in team
+
+**May need:**
+- [ ] Optional: Android-specific endpoint optimizations (if needed)
+- [ ] Optional: Token-based auth validation (if not already enforced)
+
+**Reference Projects (Cloned to sample_codes/):**
+
+Research completed: `docs/android-app-research-2026-01-03.md`
+
+Reference implementations downloaded:
+- `Android-Wave-Recorder` - Low-level audio recording (AudioRecord API, silence detection)
+- `dicio-android` - Voice assistant with skill architecture, on-device STT (Vosk)
+- `PlaylistCore` - Production MediaSession implementation for headphone buttons
+- `Demo_CleanEmptyCompose` - Minimal Jetpack Compose Material 3 template
+- `AudioRecorder` - Full app architecture (Compose + Hilt + Room)
+- `voice-panel-android` - Wake lock management for background operation
+- `ComposePrefs` - Settings UI components with DataStore
+- `android-background-audio-pattern.kt` - Android 14+ foreground service pattern
+
+**Progressive Development Plan (5 Sprints - PRODUCT-ORIENTED):**
+
+**Philosophy:** Each sprint delivers a COMPLETE, USABLE product increment. Boss can use the app after every sprint.
+
+### Sprint 10: REJECTED - Architecture Invalid ❌
+
+**Status:** REJECTED (2026-01-03)
+**Reason:** MediaRecorder architecture cannot support stop word detection (Boss critical requirement)
+
+**What Was Attempted:**
+- ✅ Android project created (Kotlin + Jetpack Compose)
+- ✅ Simple UI with "Record" button
+- ✅ 5-second recording (MediaRecorder)
+- ✅ Backend integration (`POST /api/voice/transcribe`)
+- ✅ Display transcription in UI
+- ❌ **FAILED:** No stop word detection (MediaRecorder limitation)
+
+**Key Learning:**
+- **Original AC missed critical requirement:** Stop word detection not specified in Sprint 10 AC
+- **Architecture choice invalid:** MediaRecorder (file-based) cannot detect stop words in real-time
+- **Boss requirement:** Stop word detection is CRITICAL, not optional
+- **Correct approach:** WebSocket streaming (AudioRecord + Soniox real-time) like web frontend
+
+**Why Rejected:**
+Boss tested the app and found 5-second fixed recording unusable. Actual requirement is stop word detection (user says "stop" to end recording, not fixed 5 seconds). MediaRecorder architecture fundamentally cannot support this.
+
+**Lessons for Future Sprints:**
+1. Capture ALL critical requirements in AC (not just "5 seconds or until released")
+2. Validate architecture choice BEFORE implementation
+3. Reference existing working implementation (web frontend uses WebSocket streaming)
+
+**Next Sprint:** Sprint 11 will use correct architecture (AudioRecord + WebSocket + Soniox real-time)
+
+**Files to Create:**
+- `app/src/main/kotlin/com/aiteams/MainActivity.kt` - Main activity with Record button
+- `app/src/main/kotlin/com/aiteams/AudioRecorder.kt` - Simple recording (NO foreground service)
+- `app/src/main/kotlin/com/aiteams/api/BackendApi.kt` - Retrofit interface
+- `app/src/main/AndroidManifest.xml` - Basic permissions only
+
+**Technical Stack:**
+- Kotlin 1.9+
+- Jetpack Compose (Material 3)
+- Retrofit for API calls
+- MediaRecorder (simple, no AudioRecord yet)
+- Hardcoded: Backend URL, API token, team=command-center, role=PO
+
+---
+
+### Sprint 11: STOPPED - WebSocket Streaming + Stop Word Detection
+
+**Status:** STOPPED (2026-01-03 17:35 - Boss directive)
+**Reason:** Boss switched priorities to Mini IDE Epic
+
+**What Was Completed Before Stop:**
+- ✅ TL technical spec created (sprints/sprint_11/TL_SPEC.md - 142 lines)
+- ✅ SM created Sprint 11 backlog
+- ✅ FE implementation COMPLETE (5 work items, 5 commits):
+  - Work Item #1: AudioRecordCapture (commit c94bac0)
+  - Work Item #2: SonioxStreamingService (commit dfc4907)
+  - Work Item #3: StopWordDetector (commit d8557e2)
+  - Work Item #4: MainViewModelStreaming (commit 919554e, 6/6 unit tests passing)
+  - Work Item #5: UI Polish (commit 485d990)
+- ✅ TL code review: PASS (4/4 gates verified at 17:32)
+- ⏳ QA testing: IN PROGRESS (assigned 17:32, stopped at 17:35 before completion)
+
+**Architecture (Correctly Designed for Stop Words):**
+```
+[AudioRecord] → 16kHz PCM16 → [OkHttp WebSocket] → Soniox
+                                                      ↓
+                                           Real-time transcription
+                                                      ↓
+                                          [StopWordDetector]
+                                                      ↓
+                                    ("thank you" detected) → Send command
+```
+
+**What Was Intended (Not Completed):**
+- Real-time audio streaming to Soniox WebSocket
+- Stop word detection ("thank you" ends recording)
+- Real-time transcript display
+- Command sent on stop word detection
+
+**Code Status:**
+- All code committed and reviewed (PASS)
+- Not tested by QA (stopped before QA completion)
+- Not accepted by PO (stopped before acceptance)
+- Code exists in android/ directory, ready to resume if needed
+
+**Why Stopped:**
+Boss directive to switch to Mini IDE Epic. Android epic paused indefinitely.
+
+**To Resume (Future):**
+If Boss wants to resume Android epic later, start from QA testing (code is ready, just needs QA → PO → Boss demo).
+
+---
+
+### Sprint 12: Add Headphone Buttons (True Hands-Free)
+
+**Goal:** Boss can control recording with headphone play/pause buttons.
+
+**What Boss Can Do After This Sprint:**
+- ✅ Everything from Sprint 10-11 (send commands, screen off)
+- ✅ **NEW**: Press headphone play button → start recording
+- ✅ **NEW**: Press headphone pause button → stop & send command
+- ✅ **NEW**: No need to look at phone or open app
+- ✅ USABLE: True hands-free operation!
+
+**Reference Projects:**
+- `PlaylistCore` - MediaSession API implementation
+- `PlaylistCore` - Media button receiver patterns
+
+**Deliverables:**
+- [ ] MediaSession setup in VoiceService
+- [ ] Headphone button receiver
+- [ ] Play button → start recording
+- [ ] Pause button → stop recording & send
+- [ ] Lock screen media controls
+- [ ] Bluetooth + wired headphone support
+
+**Acceptance Criteria:**
+- [ ] Press headphone play button → starts recording
+- [ ] Press headphone pause → stops recording, sends to backend
+- [ ] Notification updates: "Ready" / "Recording..." / "Processing..."
+- [ ] Works with Bluetooth and wired headphones
+- [ ] Lock screen shows media controls
+- [ ] Can use app WITHOUT opening it (headphone buttons only)
+- [ ] All Sprint 10-11 functionality still works
+- [ ] **BOSS CAN USE: Full hands-free control with headphones!**
+
+**Files to Modify:**
+- `VoiceService.kt` - Add MediaSession
+- NEW: `MediaButtonReceiver.kt` - Handle headphone buttons
+- `AndroidManifest.xml` - MediaSession permissions
+
+---
+
+### Sprint 13: Add TTS Feedback (Hear Responses)
+
+**Goal:** Boss hears voice feedback from AI agents through headphones.
+
+**What Boss Can Do After This Sprint:**
+- ✅ Everything from Sprint 10-12 (hands-free control)
+- ✅ **NEW**: Hear TTS feedback through headphones
+- ✅ **NEW**: Audio continues playing with screen off
+- ✅ **NEW**: Complete round-trip: speak command → hear response
+- ✅ USABLE: Full conversational experience!
+
+**Reference Projects:**
+- `dicio-android` - Audio playback patterns
+- `AudioRecorder` - MediaPlayer usage
+
+**Deliverables:**
+- [ ] WebSocket connection to backend
+- [ ] Receive voice feedback events
+- [ ] TTS audio playback through headphones
+- [ ] Audio routing (headphones, not speaker)
+- [ ] Playback continues with screen off
+- [ ] Notification shows "Playing feedback..."
+
+**Acceptance Criteria:**
+- [ ] WebSocket connects to `wss://voice-backend.hungson175.com/ws/voice-feedback`
+- [ ] Receives TTS audio after command sent
+- [ ] Audio plays through headphones (not speaker)
+- [ ] Playback continues with screen locked
+- [ ] Notification updates: "Ready" → "Recording" → "Processing" → "Playing"
+- [ ] All Sprint 10-12 functionality still works
+- [ ] **BOSS CAN USE: Full round-trip conversation with AI agents!**
+
+**Files to Create:**
+- NEW: `WebSocketClient.kt` - WebSocket handler
+- NEW: `AudioPlayer.kt` - TTS playback
+- Modify: `VoiceService.kt` - Integrate WebSocket + playback
+
+---
+
+### Sprint 14: Team/Role Selection + Polish (Production Ready)
+
+**Goal:** Boss can switch teams/roles and app is production-ready.
+
+**What Boss Can Do After This Sprint:**
+- ✅ Everything from Sprint 10-13 (full conversation flow)
+- ✅ **NEW**: Select team from dropdown (not hardcoded)
+- ✅ **NEW**: Select role from dropdown (not hardcoded)
+- ✅ **NEW**: Configure backend URL and API token
+- ✅ **NEW**: Battery optimization handled
+- ✅ USABLE: Production-ready app for daily use!
+
+**Reference Projects:**
+- `ComposePrefs` - Settings UI, dropdowns, DataStore
+- `voice-panel-android` - Battery optimization
+
+**Deliverables:**
+- [ ] Settings screen
+- [ ] Team dropdown (fetch from backend)
+- [ ] Role dropdown (fetch from backend)
+- [ ] Backend URL configuration
+- [ ] API token configuration
+- [ ] TTS volume slider
+- [ ] Battery optimization exemption
+- [ ] Connection status indicator
+- [ ] Voice feedback history (last 5)
+- [ ] App icon and branding
+
+**Acceptance Criteria:**
+- [ ] Settings screen accessible from main UI
+- [ ] Team dropdown populated from `GET /api/teams`
+- [ ] Role dropdown populated from `GET /api/teams/{team}/roles`
+- [ ] Selections persist (DataStore) and restore on app launch
+- [ ] Backend URL editable (default: voice-backend.hungson175.com)
+- [ ] API token input with show/hide toggle
+- [ ] TTS volume slider (0-100%)
+- [ ] Connection status: green (connected) / red (disconnected)
+- [ ] Voice feedback history shows last 5 with timestamps
+- [ ] Battery optimization exemption requested on first launch
+- [ ] User-friendly error messages (no crashes)
+- [ ] App icon designed: "AI Teams Voice"
+- [ ] **BOSS CAN USE: Production-ready for daily use!**
+
+**Files to Create:**
+- NEW: `SettingsScreen.kt` - Settings UI
+- NEW: `TeamRoleSelector.kt` - Team/role dropdowns
+- NEW: `PreferencesManager.kt` - DataStore wrapper
+- NEW: `FeedbackHistory.kt` - History list
+
+---
+
+**Sprint Summary (PRODUCT-ORIENTED):**
+
+| Sprint | What Boss Can DO (Usable Product) | Key Addition | Effort |
+|--------|-----------------------------------|--------------|--------|
+| **Sprint 10** | ✅ Send voice commands via button, see transcription | Complete end-to-end flow (simple) | M |
+| **Sprint 11** | ✅ Use with screen locked, phone in pocket | Background service + wake lock | S |
+| **Sprint 12** | ✅ Control with headphone buttons, no screen needed | MediaSession (true hands-free) | S |
+| **Sprint 13** | ✅ Hear TTS feedback through headphones | WebSocket + audio playback | M |
+| **Sprint 14** | ✅ Switch teams/roles, production-ready | Settings + team/role selection | M |
+
+**Key Difference from Infrastructure-First Approach:**
+- ❌ OLD: No usable product until Sprint 12
+- ✅ NEW: Usable product after EVERY sprint (progressive value delivery)
+
+**Total Estimated Duration:** 5 sprints (~2-3 weeks if focused)
+
+**Progressive Value:**
+- Sprint 10: 40% value (can send commands)
+- Sprint 11: 60% value (+ mobile use)
+- Sprint 12: 80% value (+ hands-free)
+- Sprint 13: 95% value (+ TTS feedback)
+- Sprint 14: 100% value (production ready)
+
+**Deployment:**
+- Google Play Store internal testing track
+- APK direct download (for Boss testing)
+- Auto-update mechanism (optional)
+
+**Estimated Effort:**
+- **Size:** XL (New platform, new codebase)
+- **Duration:** ~3-5 sprints (depending on team availability)
+- **Complexity:** High (Android background services, media session, permissions)
+
+**Why P0:**
+- Web version fundamentally limited for hands-free use
+- Hardware button support impossible in web browsers
+- Background operation blocked by browser security model
+- This is the ONLY way to achieve true hands-free mobile experience
+
+**Success Criteria:**
+Boss can:
+1. Put phone in pocket
+2. Press headphone play button
+3. Speak voice command
+4. Press headphone pause button
+5. Hear TTS feedback through headphones
+6. Screen stays off throughout entire flow
+
+**Notes:**
+- Start with **lite version** - minimal features, hands-free focus
+- Don't try to replicate web version features (file browser, terminal, etc.)
+- Focus on solving the ONE critical problem: hands-free operation
+- Web version remains primary interface for complex tasks
+- Android app is specialized tool for voice-only mobile use
+
+---
+
+### Fix Upgrade Button Visibility in Power Selector
+**Status:** TODO (New - Boss Request 2026-01-08)
+**Size:** XS (Small - UI visibility fix)
+**Priority:** P1 (High - UX issue)
+
+**Problem:**
+Some parts of upgrade UI are invisible. Specifically in power selector section, the green upgrade button (e.g., for "basic power") has visibility issues.
+
+**Boss Quote:** "There's another issue with this UI where some parts are invisible, for example, the upgrade. When upgrading, there's no way to know, but then it appears to suggest where to put it in the power selector section. For example, for basic power, there's a green upgrade button"
+
+**Acceptance Criteria:**
+- [ ] Upgrade button visible in power selector section
+- [ ] Green upgrade button clearly visible for basic power
+- [ ] User can see upgrade options without confusion
+- [ ] No invisible/hidden upgrade UI elements
+
+**Priority:** P1 (UX clarity)
+
+---
+
+### AI Response Length Control
+**Status:** TODO (New - Boss Request 2026-01-08)
+**Size:** S (Small - UX improvement)
+**Priority:** P1 (High - usability issue)
+
+**Problem:**
+AI responses (Claude Code, agents) are often too long. Boss finds lengthy responses hard to read/scan.
+
+**Boss Quote:** "Check the responses generated by the AI; they're a bit long. Not every response is like that, but the ones that are lengthy, I don't know. Help me handle them."
+
+**Possible Solutions:**
+1. **Collapse/Expand UI** - Long responses auto-collapsed with "Show more" button
+2. **Summary + Details** - AI provides short summary first, details hidden
+3. **Token Limit** - Enforce max response length in prompts
+4. **Progressive Disclosure** - Show sections progressively (headings visible, content collapsed)
+5. **AI Instruction** - Update prompts to enforce brevity
+
+**Acceptance Criteria:**
+- [ ] Long AI responses don't overwhelm Boss
+- [ ] Boss can quickly scan key points
+- [ ] Details available if needed (expandable)
+- [ ] Works for all AI roles (PO, SM, TL, FE, BE, QA)
+
+**Priority:** P1 (UX improvement)
+
+---
+
+### Voice Feedback Volume Control
+**Status:** TODO
+**Size:** S (Small)
+**Priority:** P0 (High user impact)
+
+**Problem:** TTS voice feedback too loud when system volume is high for movies/media.
+
+**User Story:**
+As a user listening to voice feedback,
+I want to control the TTS volume independently,
+So that I don't get blasted when system volume is high for other activities.
+
+**Acceptance Criteria:**
+- [ ] Volume slider in Settings (0-100%)
+- [ ] Volume persists across sessions (localStorage)
+- [ ] Applies to voice feedback audio playback
+- [ ] Independent from system volume
+
+**Technical Notes:**
+- Frontend: Add volume slider in Settings component
+- Use localStorage to persist setting
+- Apply volume multiplier when playing audio in useVoiceRecorder.ts
+
+---
+
+### SM Responsibility: Maintain CLAUDE.md After Each Sprint
+**Status:** TODO (Boss Directive 2026-01-11)
+**Size:** XS (Process improvement)
+**Priority:** P0
+
+**Problem:**
+CLAUDE.md is a critical file that guides Claude Code when working with this repository. It must be kept updated and relevant as the project evolves. Currently, no one is systematically responsible for maintaining it.
+
+**CRITICAL Constraints:**
+1. **Keep it COMPACT** - CLAUDE.md is loaded for ALL 6 agents (PO, SM, TL, FE, BE, QA). Every agent reads it at session start. Must be kept extremely short.
+2. **Keep it UP-TO-DATE** - Must reflect current project state. Outdated info causes bugs.
+
+**As a** Scrum Master managing the team process
+**I want** to review and update CLAUDE.md after each sprint retrospective
+**So that** the file stays current with project changes and lessons learned
+
+**Boss Directive:**
+"His responsibilities include maintaining the Claude.md file. Because he's the one managing the entire process, and Claude.md is a critical file. It must be kept updated and relevant. So after each sprint in the retrospective, he needs to consider whether the Claude.md file needs to be updated or kept in sync."
+
+"Remember to tell the Scrum Master, even right at the top of the first file of CLAUDE.md, that this file must be kept compact and reference other files if needed, because it's used for all agents in the team, all 6 agents. So it must be kept extremely compact, and if anything is needed, reference the content rather than updating this file too casually. For that CLAUDE.md file, note that it must be kept short because everyone has to read it. Second, it must be extremely up-to-date."
+
+**Acceptance Criteria:**
+- [ ] SM reviews CLAUDE.md after each sprint retrospective
+- [ ] SM updates CLAUDE.md with relevant changes (new processes, scripts, lessons learned)
+- [ ] SM ensures CLAUDE.md stays in sync with actual project state
+- [ ] **SM keeps CLAUDE.md COMPACT** - Reference other files instead of adding content
+- [ ] **SM does NOT update casually** - Only add critical information that ALL agents need
+- [ ] Updates documented in retrospective notes
+
+**Priority:** P0 (Critical process improvement - ensures documentation quality)
+
+---
+
+## P1 - High Priority (Next 1-2 Sprints)
+
+### Technical Debt Evaluation (Pre-Refactor)
+**Status:** TODO (Boss Request 2026-01-08)
+**Size:** S (Small - research + analysis)
+**Priority:** P1 (Must do BEFORE refactor)
+
+**Problem:**
+Features keep getting pushed continuously. No time to pay down technical debt. Need to evaluate current debt level before attempting refactor.
+
+**Boss Quote:**
+"We're an AI agent team, but features keep getting pushed in continuously, so there's no time to pay down technical debt. I've postponed this task for quite a while, but I feel like it's time to pay off the debt."
+
+**Task for TL:**
+Find a framework to evaluate current technical debt. Assess whether project has low, medium, or high technical debt.
+
+**Deliverables:**
+- [ ] Research technical debt evaluation frameworks
+- [ ] Evaluate codebase using chosen framework
+- [ ] Report: Technical debt level (low/medium/high)
+- [ ] Identify top debt areas (code smells, duplication, complexity)
+- [ ] Recommendations for refactor priorities
+
+**Output:** Document in `docs/tech-debt-evaluation.md`
+
+---
+
+### Codebase Refactor (Pay Down Technical Debt)
+**Status:** TODO (Boss Request 2026-01-08)
+**Size:** L (Large - depends on debt evaluation)
+**Priority:** P1 (After tech debt evaluation)
+
+**Problem:**
+Technical debt has accumulated. Features pushed continuously without refactor time. Need to pay down debt, but must be careful - breaking things is disastrous.
+
+**Boss Requirements:**
+1. **Evaluate debt FIRST** - complete "Technical Debt Evaluation" task above
+2. **Write unit tests BEFORE refactoring** - must have safety net
+3. **Careful execution** - if something breaks, it's disastrous
+4. **Progressive refactor** - one area at a time, not everything at once
+
+**Prerequisites:**
+- [ ] Technical debt evaluation complete
+- [ ] Unit test coverage adequate
+- [ ] Boss approval of refactor plan
+
+**Approach:**
+1. Evaluate debt (separate task above)
+2. Write/improve unit tests for target areas
+3. Refactor incrementally (one module at a time)
+4. Verify tests still pass after each change
+5. QA testing after each refactor sprint
+
+**Acceptance Criteria:**
+- [ ] Code complexity reduced
+- [ ] Test coverage increased
+- [ ] No breaking changes
+- [ ] Easier to maintain
+
+---
+
+### Pluggable TTS Architecture - SOLID Provider System
+**Status:** TODO (New - Boss Request 2026-01-05)
+**Size:** M (Medium - architectural refactoring)
+**Priority:** P1 (Enable multiple TTS providers)
+
+**Problem:** Current TTS implementation is tightly coupled to Google Cloud TTS. Cannot easily switch to alternative providers (HD-TTS API, OpenAI, or future providers) without modifying core code.
+
+**As a** system administrator
+**I want** a pluggable TTS provider architecture
+**So that** I can switch between TTS providers (Google Cloud TTS, HD-TTS, OpenAI, or any future API) without code changes
+
+**Current State:**
+- Existing: Google Cloud TTS (Story 36 - switchable with OpenAI via env var)
+- Provider switching: Via `TTS_PROVIDER` environment variable
+- Location: `backend/app/services/tts_providers.py`
+
+**New Requirement:**
+- Add HD-TTS API as third provider option
+- Design follows SOLID principles (Open/Closed Principle - open for extension, closed for modification)
+- "Plug-in and use any TTS" architecture
+
+**Acceptance Criteria:**
+- [ ] Abstract TTS provider interface maintained (existing `TTSProvider` base class)
+- [ ] HD-TTS provider implementation created (`HDTTSProvider` class)
+- [ ] Supports all HD-TTS API parameters (gender, area, emotion, group, speed, quality)
+- [ ] Switch providers via `TTS_PROVIDER=hdtts` environment variable
+- [ ] No changes to Celery task code (`celery_tasks.py`) - provider factory handles selection
+- [ ] HD-TTS API documentation available at `docs/tech/hd-tts-apis.md`
+- [ ] Authentication via X-API-Key header (configurable via env var)
+- [ ] Error handling for HD-TTS API failures
+- [ ] All existing Google Cloud TTS and OpenAI TTS functionality preserved
+
+**Provider Options After Implementation:**
+1. `TTS_PROVIDER=google` - Google Cloud TTS (default, $4/million chars)
+2. `TTS_PROVIDER=openai` - OpenAI TTS ($15/million chars)
+3. `TTS_PROVIDER=hdtts` - HD-TTS API (Vietnamese-specialized)
+
+**Technical Reference:**
+- API Documentation: `docs/tech/hd-tts-apis.md`
+- Current Implementation: `backend/app/services/tts_providers.py` (Story 36 architecture)
+- HD-TTS Base URL: `https://hd-tts-backend.hungson175.com`
+- HD-TTS Test Key: `vvtts_7e1647c466a68a36cfa401a08e1ec4a2`
+
+**Priority:** P1
+
+---
+
+### Voice Speed UI Setting (Dynamic, No Server Restart)
+**Status:** TODO (New - Boss Request 2026-01-05)
+**Size:** S (Small - UI settings enhancement)
+**Priority:** P1 (UX improvement - eliminate server restarts)
+
+**Problem:**
+Current voice speed is hardcoded in backend/.env (HDTTS_SPEED=0.58). Changing speed requires:
+1. Edit backend/.env
+2. Restart Celery worker
+This is frustrating for users who want to adjust speed dynamically.
+
+**As a** user
+**I want** voice speed as a UI setting in the Settings panel
+**So that** I can adjust speech speed dynamically without server restarts
+
+**Current Implementation:**
+- Speed hardcoded: `HDTTS_SPEED=0.58` in backend/.env
+- Speed passed to TTS provider on each request
+- Celery loads speed at startup
+
+**Desired Implementation:**
+- Frontend Settings panel (left side, like noise filter)
+- Speed slider: range 0.5 - 2.0 (or HD-TTS API supported range)
+- Speed saved to localStorage
+- Speed sent with each voice feedback request to backend
+- Backend uses speed from request body (not .env)
+- Fallback to .env default if not specified in request
+
+**Acceptance Criteria:**
+- [ ] Add speed slider to Settings panel (0.5 - 2.0 range)
+- [ ] Save speed to localStorage (e.g., `voice_feedback_speed`)
+- [ ] Send speed with voice feedback API requests
+- [ ] Backend reads speed from request body, not just .env
+- [ ] Celery uses request speed, fallback to .env default
+- [ ] No server restart required when changing speed
+- [ ] Speed changes take effect immediately on next voice feedback
+
+**Technical Notes:**
+- Frontend: `components/voice/VoiceSettingsPanel.tsx`
+- Backend: `app/services/celery_tasks.py` - read speed from task params
+- Backend: `app/api/voice_routes.py` - pass speed from request to Celery
+- Fallback: Keep `HDTTS_SPEED` in .env as default
+
+**Priority:** P1
+
+---
+
+### [EPIC] Mini Online IDE - Transform File Browser
+**Status:** TODO (New - Boss Request 2026-01-03)
+**Size:** XL (Epic - 4 progressive sprints)
+**Priority:** P1 (Natural progression after CRUD complete)
+**Philosophy:** Each sprint delivers a COMPLETE, USABLE improvement. Boss can use the file browser after EVERY sprint.
+
+**Problem:** File browser currently supports view-only + CRUD operations. Users cannot edit file contents directly in the browser - must use external editors.
+
+**User Story:**
+As a developer managing project files,
+I want to edit and save files directly in the browser,
+So that I can make quick changes without switching to external editors.
+
+**Vision:** Transform file browser into a mini online IDE with progressive enhancements.
+
+**Current State (After Sprint 9):**
+- ✅ View files (read-only with syntax highlighting)
+- ✅ Create/Delete/Rename (CRUD complete)
+- ❌ **Missing:** Edit and save files
+
+---
+
+## Progressive Sprint Breakdown (Product-Oriented)
+
+**After EVERY sprint:** Boss can use an improved file browser. No sprint ends with "just infrastructure."
+
+### Sprint 1: Edit + Save (Simplest Complete Flow)
+
+**Goal:** Boss can edit and save files directly in browser - NO MORE external editors!
+
+**What Boss Can Do After This Sprint:**
+- ✅ Click "Edit" button on any file
+- ✅ Edit file content in basic text editor
+- ✅ Click "Save" button (or Cmd+S / Ctrl+S)
+- ✅ Changes persist to disk
+- ✅ **ACTUALLY USABLE** - Can edit files without leaving browser!
+
+**Deliberately OUT OF SCOPE (save for later sprints):**
+- ❌ NO syntax highlighting yet (plain text - simpler)
+- ❌ NO auto-save yet (manual save only - simpler)
+- ❌ NO unsaved changes indicator yet (simpler)
+- ❌ NO fancy editor features yet (simpler)
+
+**Why This Approach:**
+- **Product-Oriented**: Boss has working editor after Sprint 1, not Sprint 4
+- **Progressive**: Start simple (plain text edit), add features later
+- **Risk Reduction**: Validate save workflow early
+
+**Deliverables:**
+- [ ] "Edit" button in FileViewer
+- [ ] Plain textarea for editing (no fancy editor yet)
+- [ ] "Save" button + Cmd+S / Ctrl+S keyboard shortcut
+- [ ] Backend: `PUT /api/files/{team}/{path}` endpoint
+- [ ] Toast notification on save success/failure
+- [ ] Cancel button (discard changes)
+
+**Acceptance Criteria:**
+- [ ] Edit button switches file to edit mode
+- [ ] Can type and modify file content
+- [ ] Cmd+S / Ctrl+S saves changes
+- [ ] Backend persists changes to disk
+- [ ] Toast shows "File saved successfully"
+- [ ] **BOSS CAN USE: Edit any file and save it!**
+
+**Size:** M (Medium)
+**Tech:** Basic textarea, Retrofit PUT endpoint
+
+---
+
+### Sprint 2: Syntax Highlighting + Terminal Quick View
+
+**Goal:** Boss has professional code editing experience + can view files from terminal links.
+
+**What Boss Can Do After This Sprint:**
+- ✅ Everything from Sprint 1 (edit + save files)
+- ✅ **NEW**: Syntax highlighting for all languages (JS, TS, Python, etc.)
+- ✅ **NEW**: Click file path in terminal → popup shows file content
+- ✅ **STILL USABLE** - Better editing experience!
+
+**Reference:** CodeMirror 6 (lightweight, ~200KB)
+
+**Deliverables:**
+- [ ] Replace textarea with CodeMirror 6
+- [ ] Auto-detect language from file extension
+- [ ] Syntax highlighting for: JS, TS, Python, Go, Rust, Java, CSS, HTML, Markdown, JSON, YAML
+- [ ] Terminal file path parser (detect `/path/to/file.md` patterns)
+- [ ] Clickable file paths in terminal output
+- [ ] Quick view popup/modal with syntax highlighting
+- [ ] Escape key or click-outside to close popup
+
+**Acceptance Criteria:**
+- [ ] Files open with proper syntax highlighting
+- [ ] All Sprint 1 functionality still works
+- [ ] File paths in terminal are clickable
+- [ ] Clicking path opens popup with file content
+- [ ] Popup has syntax highlighting
+- [ ] **BOSS CAN USE: Professional code editing + quick file viewing!**
+
+**Size:** M (Medium)
+**Tech:** CodeMirror 6, terminal ANSI parser
+
+---
+
+### Sprint 3: Keyboard Shortcuts + .env File Access
+
+**Goal:** Boss has power user features + can edit environment variables.
+
+**What Boss Can Do After This Sprint:**
+- ✅ Everything from Sprint 1-2 (edit with syntax highlighting)
+- ✅ **NEW**: Esc key to cancel editing
+- ✅ **NEW**: View and edit .env files (currently blocked)
+- ✅ **STILL USABLE** - Power user productivity!
+
+**Deliverables:**
+- [ ] Esc key cancels editing (returns to view mode)
+- [ ] Cmd+E / Ctrl+E toggles edit mode
+- [ ] Fix .env file read permissions (backend)
+- [ ] Allow .env file editing with validation
+- [ ] Warn on invalid .env format
+- [ ] Confirmation dialog for .env saves
+
+**Acceptance Criteria:**
+- [ ] Esc cancels edit, discards unsaved changes
+- [ ] Cmd+E toggles between view/edit modes
+- [ ] .env files visible in file browser
+- [ ] Can edit .env files
+- [ ] Invalid .env format shows warning
+- [ ] All Sprint 1-2 functionality still works
+- [ ] **BOSS CAN USE: Power shortcuts + manage environment variables!**
+
+**Size:** S (Small)
+**Tech:** Keyboard event handlers, backend file permissions
+
+---
+
+### Sprint 4: Polish + Production Ready
+
+**Goal:** Boss has complete, polished mini IDE ready for daily use.
+
+**What Boss Can Do After This Sprint:**
+- ✅ Everything from Sprint 1-3 (full editing experience)
+- ✅ **NEW**: Unsaved changes indicator (visual feedback)
+- ✅ **NEW**: Auto-save option (configurable)
+- ✅ **NEW**: Line numbers in editor
+- ✅ **NEW**: Mobile-friendly (hamburger menu)
+- ✅ **PRODUCTION READY** - Complete mini IDE!
+
+**Deliverables:**
+- [ ] Unsaved changes indicator (dot on filename, "Modified" badge)
+- [ ] Confirmation dialog if closing unsaved file
+- [ ] Auto-save toggle (off by default, configurable interval)
+- [ ] Line numbers in CodeMirror
+- [ ] Hamburger menu for mobile sidebar
+- [ ] Large file warning (>1MB shows view-only mode)
+- [ ] Performance optimization (lazy loading)
+
+**Acceptance Criteria:**
+- [ ] Visual indicator for unsaved files
+- [ ] Confirm dialog prevents accidental data loss
+- [ ] Auto-save works when enabled
+- [ ] Line numbers visible in editor
+- [ ] Mobile UI has hamburger menu
+- [ ] Large files handled gracefully
+- [ ] All Sprint 1-3 functionality still works
+- [ ] **BOSS CAN USE: Production-ready mini IDE for daily work!**
+
+**Size:** M (Medium)
+**Tech:** State management, mobile responsive design
+
+---
+
+## Epic Summary (Product-Oriented)
+
+| Sprint | What Boss Can DO (Usable Product) | Key Addition | Value |
+|--------|-----------------------------------|--------------|-------|
+| **Sprint 1** | ✅ Edit and save files in browser | Basic editor + save workflow | 40% |
+| **Sprint 2** | ✅ Professional code editing + terminal quick view | Syntax highlighting + file popups | 70% |
+| **Sprint 3** | ✅ Power user shortcuts + .env editing | Keyboard shortcuts + .env access | 85% |
+| **Sprint 4** | ✅ Complete mini IDE with auto-save + polish | Unsaved indicators + mobile + auto-save | 100% |
+
+**Key Difference from Infrastructure-First:**
+- ❌ OLD: Build editor → Add syntax → Add features → Usable (Sprint 4)
+- ✅ NEW: Usable editor (Sprint 1) → Better editor (Sprint 2) → Power features (Sprint 3) → Polish (Sprint 4)
+
+**Total Estimated Duration:** 4 sprints (~1-2 weeks if focused)
+
+---
+
+## Technical Stack
+
+**Frontend:**
+- CodeMirror 6 (lightweight code editor)
+- React state management (edit mode, unsaved changes)
+- Keyboard event handlers (Cmd+S, Esc, Cmd+E)
+
+**Backend:**
+- `PUT /api/files/{team}/{path}` - Save file contents
+- File permissions fix for .env files
+- Validation for .env format
+
+**Dependencies:**
+- CodeMirror 6: `@codemirror/view`, `@codemirror/lang-javascript`, `@codemirror/lang-python`, etc.
+
+---
+
+## Notes
+
+- **Progressive value delivery** - Boss gets working editor after Sprint 1
+- **Low risk** - Each sprint is small and testable
+- **High impact** - Eliminates external editor context switching
+- **Natural progression** - Builds on Sprint 9 (CRUD complete)
+
+---
+
+### Intelligent File Path Resolution in Terminal Quick View
+**Status:** TODO (New - Boss Request 2026-01-04)
+**Size:** M (Medium - looks small but complicated)
+**Priority:** P1 (High - Sprint 13 feature incomplete without this)
+
+**Problem:**
+Terminal quick view popup currently fails to resolve file paths correctly. Claude Code outputs mixed path formats (relative, absolute, relative to subdirectories), causing parser to fail. Users click file paths that don't open or open wrong files.
+
+**As a** developer viewing terminal output
+**I want** file paths to resolve correctly regardless of format
+**So that** clicking any file path opens the correct file
+
+**Acceptance Criteria:**
+- [ ] Resolve relative paths (./src/file.ts)
+- [ ] Resolve absolute paths (/full/path/file.ts)
+- [ ] Resolve paths relative to subdirectories (subdir/file.ts)
+- [ ] Handle ambiguous paths (multiple matches → show user choice popup)
+- [ ] Cache resolved paths (in-memory KV: project+path → file list)
+
+**Boss Technical Guidance for TL:**
+- Use search algorithm (similar to Cmd+P file search approach)
+- Simple in-memory cache: key = project name + path, value = list of matches
+- Multiple matches: Show popup for user to choose
+- Search scope: Project files, initialize at project load, update if file not found
+- "This feature looks small, but complicated" - THINK HARD from several perspectives
+- BE/FE: TDD very carefully
+
+**Priority:** P1
+
+---
+
+### Fix Cmd+P File Search in File Browser
+**Status:** TODO (ESCALATED - Boss frustrated 2026-01-08)
+**Size:** S (Small - existing feature broken)
+**Priority:** P0 (CRITICAL - Boss: "works like shit, never finds files")
+
+**Problem:**
+Cmd+P search in File Browser is completely broken and unusable. Boss reports it NEVER finds the files he needs.
+
+**Boss Quote:** "the search feature (Cmd +P) inside File Browser DOES NOT WORK! it works like shit, never found a file that I need"
+
+**As a** developer browsing project files
+**I want** Cmd+P quick search to actually find files
+**So that** I can quickly find and open files without manual browsing
+
+**Root Cause Analysis Needed:**
+- [ ] Does popup open when Cmd+P pressed?
+- [ ] Does search execute but return no results?
+- [ ] Is uFuzzy algorithm too strict?
+- [ ] Is file list cache broken/empty?
+- [ ] Are results ranked poorly (right file exists but not shown)?
+
+**Acceptance Criteria:**
+- [ ] Cmd+P triggers file search popup
+- [ ] Search FINDS files Boss searches for (test with real examples)
+- [ ] Results ranked by relevance (fuzzy matching works)
+- [ ] Selecting file opens it in editor
+- [ ] Search is performant (no lag on typing)
+- [ ] Boss can actually use it to find files
+
+**Priority:** P0 (ESCALATED - Boss pain point)
+
+**Next Step:** TL/FE diagnose why search fails, fix algorithm or caching issue
+
+---
+
+### Multi-User Deployment via Docker Containers
+**Status:** TODO (New - Boss Request 2026-01-04)
+**Size:** L (Large - deployment infrastructure + multi-tenancy)
+**Priority:** P1 (High - platform scalability for limited rollout)
+
+**Problem Statement:**
+Command Center platform currently runs on Boss's local machine (single-user). Platform serves multiple use cases beyond just coding:
+- **Scrum Team:** Software development (current command-center team)
+- **Market Research Team:** Simulating McKinsey consulting workflows
+- **Future Teams:** AI agent teams for various domains
+
+**Current Limitation:**
+- Boss's machine hosts ALL teams and workflows
+- Cannot share platform with other users (2-3 max initially)
+- Each new user would mess up Boss's local setup
+- No isolation between users
+
+**Boss Directive (2026-01-04):**
+> "The command center is a large platform for doing all sorts of things, not just this project. Right now it's running on my machine, but for each user, I'd need to run it in a separate Docker container to avoid messing up my setup. Make it deployable in separate Docker instances."
+
+**User Story:**
+As the platform owner,
+I want to deploy isolated instances for 2-3 users,
+So that each user has their own environment without interfering with others or my local setup.
+
+---
+
+## Scope: Multi-Tenant Docker Deployment
+
+### Target Users (Initial Rollout):
+- **User 1:** Boss (current setup, becomes containerized)
+- **User 2-3:** Limited beta users (invited testers)
+- **Future:** Scale to more users after validating architecture
+
+### Isolation Requirements:
+
+**Per-User Isolation:**
+- Separate tmux sessions (user1's teams ≠ user2's teams)
+- Separate file systems (project files isolated)
+- Separate databases (when PostgreSQL added - Sprint 25)
+- Separate voice feedback (user1 audio ≠ user2 audio)
+- Separate API tokens (authentication per user)
+
+**Shared Resources:**
+- Single codebase (same application code)
+- Shared Redis (with user-namespaced keys)
+- Shared Celery workers (with user-aware task routing)
+
+---
+
+## Architecture Options
+
+### Option A: Docker Compose Multi-Container (RECOMMENDED)
+
+**Structure:**
+```yaml
+services:
+  # User 1 Instance
+  user1-frontend:
+    image: ai-teams-frontend:latest
+    environment:
+      - USER_ID=user1
+      - BACKEND_URL=http://user1-backend:17061
+
+  user1-backend:
+    image: ai-teams-backend:latest
+    environment:
+      - USER_ID=user1
+      - REDIS_KEY_PREFIX=user1
+    volumes:
+      - user1-projects:/app/projects
+
+  # User 2 Instance
+  user2-frontend:
+    image: ai-teams-frontend:latest
+    environment:
+      - USER_ID=user2
+      - BACKEND_URL=http://user2-backend:17061
+
+  user2-backend:
+    image: ai-teams-backend:latest
+    environment:
+      - USER_ID=user2
+      - REDIS_KEY_PREFIX=user2
+    volumes:
+      - user2-projects:/app/projects
+
+  # Shared Services
+  redis:
+    image: redis:7-alpine
+
+  celery-worker:
+    image: ai-teams-backend:latest
+    command: celery worker
+```
+
+**Advantages:**
+- ✅ Simple to deploy (docker-compose up)
+- ✅ Easy to add new users (add service to docker-compose.yml)
+- ✅ Isolation via separate containers
+- ✅ Resource limits per user (Docker memory/CPU limits)
+
+**Disadvantages:**
+- ⚠️ All users on same host (Boss's machine)
+- ⚠️ Manual scaling (edit YAML for new users)
+
+---
+
+### Option B: Kubernetes Multi-Namespace (OVER-ENGINEERED)
+
+**Not recommended for 2-3 users** - Kubernetes overkill for initial rollout.
+
+**When to revisit:** If users > 10, need auto-scaling, or multi-host deployment.
+
+---
+
+### Option C: Docker Swarm (ALTERNATIVE)
+
+**Middle ground between Compose and Kubernetes:**
+- Service replication
+- Load balancing
+- Multi-host support
+
+**When to consider:** If users grow to 5-10 and need distributed deployment.
+
+---
+
+## Implementation Plan
+
+### Phase 1: Dockerization (Base Infrastructure)
+
+**Deliverables:**
+- [ ] Dockerfile for frontend (Next.js production build)
+- [ ] Dockerfile for backend (FastAPI + Celery)
+- [ ] docker-compose.yml for single-user setup
+- [ ] Environment variable configuration (USER_ID, ports, volumes)
+- [ ] Volume mounts for persistent data (projects, databases)
+- [ ] Health checks (frontend, backend, Redis, Celery)
+
+**Acceptance Criteria:**
+- [ ] Boss can run `docker-compose up` and system works identically to local setup
+- [ ] All features work in Docker (voice, file browser, terminal, teams)
+- [ ] Data persists across container restarts (volumes work)
+- [ ] No performance degradation vs local setup
+
+---
+
+### Phase 2: Multi-User Support (Isolation)
+
+**Deliverables:**
+- [ ] User namespace isolation (Redis keys prefixed with USER_ID)
+- [ ] User-specific tmux sessions (user1:command-center ≠ user2:command-center)
+- [ ] User-specific file storage (separate volumes per user)
+- [ ] User authentication (JWT tokens mapped to USER_ID)
+- [ ] User-specific Celery task routing (tasks tagged with USER_ID)
+- [ ] User-specific voice feedback (WebSocket rooms per user)
+
+**Acceptance Criteria:**
+- [ ] User 1 cannot see User 2's teams, files, or tasks
+- [ ] User 1 voice feedback doesn't play to User 2
+- [ ] User 1 can create teams without affecting User 2
+- [ ] Concurrent usage: Both users can work simultaneously
+- [ ] Zero cross-user contamination (strict isolation)
+
+---
+
+### Phase 3: Deployment & Access (Cloudflare Tunnels)
+
+**Current Setup:**
+- `voice-ui.hungson175.com` → localhost:3334 (Boss only)
+- `voice-backend.hungson175.com` → localhost:17061 (Boss only)
+
+**Multi-User Setup:**
+- `user1.ai-teams.hungson175.com` → user1-frontend:3334
+- `user2.ai-teams.hungson175.com` → user2-frontend:3334
+- `user3.ai-teams.hungson175.com` → user3-frontend:3334
+
+**Deliverables:**
+- [ ] Cloudflare Tunnel configuration (multiple subdomains)
+- [ ] Subdomain routing (user1.* → user1 container, user2.* → user2 container)
+- [ ] SSL certificates (Cloudflare handles this)
+- [ ] User onboarding documentation (how to access your instance)
+
+**Acceptance Criteria:**
+- [ ] Each user has unique subdomain URL
+- [ ] Users can access their instance from anywhere (internet access)
+- [ ] HTTPS working for all subdomains
+- [ ] No cross-user URL access (user1 can't access user2's subdomain)
+
+---
+
+### Phase 4: Resource Management & Monitoring
+
+**Deliverables:**
+- [ ] Docker resource limits (CPU, memory per user container)
+- [ ] Monitoring dashboard (Prometheus + Grafana)
+  - Container CPU/memory usage per user
+  - API request rates per user
+  - Voice feedback latency per user
+- [ ] Log aggregation (centralized logs for all users)
+- [ ] Alerting (notify Boss if user container crashes)
+
+**Acceptance Criteria:**
+- [ ] User containers respect resource limits (no one user hogs CPU)
+- [ ] Boss can view usage metrics per user
+- [ ] Logs searchable by USER_ID
+- [ ] Alerts sent to Boss on critical failures
+
+---
+
+## Technical Challenges & Solutions
+
+### Challenge 1: Tmux in Docker
+**Problem:** Tmux expects TTY, Docker containers are non-interactive.
+
+**Solution:**
+- Run tmux in detached mode (`tmux new-session -d`)
+- Backend API controls tmux via `tmux send-keys` (already implemented)
+- No interactive tmux access needed (web UI is the interface)
+
+---
+
+### Challenge 2: File System Permissions
+**Problem:** Docker containers run as specific user (UID/GID), file permissions may break.
+
+**Solution:**
+- Use named volumes (Docker manages permissions)
+- Set container user to match host UID (if mounting host directories)
+- Use `chown` in Dockerfile entrypoint if needed
+
+---
+
+### Challenge 3: Redis Key Collision
+**Problem:** User 1 and User 2 both create team "command-center", Redis keys collide.
+
+**Solution:**
+- Prefix all Redis keys with USER_ID: `user1:command-center:*` vs `user2:command-center:*`
+- Update Redis client configuration (backend/app/services/redis_client.py)
+- Ensure all Redis operations use prefixed keys
+
+---
+
+### Challenge 4: Celery Task Routing
+**Problem:** User 1's TTS task might be executed with User 2's context.
+
+**Solution:**
+- Tag Celery tasks with USER_ID: `task.apply_async(kwargs={'user_id': 'user1'})`
+- Celery worker checks USER_ID before execution
+- User-specific task queues: `celery_user1_queue`, `celery_user2_queue`
+
+---
+
+### Challenge 5: Voice Feedback Isolation
+**Problem:** User 1's voice feedback might play to User 2 if WebSocket rooms not isolated.
+
+**Solution:**
+- WebSocket room names include USER_ID: `voice-feedback-user1`, `voice-feedback-user2`
+- Frontend connects to user-specific room (determined by auth token)
+- Backend publishes to user-specific room only
+
+---
+
+## Estimated Effort
+
+**Phase 1 (Dockerization):** 1-2 weeks
+- Create Dockerfiles
+- Configure docker-compose.yml
+- Test single-user Docker deployment
+- Fix Docker-specific issues (tmux, permissions, etc.)
+
+**Phase 2 (Multi-User Support):** 2-3 weeks
+- Implement USER_ID isolation layer
+- Refactor Redis, Celery, WebSocket for user namespaces
+- Test concurrent multi-user scenarios
+- Fix isolation bugs
+
+**Phase 3 (Deployment):** 1 week
+- Configure Cloudflare Tunnels
+- Set up subdomain routing
+- User onboarding + documentation
+
+**Phase 4 (Monitoring):** 1 week
+- Set up Prometheus + Grafana
+- Configure alerts
+- Create dashboards
+
+**Total: 5-7 weeks** for full multi-user Docker deployment
+
+---
+
+## Success Criteria
+
+**Functional:**
+- [ ] 2-3 users can access their own isolated instances
+- [ ] Zero cross-user contamination (strict isolation verified)
+- [ ] All features work in Docker (voice, file browser, terminal, teams)
+- [ ] Performance equivalent to local setup (no degradation)
+
+**Deployment:**
+- [ ] `docker-compose up` deploys all user instances
+- [ ] New user onboarding: < 10 minutes (add config, restart)
+- [ ] Data persists across restarts (volumes work correctly)
+
+**Boss Validation:**
+- [ ] Boss comfortable inviting 2-3 beta users
+- [ ] Boss can monitor resource usage per user
+- [ ] Boss's local setup unaffected (runs in Docker too)
+
+---
+
+## Dependencies
+
+**Blockers:**
+- None - can start immediately
+
+**Nice to Have (Not Blockers):**
+- PostgreSQL migration (Sprint 25) - would simplify multi-user data isolation
+- Refactoring Epic (P0) - cleaner architecture makes Dockerization easier
+
+**Enables:**
+- Beta user testing (real user feedback on platform)
+- Revenue potential (SaaS model if successful)
+- Scalability testing (identify bottlenecks with real users)
+
+---
+
+## Future Enhancements (Post-Launch)
+
+**After 2-3 users validated:**
+- User self-registration (currently invite-only)
+- Usage-based pricing ($X/month per user)
+- User management dashboard (Boss can add/remove users via UI)
+- Auto-scaling (spin up containers on demand)
+- Multi-host deployment (if users > 10, spread across machines)
+
+---
+
+**Created By:** PO (Product Owner)
+**Date:** 2026-01-04
+**Status:** TODO - Awaiting prioritization vs Mini IDE Epic and Refactoring Epic
+**Priority:** P1 (High - enables platform scalability)
+
+---
+
+### Vietnamese Educational Content Library (Audio + Textbooks)
+**Status:** TODO (New - Boss Request 2026-01-03)
+**Size:** L (Large - content platform with multiple features)
+**Priority:** P1 (High - educational platform for Vietnamese students)
+
+**Problem:** Vietnamese students need a centralized platform to access educational content (textbooks, audio materials) for all subjects and grades (1-12).
+
+**User Story:**
+As a Vietnamese student,
+I want to access textbooks and audio materials for all subjects and grades,
+So that I can review lessons and study efficiently without managing multiple resources.
+
+**Target Audience:**
+- Vietnamese students (grades 1-12)
+- Focus: Review and self-study
+
+**Content Requirements:**
+
+1. **Subjects (All Grades 1-12):**
+   - Geography (Địa lý)
+   - History (Lịch sử)
+   - Math (Toán)
+   - Vietnamese Literature (Ngữ văn)
+   - Physics (Vật lý)
+   - Chemistry (Hóa học)
+   - Biology (Sinh học)
+   - English
+   - All other curriculum subjects
+
+2. **Audio Constraint:**
+   - Total audio content: Under 10GB
+   - Format: Compressed audio (MP3 or similar)
+   - Quality: Optimized for voice clarity
+
+3. **Content Organization:**
+   - By Subject → Grade → Chapter
+   - Example: History → Grade 8 → Chapter 3
+
+**UI/UX Requirements:**
+
+1. **Default Selection:**
+   - Auto-detect/set current grade level
+   - Or allow manual grade selection on first launch
+   - Remember user's grade preference
+
+2. **Subject Selection:**
+   - Option 1: Select specific subject + grade (e.g., "History Grade 8")
+   - Option 2: Select all subjects (default)
+   - Show available subjects as grid or list
+
+3. **Chapter Selection:**
+   - After selecting subject + grade, show chapter list
+   - Allow multi-select or single chapter selection
+   - Visual progress indicator (completed/in-progress chapters)
+
+4. **Content Upload/Selection:**
+   - Allow manual content upload (admin/teacher feature)
+   - OR select from pre-loaded content library
+   - Validate file formats (PDF for textbooks, MP3/audio for recordings)
+
+**Acceptance Criteria:**
+
+- [ ] Subject library loaded for all Vietnamese curriculum subjects (grades 1-12)
+- [ ] User can select grade level (default: current grade or configurable)
+- [ ] User can filter by subject (Geography, History, Math, etc.)
+- [ ] User can view chapters within selected subject + grade
+- [ ] Chapter selection interface (multi-select or individual)
+- [ ] Default behavior: Show all subjects, allow filtering
+- [ ] Audio content available (under 10GB total)
+- [ ] Content organization: Subject → Grade → Chapter hierarchy
+- [ ] Search functionality (search by subject, chapter name, keyword)
+- [ ] Progress tracking (which chapters user has studied)
+- [ ] Responsive UI (works on mobile, tablet, desktop)
+
+**Technical Considerations:**
+
+1. **Content Storage:**
+   - Database schema: Subjects → Grades → Chapters → Resources (PDF, audio)
+   - File storage: S3/CDN for textbooks and audio files
+   - Metadata: Subject name, grade, chapter number, title, description
+
+2. **Audio Optimization:**
+   - Use compressed audio formats (MP3 at 64-128 kbps for voice)
+   - Lazy loading (download on-demand, not all at once)
+   - Audio player with playback speed control (0.5x, 1x, 1.5x, 2x)
+
+3. **Content Management:**
+   - Admin interface to upload/manage content
+   - Versioning (handle textbook updates across school years)
+   - Content validation (file type, size, metadata completeness)
+
+4. **User Experience:**
+   - Fast content browsing (virtualized lists for large chapter counts)
+   - Offline support (progressive web app, cache downloaded content)
+   - Bookmark/favorite chapters
+
+5. **Performance:**
+   - Index by subject + grade for fast filtering
+   - Pagination for chapter lists (if hundreds of chapters)
+   - CDN for static content delivery
+
+**Proposed Breakdown:**
+
+1. **Phase 1:** Database schema + basic subject/grade/chapter structure
+2. **Phase 2:** Content upload interface (admin tool)
+3. **Phase 3:** Student UI - subject/grade selection
+4. **Phase 4:** Chapter list + audio player integration
+5. **Phase 5:** Search, progress tracking, bookmarks
+6. **Phase 6:** Offline support (PWA)
+
+**Files to Create/Modify:**
+- Database schema: `subjects`, `grades`, `chapters`, `resources` tables
+- Backend API: Subject/grade/chapter endpoints
+- Frontend: Education library UI component
+- Admin interface: Content management dashboard
+
+**Dependencies:**
+- Audio player library (e.g., Howler.js, React Player)
+- File upload/storage (S3 or local filesystem)
+- PDF viewer component (if showing textbooks in-app)
+
+**Notes:**
+- This is a separate educational platform feature (different domain from AI Teams Controller)
+- High impact for Vietnamese student audience
+- Requires significant content curation and upload effort
+- Consider partnership with Vietnamese education publishers for content licensing
+
+---
+
+### File Browser: Pre-fill Path in Add File/Folder Dialog
+**Status:** ✅ DONE (Sprint 9 - verified working)
+**Size:** XS
+**Source:** Sprint 8 Retrospective minor finding
+
+**Problem:** Add File/Folder dialog doesn't pre-fill current directory path, requiring users to type full path every time.
+
+**User Story:**
+As a user adding a file/folder,
+I want the current directory path pre-filled in the dialog,
+So that I don't have to type the full path every time.
+
+**Acceptance Criteria:**
+- [ ] Dialog pre-fills current directory path when opened
+- [ ] User can edit the pre-filled path
+- [ ] Works for both file and folder creation
+- [ ] Pre-filled path updates based on currently selected folder in tree
+
+**Technical Notes:**
+- FileBrowser component needs to track current selected directory
+- Pass current path to AddFileDialog as default value
+
+---
+
+## P2 - Medium Priority (When Capacity Allows)
+
+### Direct Tmux Pane Attachment (xterm.js Terminal Integration)
+**Status:** TODO (Research Complete - Boss Request 2026-01-07)
+**Size:** M (Medium - ~2 days effort)
+**Priority:** P2 (Boss saved for future)
+
+**Problem:**
+Current system captures tmux pane text output and renders it in frontend. This is one-way (read-only) and has 500ms polling delay. Users cannot interact directly with panes.
+
+**User Story:**
+As a user,
+I want each role tab (PO, SM, TL, FE, BE, QA) to be a REAL interactive terminal connected to that tmux pane,
+So that I can type commands and interact directly with each role instead of just viewing captured text.
+
+**Proposed Architecture (TL Research - GoTTY Pattern):**
+```
+Browser Tab (PO) → WebSocket → Backend (node-pty) → tmux attach -t command-center:0.0 → Real PO pane
+Browser Tab (SM) → WebSocket → Backend (node-pty) → tmux attach -t command-center:0.1 → Real SM pane
+... (same for all 6 roles)
+```
+
+**Technology Stack:**
+- Frontend: xterm.js (same as BE's SSH POC)
+- Backend: Node.js microservice + node-pty + WebSocket
+- Pattern: Reuse BE's SSH terminal POC structure (./sample_codes/web-ssh-terminal/)
+- Proven: GoTTY (19.3k GitHub stars) uses identical pattern
+
+**Benefits Over Current Text-Capture:**
+- Full bidirectional terminal (can type, not just view)
+- Real-time (no 500ms polling delay)
+- True terminal features (colors, cursor positioning, interactive prompts)
+- Feels like native `tmux attach` but in browser
+
+**Effort Estimate (TL):**
+- Backend: 4-6 hours (WebSocket + PTY handler for tmux attach)
+- Frontend: 4-6 hours (xterm.js integration per tab)
+- Testing: 2-4 hours
+- **Total: ~2 days**
+
+**Acceptance Criteria:**
+- [ ] Each role tab (PO, SM, TL, FE, BE, QA) renders xterm.js terminal
+- [ ] WebSocket connection to backend PTY service
+- [ ] Backend spawns `tmux attach -t command-center:0.X` for each role
+- [ ] User can type into any pane from browser
+- [ ] Full terminal interactivity (colors, cursor, prompts)
+- [ ] Handles pane resize events
+- [ ] Graceful reconnection on WebSocket disconnect
+
+**Research References:**
+- BE POC: ./sample_codes/web-ssh-terminal/
+- TL Analysis: SM message 2026-01-07 10:28
+- GoTTY pattern: https://github.com/yudai/gotty
+
+**Security Considerations:**
+- Authenticate WebSocket before allowing pane attachment
+- Validate tmux session/pane exists before attach
+- Rate limit attachment requests
+- Audit log all pane interactions
+
+**Priority:** P2 (Boss wants to save for when capacity allows)
+
+---
+
+### Package Software for Distribution (Docker Compose)
+**Status:** TODO (New - Boss Request 2026-01-02)
+**Size:** L (Large - research + implementation)
+**Priority:** P2 (Boss specified medium priority)
+
+**Problem:** Software runs locally on MacBook only. Need to package for distribution to reach more users or sell to customers.
+
+**User Story:**
+As a potential customer,
+I want to install and run AI Teams Controller on my own machine,
+So that I can manage my own tmux teams without relying on a hosted deployment.
+
+**Deployment Model (Boss Decision):**
+- **Approach:** Docker Compose package
+- **Architecture:** Web app on top (existing Next.js + FastAPI)
+- **Platform Support:** macOS and Linux only (no Windows for now)
+- **Future:** Boss will review and consider other options later
+
+**Acceptance Criteria:**
+- [ ] docker-compose.yml that starts frontend + backend + Redis (for Celery)
+- [ ] Single command installation: `docker-compose up`
+- [ ] Environment variables configurable via .env file
+- [ ] Documentation: Installation guide for end users
+- [ ] Persistent storage for tmux sessions across container restarts
+- [ ] Health checks for all services
+- [ ] README with system requirements (Docker, Docker Compose versions)
+
+**Technical Considerations:**
+1. **Volume Mounts:**
+   - Tmux sessions need to persist
+   - User config files (.env, MCP settings, etc.)
+
+2. **Networking:**
+   - Frontend (port 3334) accessible from host
+   - Backend (port 17061) accessible from host
+   - Redis internal only
+
+3. **Dependencies:**
+   - tmux must be installed in containers
+   - Claude Code CLI available in containers
+   - Python/Node.js environments
+
+4. **Configuration:**
+   - API keys (OpenAI, XAI, Google Cloud) via .env
+   - MCP server configs
+   - Cloudflare tunnel (optional, for remote access)
+
+**Proposed Breakdown:**
+1. Phase 1: Create base docker-compose.yml (frontend + backend + Redis)
+2. Phase 2: Add tmux session persistence
+3. Phase 3: Environment configuration and documentation
+4. Phase 4: Testing on clean macOS and Linux systems
+5. Phase 5: Distribution via GitHub releases
+
+---
+
+### Voice Command Auto-On/Auto-Off with Context Switching
+**Status:** TODO (Boss: rough idea, needs refinement)
+**Priority:** P2 (Quality of life improvement, not critical)
+**Size:** M (requires careful design)
+
+**Pain Point (Boss 2026-01-03):**
+When switching between tabs and projects, manually turning voice on/off is tiring and inconvenient. Having to constantly toggle voice recording between different project contexts reduces productivity.
+
+**Critical Constraint:**
+If voice becomes TOO convenient (always-on or auto-switching), user might switch from Project A to Project B mid-speech, still thinking they're in Project A, and say a keyword/command - the message won't know where to route.
+
+**Problem Summary:**
+- **Inconvenience:** Manual voice on/off switching between tabs/projects is tedious
+- **Risk:** Auto-switching could cause commands to go to wrong team/role when context changes mid-speech
+- **Trade-off:** Convenience vs. accuracy of command routing
+
+**Possible Solutions (For Future Refinement):**
+- Option A: Lock context when recording starts (can't switch teams/tabs during recording)
+- Option B: Update context dynamically but show clear visual indicator of current target
+- Option C: Show warning when context changes mid-recording + require confirmation
+- Option D: Voice command prefix required (e.g., "Team Alpha: [command]") for explicit routing
+- Option E: Hybrid: Auto-on when switching tabs, but lock context during active recording
+
+**Note:** Boss emphasized this is a rough idea - needs careful design to balance convenience with safety. Keeping in P2 for future sprint when capacity allows proper exploration of solutions.
+
+---
+
+### File Browser: Panel Resizing Bug
+**Status:** TODO (New - Boss Request 2026-01-04)
+**Size:** S (Small - UI bug fix)
+**Priority:** P2 (Quality of life, not blocking)
+
+**Problem:**
+File browser panels have weird resizing behavior. When opening file browser, left panel becomes very narrow. When dragging left panel border to the left (to make it smaller), it doesn't shrink - instead, the right panel expands by exactly the drag amount. This is counterintuitive and makes panel sizing difficult to control.
+
+**As a** developer using file browser
+**I want** panel resizing to work intuitively
+**So that** I can adjust panel sizes to my preference without unexpected behavior
+
+**Acceptance Criteria:**
+- [ ] Left panel opens with reasonable default width (not very narrow)
+- [ ] Dragging left panel border left makes left panel smaller (not bigger)
+- [ ] Dragging left panel border right makes left panel larger
+- [ ] Right panel adjusts correspondingly to maintain total width
+- [ ] Panel sizes persist across sessions (optional)
+
+**Priority:** P2
+
+---
+
+### File Browser: Complete CRUD Operations
+**Status:** Partial (Create ✅ Done, Read ✅ Done)
+**Priority:** P2
+**Size:** S each
+
+**Remaining Operations:**
+
+#### Delete File/Folder
+**Acceptance Criteria:**
+- [ ] Right-click on file/folder shows "Delete" option in context menu
+- [ ] Confirmation dialog before deletion
+- [ ] File/folder deleted via backend API
+- [ ] Tree refreshes after deletion
+- [ ] Toast notification confirms deletion
+
+#### Rename File/Folder
+**Acceptance Criteria:**
+- [ ] Right-click on file/folder shows "Rename" option
+- [ ] Inline edit or dialog for new name
+- [ ] Backend API handles rename
+- [ ] Tree refreshes after rename
+- [ ] Error handling for invalid names
+
+---
+
+### Keyboard Shortcuts: Escape to Close Dialogs
+**Status:** TODO
+**Priority:** P2
+**Size:** XS
+
+**Problem:** No keyboard shortcut to dismiss dialogs/modals. Forces users to click.
+
+**Acceptance Criteria:**
+- [ ] Pressing Escape closes any open dialog/modal
+- [ ] Works for all dialogs (file search, create file, directory picker, etc.)
+- [ ] Focus returns to previous element after close
+
+---
+
+## P3 - Low Priority / Nice to Have
+
+### [EPIC] Claude Code CLI for Team Operations
+**Status:** TODO
+**Priority:** P3 (Nice to have, not critical)
+**Size:** L (Large - 4 phases)
+
+**Problem:** Current team operation buttons work but could be improved with headless Claude Code CLI approach.
+
+**Reference Code:** `/home/hungson175/dev/experiments/claude-code-headless-demo/`
+- `QUICK_START.md` - Quick start guide
+- `python_examples.py` - Python wrapper class `ClaudeHeadless`
+- `bash_examples.sh` - Bash CLI examples
+- `automation_example.py` - Automation demo
+
+**Key CLI Usage:**
+```bash
+# Basic headless query with tool permissions
+claude -p "prompt" --allowedTools Bash,Read,Edit
+
+# With working directory
+claude -p "prompt" --cwd /path/to/project
+
+# JSON output
+claude -p "prompt" --output-format json
+```
+
+**Implementation Phases:**
+1. **Phase 1: Clean slate** - Delete ALL current broken buttons
+2. **Phase 2: Restart Team** - Use CLI with CLAUDE.md restart prompt
+3. **Phase 3: Load Team** - Use CLI to run setup-team.sh
+4. **Phase 4: Create Team** - Use CLI to scaffold from template
+
+**Acceptance Criteria:**
+- [ ] All old team operation buttons removed
+- [ ] Restart team works via Claude Code CLI (use existing CLAUDE.md prompt)
+- [ ] Load team works via Claude Code CLI
+- [ ] Create team works via Claude Code CLI
+- [ ] Document CLI approach for future reference
+
+---
+
+### Polish File Browser Epic
+**Status:** ✅ MERGED into "[EPIC] Mini Online IDE" (P1)
+**Priority:** N/A (consolidated)
+
+**All items moved to Mini Online IDE Epic (4 progressive sprints):**
+- Sprint 1: Edit + save files (basic)
+- Sprint 2: Syntax highlighting + **terminal file links quick view** ← Included!
+- Sprint 3: Keyboard shortcuts + **.env file access** ← Included!
+- Sprint 4: **Line numbers** + **hamburger menu** + **large file pagination** + auto-save ← Included!
+
+**Completed Items:**
+- ~~Cmd+P file search~~ (✅ Done - Sprint 3)
+- ~~Resizable panels~~ (✅ Done - Sprint 3)
+- ~~Add file/folder~~ (✅ Done - Sprint 8)
+- ~~Copy full path~~ (✅ Done - Sprint 6)
+- ~~Delete file/folder~~ (✅ Done - Sprint 9)
+- ~~Rename file/folder~~ (✅ Done - Sprint 9)
+
+---
+
+### Security Hardening (Local Dev Tool)
+**Status:** TODO
+**Priority:** P3 (Low - this is a local dev tool, not production SaaS)
+
+**Issues:**
+- Command injection risk in tmux_service.py
+- JWT secret hardcoded
+- CORS wildcard (*)
+
+**Note:** Since this is primarily a LOCAL development tool (not a multi-tenant SaaS), security is less critical. Address only if distributing to untrusted users.
+
+---
+
+### [EPIC] Voice-Controlled Navigation
+**Status:** IDEA
+**Priority:** P3
+
+**Vision:** Enable hands-free control of the web app via voice commands with "Commander" trigger keyword.
+
+**Examples:**
+- "Commander, switch to team Alpha"
+- "Commander, restart team Backend"
+
+**Note:** Fun feature but not essential for core functionality.
+
+---
+
+### Headphone Hardware Button for Voice Control
+**Status:** IDEA
+**Priority:** P3
+
+**Feature:** Toggle voice input with headphone play/pause button (web only, Media Session API).
+
+**Note:** Real device testing required (Playwright cannot simulate hardware buttons).
+
+---
+
+## Ideas / Future (Not Yet Prioritized)
+
+### [EPIC] Team Creator UI - Visual Team Builder
+Create visual UI for building tmux teams from templates + PRD input.
+
+---
+
+### [EPIC] Independent QA Team
+Separate QA team for black-box quality evaluation.
+
+---
+
+### Convert DK to On-Demand Sub-Agent
+**Problem:** DK pane sits idle most of the time, consuming resources.
+
+**Proposal:** Convert DK from dedicated pane to sub-agent PM spawns on-demand.
+
+---
+
+### Clarify Team Creation User Flow
+**Problem:** "Create Team from Template" is not discoverable. Users confuse TeamCreatorPanel with CreateTeamDialog.
+
+---
+
+### Tab Autocomplete for File/Directory Paths
+**Problem:** No tab autocomplete for paths in web UI terminal.
+
+---
+
+### Separate TeamCreatorPanel from Template Creation
+**Problem:** TeamCreatorPanel uses hardcoded templates vs CreateTeamDialog uses backend API.
+
+---
+
+### CRITICAL: Professional Codebase Refactoring & Architecture Review
+**Status:** TODO (URGENT - Boss Directive 2026-01-04)
+**Size:** XL (Epic - Multi-sprint effort)
+**Priority:** P0 (CRITICAL - Project evolution requires this NOW)
+
+**Problem Statement:**
+Project evolved from hobby → production-grade online IDE. Codebase grew organically without systematic refactoring. Current state:
+- File browser → Full file CRUD → Edit/Save → Syntax highlighting (Mini IDE)
+- Voice control → TTS feedback → Android app
+- Tmux team management → Multi-agent coordination
+- **Technical debt accumulating faster than we can address**
+
+**Boss Directive (2026-01-04):**
+> "This project started as just a hobby project, but now it's turning into a monster. The project has grown too big. So if we don't refactor the codebase now, don't review the codebase, we definitely won't be able to progress further."
+
+**Critical Insight:**
+With ~20 years coding experience, Boss recognizes this is the RIGHT TIME to refactor:
+- ✅ We have unit tests (foundation for safe refactoring)
+- ✅ Codebase still manageable (not yet unmaintainable)
+- ✅ Clear architectural issues identified (TmuxController god component, etc.)
+- ❌ But tests may not be sufficient - need careful validation
+
+**If We Don't Refactor Now:**
+- Future features become exponentially harder
+- Bug fixes create more bugs
+- Onboarding new developers impossible
+- System becomes legacy code while still growing
+
+---
+
+## Proposed Approach: Parallel Refactoring Team
+
+### Strategy A: Separate Refactoring Branch (RECOMMENDED)
+**Create dedicated long-running refactoring branch:**
+
+```
+master (feature development continues)
+  ↓
+  └─→ refactor-v2 (professional architecture overhaul)
+        ↓
+        ├─ refactor-sprint-1: Backend architecture
+        ├─ refactor-sprint-2: Frontend architecture
+        ├─ refactor-sprint-3: API consolidation
+        └─ ... (merge back when stable)
+```
+
+**Team Structure:**
+- **Feature Team (command-center):** Continue Mini IDE Epic (Sprint 13, 14, 15)
+- **Refactoring Team (NEW tmux team: "refactor-team"):** Professional codebase overhaul
+- **Coordination:** Weekly sync between teams (SM facilitates)
+
+**Advantages:**
+- ✅ Feature development doesn't stop
+- ✅ Refactoring gets dedicated focus
+- ✅ Can test refactored code thoroughly before merge
+- ✅ Can abandon refactoring if it goes wrong (branch stays separate)
+- ✅ Boss can review refactored code before replacing production
+
+**Risks:**
+- ⚠️ Merge conflicts when combining branches
+- ⚠️ Feature team builds on old architecture while refactor team fixes it
+- Mitigation: Freeze new features after Sprint 15, merge refactor branch, then resume
+
+---
+
+### Strategy B: Fork into New Project (ALTERNATIVE)
+**Create entirely new repository:**
+
+```
+AI-teams-controller (current - feature development)
+AI-teams-controller-v2 (new - refactored codebase)
+```
+
+**Advantages:**
+- ✅ Zero risk to existing system
+- ✅ Can redesign architecture from scratch
+- ✅ Boss can compare both versions side-by-side
+- ✅ Migration can be gradual (deploy v2 alongside v1)
+
+**Disadvantages:**
+- ⚠️ Duplicated effort (features in v1 need porting to v2)
+- ⚠️ Two codebases to maintain during transition
+- ⚠️ More work for Boss to manage both
+
+---
+
+### Strategy C: Feature Freeze + Intensive Refactor (HIGH RISK)
+**Stop all feature development, refactor for 2-4 weeks:**
+
+**Advantages:**
+- ✅ Single codebase, no merge conflicts
+- ✅ Fastest path to clean architecture
+
+**Disadvantages:**
+- ❌ No new features for weeks (Boss loses momentum)
+- ❌ High risk if refactoring fails (system broken, no fallback)
+- ❌ Not recommended for production system
+
+---
+
+## Recommended: Strategy A (Parallel Branch)
+
+**Phase 1: Setup Refactoring Infrastructure (Sprint 0)**
+- [ ] Create `refactor-v2` branch from current master
+- [ ] Set up new tmux team: "refactor-team" (roles: Architect, Refactorer, Reviewer)
+- [ ] Document current architecture (baseline for comparison)
+- [ ] Run full test suite on refactor branch (establish baseline)
+- [ ] Define refactoring goals and success criteria
+
+**Phase 2: Systematic Refactoring (Multiple Sprints)**
+
+**Sprint R1: Backend Architecture Cleanup**
+- [ ] Remove legacy SESSION_TOKEN auth (JWT only)
+- [ ] Centralize API client (single Axios instance, interceptors)
+- [ ] Consolidate route handlers (eliminate duplication)
+- [ ] Database abstraction layer (prepare for PostgreSQL migration)
+- [ ] All backend tests PASS after refactor
+
+**Sprint R2: Frontend Architecture Overhaul**
+- [ ] Refactor TmuxController (god component → composition)
+  - Split into: TeamManager, PaneController, CommandController
+  - Use React Context for global state
+  - Eliminate prop drilling
+- [ ] Consolidate API calls (custom hooks: useTeams, usePanes, useSendCommand)
+- [ ] Component composition (atomic design principles)
+- [ ] All frontend tests PASS after refactor
+
+**Sprint R3: API & State Management**
+- [ ] REST API consistency (standardize response formats)
+- [ ] WebSocket architecture review (connection management, reconnection)
+- [ ] State management patterns (Zustand or Jotai for complex state)
+- [ ] Error handling standardization (toast notifications, retry logic)
+- [ ] All integration tests PASS
+
+**Sprint R4: Code Quality & Documentation**
+- [ ] ESLint/Prettier rules enforcement
+- [ ] TypeScript strict mode (eliminate `any` types)
+- [ ] API documentation (OpenAPI/Swagger for backend)
+- [ ] Component documentation (Storybook for UI components)
+- [ ] Architecture decision records (ADRs)
+
+**Sprint R5: Testing & Validation**
+- [ ] Increase test coverage (target: 80%+)
+- [ ] E2E tests (Playwright for critical flows)
+- [ ] Performance benchmarks (compare refactored vs original)
+- [ ] Security audit (same as P0 security epic, but on refactored code)
+- [ ] Boss review: Does refactored system feel better?
+
+**Phase 3: Merge & Deploy**
+- [ ] Feature freeze on master (after Mini IDE Epic complete)
+- [ ] Merge refactor-v2 → master (resolve conflicts carefully)
+- [ ] Run FULL test suite on merged code
+- [ ] Deploy to staging, Boss acceptance testing
+- [ ] Deploy to production (Cloudflare tunnel points to new version)
+- [ ] Monitor for regressions (1-2 weeks)
+
+---
+
+## Scope: What Needs Refactoring
+
+### Backend (Python/FastAPI)
+**Critical Issues:**
+1. **No database** - Everything in memory (sessions lost on restart)
+2. **Route handlers duplication** - Similar patterns repeated
+3. **No request validation middleware** - Pydantic schemas inconsistent
+4. **WebSocket connection management** - Ad-hoc reconnection logic
+5. **Celery task organization** - TTS tasks not well structured
+
+**Target Architecture:**
+- PostgreSQL for persistent state
+- SQLAlchemy ORM with migrations (Alembic)
+- Service layer pattern (routes → services → data access)
+- Dependency injection for testability
+- Structured logging (not print statements)
+
+### Frontend (Next.js/React)
+**Critical Issues:**
+1. **TmuxController god component** - 500+ lines, does everything
+2. **Prop drilling** - Props passed 3-4 levels deep
+3. **API calls scattered** - Fetch logic duplicated across components
+4. **State management ad-hoc** - useState everywhere, no global state
+5. **No error boundaries** - Errors crash entire UI
+
+**Target Architecture:**
+- Component composition (atomic design: atoms → molecules → organisms)
+- Custom hooks for API calls (useTeams, usePanes, useSendCommand)
+- Context API or Zustand for global state
+- Error boundaries with fallback UI
+- React Query for server state caching
+
+### API Layer
+**Critical Issues:**
+1. **Inconsistent response formats** - Some return `{ data }`, some return direct values
+2. **No versioning** - `/api/teams` can't evolve without breaking clients
+3. **CORS wildcard `*`** - Security issue (allow specific origins only)
+4. **No rate limiting** - Open to abuse
+5. **Authentication scattered** - Some endpoints check token, some don't
+
+**Target Architecture:**
+- Versioned API (`/api/v1/teams`, `/api/v2/teams`)
+- Standardized responses: `{ success, data, error, metadata }`
+- Authentication middleware (all endpoints require auth)
+- Rate limiting (per-user quotas)
+- OpenAPI documentation (auto-generated from code)
+
+---
+
+## Success Criteria
+
+**Quantitative:**
+- [ ] Test coverage: ≥80% (up from current ~60%)
+- [ ] Build time: ≤10 seconds (currently ~10s, maintain or improve)
+- [ ] Bundle size: ≤1MB gzipped (currently ~800KB, don't bloat)
+- [ ] API response time: <100ms p95 (measure before/after)
+- [ ] Zero regressions (all existing features work identically)
+
+**Qualitative:**
+- [ ] Boss review: "System feels cleaner, easier to understand"
+- [ ] New features: "Easier to add features after refactor than before"
+- [ ] Onboarding: "New developer can understand codebase in <1 day"
+- [ ] Confidence: "Boss comfortable making changes without breaking things"
+
+---
+
+## Boss Collaboration Required
+
+**This is NOT a task for the team to execute autonomously.** Boss needs to:
+
+1. **Choose Strategy:** Branch (A), Fork (B), or Freeze (C)?
+2. **Define Scope:** Which areas MUST be refactored vs nice-to-have?
+3. **Set Timeline:** How many weeks can we dedicate to refactoring?
+4. **Review Architecture:** Boss has 20 years experience - architectural decisions need Boss input
+5. **Acceptance Criteria:** What does "success" look like for Boss?
+
+**Proposed Next Steps:**
+1. **PO schedules brainstorming session with Boss** (30-60 min)
+2. **Boss + PO discuss:**
+   - Current pain points in codebase
+   - Which strategy (A, B, or C)
+   - Refactoring team composition
+   - Timeline and priorities
+3. **PO creates detailed refactoring epic** based on Boss decisions
+4. **SM sets up refactor-team tmux session** (if Strategy A)
+5. **Team begins systematic refactoring** while feature team continues Mini IDE
+
+---
+
+## Why P0 (Critical Priority)
+
+**Not P1 or P2** - this MUST happen before more features:
+
+1. **Technical Debt Compound Interest:**
+   - Every new feature built on shaky foundation adds more debt
+   - Refactoring becomes HARDER the longer we wait
+   - "Move fast and break things" worked for hobby project, not anymore
+
+2. **Feature Velocity Declining:**
+   - Sprint 12: 8 min implementation (simple CRUD endpoint)
+   - Future sprints: Will take exponentially longer due to complexity
+   - Refactoring NOW maintains velocity for future
+
+3. **Boss Time Investment:**
+   - Boss can't scale if codebase is unmaintainable
+   - Clean architecture → Boss can delegate to team confidently
+   - Messy architecture → Boss must review every change (bottleneck)
+
+4. **Project Viability:**
+   - Hobby project → Production IDE transition is CRITICAL MOMENT
+   - Either refactor now and succeed, or accumulate debt and fail
+   - No middle ground at this inflection point
+
+---
+
+## Estimated Effort
+
+**Conservative Estimate:**
+- **Sprint R0 (Setup):** 1 week
+- **Sprint R1-R4 (Refactoring):** 4-6 weeks (1-1.5 weeks per sprint)
+- **Sprint R5 (Testing):** 1-2 weeks
+- **Merge & Deploy:** 1 week
+- **Total: 8-10 weeks** for comprehensive refactoring
+
+**Aggressive Estimate:**
+- Focus on critical issues only (Backend + Frontend architecture)
+- **Total: 4-6 weeks**
+
+**Parallel Development:**
+- Feature team completes Mini IDE Epic (Sprint 13-15) in 2-3 weeks
+- Refactoring team works in parallel
+- Both complete around same time → merge → deploy v2
+
+---
+
+## Alternative: CodeRabbit AI Code Review Integration
+
+**If Boss prefers AI-assisted refactoring:**
+- Tool: CodeRabbit (mentioned in backlog at line 1215)
+- Cost: $48/month
+- Benefit: Automated code review, refactoring suggestions
+- Limitation: AI can't make architectural decisions (Boss still needed)
+
+**Recommendation:** Use CodeRabbit AFTER manual refactoring for ongoing quality
+
+---
+
+## Dependencies
+
+**Blockers:**
+- None - can start immediately after Boss brainstorming session
+
+**Enables:**
+- PostgreSQL migration (Sprint 25 - blocked on clean architecture)
+- Team collaboration features (blocked on state management refactor)
+- Mobile app improvements (blocked on API versioning)
+- Third-party integrations (blocked on API standardization)
+
+---
+
+**Created By:** PO (Product Owner)
+**Date:** 2026-01-04
+**Status:** DRAFT - Awaiting Boss brainstorming session and strategy decision
+**Priority:** P0 (CRITICAL - Must happen before more features)
+
+---
+
+### "Failed to fetch" Error Handling
+- Graceful error when backend unreachable
+
+---
+
+### CodeRabbit AI Code Review
+- Cost: $48/month
+- Automated code reviews
+
+---
+
+## Completed (Archive - Sprints 1-9)
+
+### Sprint 9 (2026-01-03)
+- ✅ Pre-fill Path in Add File/Folder Dialog (2/2 QA tests PASS - already implemented)
+- ✅ Delete File/Folder (7/7 QA tests PASS)
+- ✅ Rename File/Folder (7/7 QA tests PASS)
+- ✅ Escape to Close Dialogs (4/4 QA tests PASS)
+
+### Sprint 8 (2026-01-02)
+- ✅ Directory Picker (5/5 QA tests PASS)
+- ✅ File Browser: Add File/Folder with + button (6/6 QA tests PASS)
+- ✅ Team List Notification Indicator (3/3 QA tests PASS)
+
+### Sprint 6 (2026-01-01)
+- ✅ Right-Click to Copy Full Path in File Browser
+
+### Sprint 5 (2026-01-01)
+- ✅ Rename tmux session to 'command-center' (4/4 QA tests PASS)
+- ✅ Remove PANE_ROLES.md - Use Dynamic Role Lookup (4/4 QA tests PASS)
+
+### Sprint 4 (2025-12-29)
+- ✅ Left Panel Scroll Fix (3/3 QA tests PASS)
+
+### Sprint 3 (2025-12-29)
+- ✅ File Search (Cmd+P) (3/3 QA tests PASS)
+- ✅ Stop Button (Escape key) (2/2 QA tests PASS)
+- ✅ File Browser Panel Width Fix
+
+### Sprint 2 (2025-12-28)
+- ✅ Terminal-like Input with Autocomplete (24 tests PASS)
+
+### Sprint 1 (2025-12-27)
+- ✅ Responsive Tmux Pane Width
+- ✅ Beautiful Terminal Display (ANSI Colors)
+
+### Earlier (2025-12-23 to 2025-12-26)
+- ✅ Voice Feedback System Overhaul (7 stories)
+- ✅ Load Team Button Epic
+- ✅ Project File Browser (basic functionality)
+- ✅ Mixed English/Vietnamese TTS Integration
+- ✅ Trigger Word Routing for Backlog Management
+- ✅ Build Version Logging (console timestamp for cache debugging)
+- ✅ Webpack build fix (replaced Turbopack due to caching issues)
+
+---
+
+## Research Notes
+
+### Soniox STT
+- Vietnamese: 5.4% WER
+- 68% cost savings potential
+- Decision: Keep GPT Realtime for now
+
+### GLM-4-Voice
+- Does NOT support Vietnamese - not suitable

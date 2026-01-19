@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Headphone Button Demo - Voice Input Control</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #e94560;
+        }
+
+        .subtitle {
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mic-indicator {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 48px;
+        }
+
+        .mic-indicator.inactive {
+            background: rgba(255, 255, 255, 0.1);
+            border: 3px solid #666;
+        }
+
+        .mic-indicator.active {
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+            border: 3px solid #e94560;
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.5);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .status-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .status-text.inactive { color: #888; }
+        .status-text.active { color: #e94560; }
+
+        .init-button {
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            color: #fff;
+            border: 2px solid #e94560;
+            padding: 15px 40px;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .init-button:hover {
+            background: #e94560;
+            transform: translateY(-2px);
+        }
+
+        .init-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .init-button.initialized {
+            background: #2ecc71;
+            border-color: #2ecc71;
+        }
+
+        .log-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.75rem;
+        }
+
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: #888;
+            margin-right: 10px;
+        }
+
+        .log-event { color: #2ecc71; }
+        .log-info { color: #3498db; }
+        .log-warn { color: #f39c12; }
+        .log-error { color: #e74c3c; }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .instructions h3 {
+            color: #e94560;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            color: #ccc;
+        }
+
+        .api-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+
+        .api-status.supported {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
+        }
+
+        .api-status.unsupported {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+        }
+
+        .button-count {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #e94560;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Headphone Button Demo</h1>
+        <p class="subtitle">Control voice input with your Bluetooth headphone button</p>
+
+        <div class="status-card">
+            <div class="mic-indicator inactive" id="micIndicator">
+                <span id="micIcon">🎤</span>
+            </div>
+            <div class="status-text inactive" id="statusText">Voice Input OFF</div>
+            <div class="button-count" id="buttonCount">0</div>
+            <div style="color: #888; font-size: 0.8rem;">button presses detected</div>
+        </div>
+
+        <button class="init-button" id="initButton" onclick="initMediaSession()">
+            Initialize Media Session
+        </button>
+
+        <div id="apiStatus" class="api-status"></div>
+
+        <div class="log-container" id="logContainer">
+            <div class="log-entry">
+                <span class="log-time">--:--:--</span>
+                <span class="log-info">Waiting for initialization...</span>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>How to Test</h3>
+            <ol>
+                <li>Connect your Bluetooth headphones to this device</li>
+                <li>Click "Initialize Media Session" button above</li>
+                <li>Press the play/pause button on your headphones</li>
+                <li>Watch the mic indicator toggle on/off</li>
+                <li>Check the event log for button press events</li>
+            </ol>
+            <p style="margin-top: 15px; color: #f39c12;">
+                <strong>Note:</strong> This uses the Media Session API with a silent audio track.
+                Headphone buttons trigger play/pause which toggles voice input state.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let isVoiceActive = false;
+        let buttonPressCount = 0;
+        let audioElement = null;
+        let isInitialized = false;
+
+        // DOM elements
+        const micIndicator = document.getElementById('micIndicator');
+        const micIcon = document.getElementById('micIcon');
+        const statusText = document.getElementById('statusText');
+        const buttonCount = document.getElementById('buttonCount');
+        const initButton = document.getElementById('initButton');
+        const logContainer = document.getElementById('logContainer');
+        const apiStatus = document.getElementById('apiStatus');
+
+        // Logging
+        function log(message, type = 'info') {
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { hour12: false });
+
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `
+                <span class="log-time">${time}</span>
+                <span class="log-${type}">${message}</span>
+            `;
+
+            // Remove "waiting" message if it exists
+            if (logContainer.children.length === 1 && logContainer.children[0].textContent.includes('Waiting')) {
+                logContainer.innerHTML = '';
+            }
+
+            logContainer.insertBefore(entry, logContainer.firstChild);
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        // Check API support
+        function checkApiSupport() {
+            if ('mediaSession' in navigator) {
+                apiStatus.className = 'api-status supported';
+                apiStatus.textContent = '✅ Media Session API is supported in this browser';
+                log('Media Session API is supported', 'event');
+                return true;
+            } else {
+                apiStatus.className = 'api-status unsupported';
+                apiStatus.textContent = '❌ Media Session API is NOT supported in this browser';
+                log('Media Session API is NOT supported!', 'error');
+                initButton.disabled = true;
+                return false;
+            }
+        }
+
+        // Toggle voice state
+        function toggleVoice(source = 'unknown') {
+            isVoiceActive = !isVoiceActive;
+            buttonPressCount++;
+
+            // Update UI
+            buttonCount.textContent = buttonPressCount;
+
+            if (isVoiceActive) {
+                micIndicator.className = 'mic-indicator active';
+                statusText.className = 'status-text active';
+                statusText.textContent = 'Voice Input ON';
+                log(`VOICE ON (via ${source})`, 'event');
+            } else {
+                micIndicator.className = 'mic-indicator inactive';
+                statusText.className = 'status-text inactive';
+                statusText.textContent = 'Voice Input OFF';
+                log(`VOICE OFF (via ${source})`, 'event');
+            }
+
+            // Update media session playback state
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.playbackState = isVoiceActive ? 'playing' : 'paused';
+            }
+        }
+
+        // Create silent audio for Media Session activation
+        function createSilentAudio() {
+            // Create audio context for generating silent audio
+            // Using a very short, nearly silent tone (Firefox requires non-zero audio)
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            // Nearly silent - volume at 0.001 (effectively inaudible)
+            gainNode.gain.value = 0.001;
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            // Very low frequency, even harder to hear
+            oscillator.frequency.value = 1;
+            oscillator.type = 'sine';
+
+            return { audioContext, oscillator, gainNode };
+        }
+
+        // Alternative: Use a data URL with minimal audio
+        function createMinimalAudioElement() {
+            // Create an audio element with a tiny silent WAV file (base64 encoded)
+            // This is a 0.1 second nearly-silent audio file
+            const silentWav = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+
+            const audio = new Audio(silentWav);
+            audio.loop = true;
+            audio.volume = 0.01; // Nearly silent but not zero (Firefox compatibility)
+
+            return audio;
+        }
+
+        // Initialize Media Session
+        async function initMediaSession() {
+            if (isInitialized) {
+                log('Already initialized', 'warn');
+                return;
+            }
+
+            if (!checkApiSupport()) {
+                return;
+            }
+
+            log('Initializing Media Session...', 'info');
+
+            try {
+                // Create and play nearly-silent audio to activate media session
+                audioElement = createMinimalAudioElement();
+
+                // Set up media session metadata
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: 'Voice Input',
+                    artist: 'AI Teams Controller',
+                    album: 'Voice Commands',
+                    artwork: [
+                        { src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23e94560"/><text x="50" y="65" text-anchor="middle" font-size="40" fill="white">🎤</text></svg>', sizes: '96x96', type: 'image/svg+xml' }
+                    ]
+                });
+
+                // Set up action handlers
+                const actionHandlers = {
+                    'play': () => {
+                        log('Play action received from headphone button', 'event');
+                        if (!isVoiceActive) {
+                            toggleVoice('play');
+                        }
+                        audioElement.play().catch(e => log('Audio play error: ' + e.message, 'error'));
+                    },
+                    'pause': () => {
+                        log('Pause action received from headphone button', 'event');
+                        if (isVoiceActive) {
+                            toggleVoice('pause');
+                        }
+                    },
+                    'stop': () => {
+                        log('Stop action received', 'event');
+                        if (isVoiceActive) {
+                            toggleVoice('stop');
+                        }
+                    },
+                    'togglemicrophone': () => {
+                        log('Toggle microphone action received', 'event');
+                        toggleVoice('togglemicrophone');
+                    }
+                };
+
+                // Register handlers with error handling
+                for (const [action, handler] of Object.entries(actionHandlers)) {
+                    try {
+                        navigator.mediaSession.setActionHandler(action, handler);
+                        log(`Registered handler: ${action}`, 'info');
+                    } catch (error) {
+                        log(`Handler not supported: ${action}`, 'warn');
+                    }
+                }
+
+                // Start playing silent audio
+                await audioElement.play();
+                log('Silent audio started - Media Session active', 'event');
+
+                // Set initial playback state
+                navigator.mediaSession.playbackState = 'paused';
+
+                // Update button state
+                isInitialized = true;
+                initButton.textContent = '✅ Initialized';
+                initButton.className = 'init-button initialized';
+                initButton.disabled = true;
+
+                log('Media Session initialized successfully!', 'event');
+                log('Now press your headphone play/pause button...', 'info');
+
+            } catch (error) {
+                log('Initialization error: ' + error.message, 'error');
+                console.error(error);
+            }
+        }
+
+        // Also allow click/tap on the mic indicator to toggle (for testing)
+        micIndicator.addEventListener('click', () => {
+            if (isInitialized) {
+                toggleVoice('click');
+            } else {
+                log('Click "Initialize Media Session" first', 'warn');
+            }
+        });
+
+        // Check API support on load
+        window.addEventListener('load', () => {
+            checkApiSupport();
+            log('Demo loaded. Click "Initialize Media Session" to start.', 'info');
+        });
+
+        // Handle visibility change (resume audio if needed)
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && isInitialized && audioElement) {
+                audioElement.play().catch(() => {});
+                log('Visibility restored - audio resumed', 'info');
+            }
+        });
+    </script>
+</body>
+</html>

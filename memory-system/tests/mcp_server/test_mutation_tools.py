@@ -28,14 +28,11 @@ class TestStoreMemory:
 **Content:** This is test content for validation.
 
 **Tags:** #test #validation #backend""",
+            role="backend",
             metadata={
-                "memory_type": "episodic",
-                "role": "backend",
-                "tags": ["test", "validation"],
                 "title": "Test Memory",
-                "description": "Test description",
-                "confidence": "high",
-                "frequency": 1
+                "preview": "Test preview",
+                "content": "Full content"
             }
         )
 
@@ -54,12 +51,11 @@ class TestStoreMemory:
         """Test storing with only required metadata fields."""
         params = StoreMemoryInput(
             document="**Title:** Minimal\n**Content:** Minimal content.",
+            role="backend",
             metadata={
-                "memory_type": "semantic",
-                "role": "backend",
-                "tags": ["minimal"],
                 "title": "Minimal",
-                "description": "Minimal description"
+                "preview": "Test preview",
+                "content": "Full content"
             }
         )
 
@@ -74,16 +70,11 @@ class TestStoreMemory:
         """Test storing with all optional metadata fields."""
         params = StoreMemoryInput(
             document="**Title:** Full Test\n**Content:** Full content.",
+            role="backend",
             metadata={
-                "memory_type": "procedural",
-                "role": "backend",
-                "tags": ["full", "test"],
                 "title": "Full Test",
-                "description": "Full description",
-                "confidence": 0.95,
-                "frequency": 5,
-                "source": "test-suite",
-                "project_context": "testing"
+                "preview": "Full description",
+                "content": "Full content"
             }
         )
 
@@ -99,12 +90,11 @@ class TestStoreMemory:
         # This should be caught during validation or storage
         params = StoreMemoryInput(
             document="**Title:** Test\n**Content:** Test.",
+            role="invalid-role-xyz-nonexistent",
             metadata={
-                "memory_type": "episodic",
-                "role": "invalid-role-xyz-nonexistent",
-                "tags": ["test"],
                 "title": "Test",
-                "description": "Test"
+                "preview": "Test",
+                "content": "Full content"
             }
         )
 
@@ -118,14 +108,17 @@ class TestStoreMemory:
     @pytest.mark.asyncio
     async def test_store_with_missing_required_fields_raises_validation_error(self):
         """Test Pydantic validation catches missing required fields."""
-        with pytest.raises(ValueError, match="Missing required metadata"):
+        from pydantic_core import ValidationError
+        with pytest.raises(ValidationError, match="Missing required metadata"):
             StoreMemoryInput(
-                document="Test document",
-                metadata={
-                    "memory_type": "episodic",
-                    # Missing: role, tags, title, description
-                }
-            )
+            document="Test document",
+            role="backend",
+            metadata={
+                "title": "Test",
+                "preview": "Test preview"
+                # Missing 'content' field - should trigger validation error
+            }
+        )
 
 
 class TestUpdateMemory:
@@ -142,12 +135,11 @@ class TestUpdateMemory:
 **Content:** Original content to be updated.
 
 **Tags:** #original #test""",
+            role="backend",
             metadata={
-                "memory_type": "semantic",
-                "role": "backend",
-                "tags": ["original", "test"],
                 "title": "Original Title",
-                "description": "Original description"
+                "preview": "Original description",
+                "content": "Full content"
             }
         )
 
@@ -165,12 +157,11 @@ class TestUpdateMemory:
 **Content:** Updated content with new information.
 
 **Tags:** #updated #test""",
+            role="backend",
             metadata={
-                "memory_type": "semantic",
-                "role": "backend",
-                "tags": ["updated", "test"],
                 "title": "Updated Title",
-                "description": "Updated description"
+                "preview": "Updated description",
+                "content": "Updated content"
             }
         )
 
@@ -187,12 +178,11 @@ class TestUpdateMemory:
         params = UpdateMemoryInput(
             doc_id="00000000-0000-0000-0000-000000000000",
             document="Updated content",
+            role="backend",
             metadata={
-                "memory_type": "episodic",
-                "role": "backend",
-                "tags": ["test"],
                 "title": "Test",
-                "description": "Test"
+                "preview": "Test",
+                "content": "Updated content"
             }
         )
 
@@ -207,12 +197,11 @@ class TestUpdateMemory:
         params = UpdateMemoryInput(
             doc_id="c226fff1-7d09-457f-8264-728d249d3490",
             document="New content should generate new embedding.",
+            role="backend",
             metadata={
-                "memory_type": "semantic",
-                "role": "backend",
-                "tags": ["test"],
                 "title": "Test",
-                "description": "Test"
+                "preview": "Test",
+                "content": "Updated content"
             }
         )
 
@@ -228,12 +217,11 @@ class TestUpdateMemory:
         params = UpdateMemoryInput(
             doc_id="c226fff1-7d09-457f-8264-728d249d3490",
             document="Updated content with proper length for validation",
+            role="backend",
             metadata={
-                "memory_type": "semantic",
-                "role": "backend",
-                "tags": ["test"],
                 "title": "Test",
-                "description": "Test"
+                "preview": "Test",
+                "content": "Updated content"
             }
         )
 
@@ -260,12 +248,11 @@ class TestDeleteMemory:
 **Content:** Test content for deletion.
 
 **Tags:** #delete #test""",
+            role="backend",
             metadata={
-                "memory_type": "semantic",
-                "role": "backend",
-                "tags": ["delete", "test"],
                 "title": "Document To Delete",
-                "description": "This document will be deleted"
+                "preview": "This document will be deleted",
+                "content": "Full content"
             }
         )
 

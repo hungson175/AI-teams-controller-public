@@ -1,0 +1,212 @@
+{
+  "description": "Test fixture with 29 real memories extracted from 'memory' MCP server",
+  "extraction_date": "2026-01-19",
+  "source": "mcp__memory__search_memory + mcp__memory__batch_get_memories",
+  "total_memories": 29,
+  "roles": ["backend", "frontend", "qa", "devops", "universal", "scrum-master"],
+  "memories": [
+    {
+      "doc_id": "c226fff1-7d09-457f-8264-728d249d3490",
+      "role": "backend",
+      "memory_type": "semantic",
+      "title": "Multi-Service Migration: Verify ALL Services Use Abstraction Layer",
+      "tags": ["backend", "database", "migration", "microservices", "architecture", "failure"]
+    },
+    {
+      "doc_id": "0a3d4b66-6e04-4178-bc8c-68a69f245a76",
+      "role": "backend",
+      "memory_type": "procedural",
+      "title": "SQLite UUID Compatibility in Hybrid Database Testing",
+      "tags": ["database", "sqlalchemy", "sqlite", "postgresql", "testing", "cross-compatibility", "uuid", "orm", "hard-learned"]
+    },
+    {
+      "doc_id": "ce040aa8-7f0d-45a6-988a-8572fc4e8444",
+      "role": "backend",
+      "memory_type": "semantic",
+      "title": "Timeout Does Not Mean Permanent Failure in Async Systems",
+      "tags": ["async-systems", "timeout", "eventual-consistency", "distributed-systems", "success"]
+    },
+    {
+      "doc_id": "d055ea5d-75bc-49fe-ac97-5a6d5f1ab849",
+      "role": "backend",
+      "memory_type": "procedural",
+      "title": "Test Infrastructure Blockers - Pivot to Integration Testing",
+      "tags": ["testing", "pytest", "integration-testing", "time-management", "sprint-planning", "technical-debt", "hard-learned", "test-infrastructure", "fastapi"]
+    },
+    {
+      "doc_id": "46e5fc6f-f64c-4aeb-b030-56a09a73c185",
+      "role": "frontend",
+      "memory_type": "semantic",
+      "title": "Mocking Complex Headless Libraries (TipTap/Editor Pattern)",
+      "tags": ["testing", "mocking", "react", "headless-ui", "tiptap", "failure-pattern", "editor", "component-testing", "anti-pattern"]
+    },
+    {
+      "doc_id": "d188a03f-c980-428b-8356-04d61935ffd0",
+      "role": "frontend",
+      "memory_type": "episodic",
+      "title": "React Unstable Keys Causing State Loss During Re-renders",
+      "tags": ["react", "state-management", "debugging", "keys", "unmounting", "frontend"]
+    },
+    {
+      "doc_id": "13c300ee-b658-44f4-8a59-7deaa57b2774",
+      "role": "frontend",
+      "memory_type": "semantic",
+      "title": "TDD Integration Gap - Component Tested But Never Wired",
+      "tags": ["frontend", "tdd", "testing", "integration", "failure-pattern", "strong-signal", "unit-testing", "component-wiring"]
+    },
+    {
+      "doc_id": "8f89d6cc-965a-444e-afb2-a1fee36f2bc7",
+      "role": "frontend",
+      "memory_type": "episodic",
+      "title": "UI Code Review Must Include Runtime Validation",
+      "tags": ["#frontend", "#code-review", "#failure", "#validation", "#testing"]
+    },
+    {
+      "doc_id": "1d55b2bd-f196-40ff-a22b-5ec40b328a86",
+      "role": "frontend",
+      "memory_type": "semantic",
+      "title": "React Mutex Refs Smell - Refactor to FSM",
+      "tags": ["#frontend", "#react", "#state-management", "#fsm", "#refactoring", "#code-smell"]
+    },
+    {
+      "doc_id": "81679568-6202-4bd0-8c68-a5b5ba6d9776",
+      "role": "frontend",
+      "memory_type": "semantic",
+      "title": "React .env.production Build-Time vs Runtime Loading",
+      "tags": ["react", "frontend", "environment-variables", "deployment"]
+    },
+    {
+      "doc_id": "f7afa2c1-81dc-4352-82c3-776492fb1a9a",
+      "role": "frontend",
+      "memory_type": "episodic",
+      "title": "UI Component Misidentification: Ask 'Which One?' for Ambiguous Requirements",
+      "tags": ["#failure", "#frontend", "#ui", "#component-identification", "#requirements-clarification", "#critical", "#strong-signal"]
+    },
+    {
+      "doc_id": "fd648850-aade-4821-9cad-10f843d019fd",
+      "role": "frontend",
+      "memory_type": "episodic",
+      "title": "WebSocket Double State Update Causes UI Flickering",
+      "tags": ["#frontend", "#react", "#websocket", "#state-management", "#flickering", "#p0"]
+    },
+    {
+      "doc_id": "8892a98e-bd80-4e6d-84c4-43a5e7992451",
+      "role": "devops",
+      "memory_type": "procedural",
+      "title": "Docker Compose Per-Container Resource Control",
+      "tags": ["docker", "docker-compose", "resources", "multi-user", "limits", "reservations", "success"]
+    },
+    {
+      "doc_id": "227c2e10-788e-4aeb-9671-dd93a24ecbeb",
+      "role": "devops",
+      "memory_type": "procedural",
+      "title": "Detecting Background Process Success in Deployment Scripts",
+      "tags": ["deployment", "ssh", "background-process", "verification", "success"]
+    },
+    {
+      "doc_id": "6f760235-d7ca-42e4-9a4b-7bcbe7b6a99c",
+      "role": "devops",
+      "memory_type": "procedural",
+      "title": "Self-Contained Deployment Packages with Project-Local Dependencies",
+      "tags": ["deployment", "uv", "virtual-environments", "portability", "success"]
+    },
+    {
+      "doc_id": "c2fd1ccb-8d37-496e-8721-d2a3d1844b26",
+      "role": "qa",
+      "memory_type": "episodic",
+      "title": "API Base URL Configuration - Avoid Path Duplication",
+      "tags": ["api", "url", "configuration", "frontend", "backend", "path", "deployment", "qa", "sprint-1"]
+    },
+    {
+      "doc_id": "052b9215-4e39-4f44-9002-053f6749d71d",
+      "role": "universal",
+      "memory_type": "procedural",
+      "title": "Testing Strategy for Expensive API Operations and Large-Scale Data Crawling",
+      "tags": ["testing", "expensive-api", "cost-optimization", "tiered-testing", "success"]
+    },
+    {
+      "doc_id": "18076497-d468-45d7-be61-2335552a7477",
+      "role": "universal",
+      "memory_type": "episodic",
+      "title": "Check Production Database FIRST When Reference Code is Marked Broken",
+      "tags": ["#production-data", "#source-of-truth", "#reference-code", "#database-query", "#design-failure", "#qdrant", "#failure-lesson", "#sprint4", "#strong-signal"]
+    },
+    {
+      "doc_id": "b1dc3558-b4e0-4e1e-8984-e9096d1ee8b6",
+      "role": "universal-patterns",
+      "memory_type": "semantic",
+      "title": "Frontend-Backend API Contract Mismatches - Unit Tests Won't Catch Them",
+      "tags": ["frontend", "backend", "api", "integration", "testing", "failure", "code-review"]
+    },
+    {
+      "doc_id": "8f705592-2909-4f78-b539-1ab50bb95abf",
+      "role": "universal",
+      "memory_type": "semantic",
+      "title": "Timeout Does Not Mean Permanent Failure in Async Systems",
+      "tags": ["semantic", "async-systems", "timeout", "eventual-consistency", "distributed-systems", "success"]
+    },
+    {
+      "doc_id": "a19f4c0a-22f9-4107-ab9b-06b0fd9fe7d6",
+      "role": "universal",
+      "memory_type": "semantic",
+      "title": "Inspect External Data Schemas Before Implementation",
+      "tags": ["data-integration", "extraction", "transformation", "schema", "debugging", "prevention", "silent-failures", "universal-pattern", "hard-earned"]
+    },
+    {
+      "doc_id": "2f3efc74-865b-4be2-96ad-035a61fcb208",
+      "role": "universal",
+      "memory_type": "Procedural",
+      "title": "4-Gate Quality Framework - Prevents Unit Tests Pass But UI Broken Disasters",
+      "tags": ["quality-gates", "testing", "tdd", "frontend-backend-integration", "fail-closed", "feature-delivery", "strong-signal"]
+    },
+    {
+      "doc_id": "54516fa8-6b6e-43a3-a816-3c5b1323b8e8",
+      "role": "scrum-master",
+      "memory_type": "pattern",
+      "title": "FE Must Confirm Rebuild Before QA Retests UI Changes",
+      "tags": ["frontend", "qa", "testing", "next-js", "production-mode", "multi-agent", "coordination", "workflow-gap", "rebuild"]
+    },
+    {
+      "doc_id": "91bca52f-da5e-43fd-b2e9-c16a3004ee75",
+      "role": "scrum-master",
+      "memory_type": "pattern",
+      "title": "QA Must Use True Blackbox Testing (Browser-Based, No Code Access)",
+      "tags": ["qa", "testing", "blackbox", "playwright", "browser-testing", "multi-agent", "scrum", "process-failure"]
+    },
+    {
+      "doc_id": "abcdee57-c44f-4a9b-ba4c-7c1e5aed35d5",
+      "role": "qa",
+      "memory_type": "semantic",
+      "title": "Internal Test Suite False Confidence - The Green Checkmark Illusion",
+      "tags": ["qa", "testing", "false-confidence", "integration-testing", "blackbox", "independent-validation", "production-blocker", "test-coverage", "quality-gates", "mock-testing", "semantic", "strong-signal"]
+    },
+    {
+      "doc_id": "ecca3051-aeb4-4ad4-84bd-b0c3c1eb97d3",
+      "role": "universal",
+      "memory_type": "semantic",
+      "title": "Test Coverage ≠ Test Correctness - Assertion Validity Gate for Code Reviews",
+      "tags": ["semantic", "testing", "code-review", "tdd", "assertion-correctness", "fail-closed", "assertions", "bug-prevention", "best-practice", "strong-signal"]
+    },
+    {
+      "doc_id": "01856815-4334-499b-b1bd-c41f9cef9676",
+      "role": "scrum-master",
+      "memory_type": "procedural",
+      "title": "TDD Requires Written Specs Before Implementation in Team Workflows",
+      "tags": ["scrum-master", "process", "tdd", "testing", "team-workflow", "specs", "procedural"]
+    },
+    {
+      "doc_id": "62134ebc-a343-40ae-b649-5fa6d51cba76",
+      "role": "universal",
+      "memory_type": "procedural",
+      "title": "Docker Compose Per-Container Resource Control",
+      "tags": ["procedural", "docker", "docker-compose", "resources", "multi-user", "limits", "reservations", "success"]
+    },
+    {
+      "doc_id": "5eb74129-2e70-4a84-a672-fd2bd3b5c853",
+      "role": "universal",
+      "memory_type": "procedural",
+      "title": "Detecting Background Process Success in Deployment Scripts",
+      "tags": ["procedural", "deployment", "nohup", "ssh", "port-check", "process-management", "success"]
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+# BMAD Agile Team Template
+# 7 roles based on BMAD-METHOD workflow phases + our tmux communication
+# Phases: Analysis -> Planning -> Solutioning -> Implementation
+
+name: bmad-agile
+display_name: BMAD Agile Development Team
+description: Full agile team based on BMAD-METHOD with 4-phase workflow
+version: "1.0.0"
+
+roles:
+  # PM MUST be pane 0 - coordinates all communication
+  - id: PM
+    name: Product Manager
+    prompt: prompts/PM.md
+    description: COORDINATOR - Creates PRD, manages workflow across all phases
+    optional: false
+
+  - id: AN
+    name: Business Analyst
+    prompt: prompts/AN.md
+    description: Phase 1 - Researches ideas, creates product brief
+    optional: false
+
+  - id: SA
+    name: Solution Architect
+    prompt: prompts/SA.md
+    description: Phase 3 - Designs architecture, writes ADRs
+    optional: false
+
+  - id: SM
+    name: Scrum Master
+    prompt: prompts/SM.md
+    description: Phase 3-4 - Creates epics/stories, sprint planning
+    optional: false
+
+  - id: FS
+    name: Full-Stack Developer
+    prompt: prompts/FS.md
+    description: Phase 4 - Implements stories with TDD
+    optional: false
+
+  - id: CR
+    name: Code Reviewer
+    prompt: prompts/CR.md
+    description: Phase 4 - Reviews code quality
+    optional: false
+
+  - id: DK
+    name: Document Keeper
+    prompt: prompts/DK.md
+    description: Post-phase - Maintains documentation
+    optional: true
+
+workflow:
+  phases:
+    - name: "Phase 1: Analysis"
+      agents: [AN]
+      outputs: ["docs/product-brief.md"]
+      description: "AN researches idea, creates product brief"
+
+    - name: "Phase 2: Planning"
+      agents: [PM]
+      outputs: ["docs/prd.md"]
+      description: "PM creates PRD from product brief"
+
+    - name: "Phase 3: Solutioning"
+      agents: [SA, SM]
+      outputs: ["docs/architecture.md", "docs/epics/"]
+      description: "SA designs architecture, SM creates epics/stories"
+
+    - name: "Phase 4: Implementation"
+      agents: [FS, CR]
+      outputs: ["code", "tests"]
+      description: "FS implements stories, CR reviews code"
+
+    - name: "Post: Documentation"
+      agents: [DK]
+      outputs: ["docs/generated-docs/"]
+      description: "DK syncs documentation with code"
+
+  full_flow: "Boss -> AN (research, brief) -> PM (PRD) -> SA (architecture) -> SM (epics/stories) -> FS (implement) -> CR (review) -> merge -> DK (docs)"
+
+  steps:
+    - "1-2: Boss provides idea to AN"
+    - "3-4: AN researches using quick-research skill, creates product brief"
+    - "5: AN passes brief to PM"
+    - "6-7: PM creates PRD"
+    - "8: PM passes PRD to SA"
+    - "9-10: SA designs architecture"
+    - "11: SA passes to SM"
+    - "12-14: SM creates epics and stories"
+    - "15: SM assigns story to FS"
+    - "16-18: FS implements with TDD"
+    - "19-20: CR reviews code"
+    - "21: Boss approval -> merge"
+    - "22: DK syncs documentation"
+
+files:
+  - name: README.md
+    template: auto
+  - name: WHITEBOARD.md
+    template: auto
+  - name: BACKLOG.md
+    template: auto
+
+defaults:
+  session_prefix: "bmad"
+  output_base: "~/.claude/dev"

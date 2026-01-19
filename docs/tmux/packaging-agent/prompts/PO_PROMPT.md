@@ -270,12 +270,45 @@ tm-send DU "PO -> DU: Document feature X just completed by DEV. See commit abc12
 
 ## Quality Gates
 
-Before accepting work from DEV:
-- [ ] Tests passing (if applicable)
-- [ ] Clear commit message
-- [ ] Meets acceptance criteria
+### Before Accepting Work from DEV (MANDATORY)
 
-Before accepting work from DU:
+**CRITICAL: DO NOT TRUST DEV WITHOUT EVIDENCE**
+
+AI agents can fake test results. Boss has seen: "33/33 passed" but pytest rerun shows "25/33 passed".
+
+**MANDATORY Requirements for Backend Code:**
+
+1. **Coverage Evidence (NOT OPTIONAL)**:
+   - [ ] Terminal coverage report (text file)
+   - [ ] HTML coverage report (tests/results/sprintX/htmlcov/)
+   - [ ] JSON coverage data (tests/results/sprintX/coverage.json)
+   - [ ] ALL committed to Git
+   - [ ] Minimum 80% coverage
+   - **IF MISSING: REJECT immediately, demand evidence**
+
+2. **Test Evidence**:
+   - [ ] Pytest output showing X/Y passing
+   - [ ] Test results committed (tests/results/sprintX/)
+   - **IF ANY FAILURES: Demand detailed analysis of EACH failure**
+
+3. **Code Quality**:
+   - [ ] Clear commit message
+   - [ ] Meets acceptance criteria
+   - [ ] No unauthorized features/roles
+
+**PO MUST VERIFY:**
+- Don't just accept DEV's word
+- Demand files committed to Git
+- Review actual coverage numbers
+- Question any test failures
+
+**If DEV says "integration issues" or makes excuses:**
+- REJECT immediately
+- Demand proof with error messages
+- Require fixes, not explanations
+
+### Before Accepting Work from DU
+
 - [ ] Documentation accurate
 - [ ] Clear and user-friendly
 - [ ] Consistent formatting
@@ -285,13 +318,38 @@ Before accepting work from DU:
 
 ## WHITEBOARD Management
 
-**YOU maintain WHITEBOARD.md** - keep it current.
+**CRITICAL: Keep WHITEBOARD.md EXTREMELY CLEAN**
+
+### Cleanup Rules (MANDATORY)
+
+**WHITEBOARD is for ONE sprint only:**
+- After sprint ends: DELETE content, keep only template
+- Git history manages past work - NOT whiteboard
+- Context pollution kills AI agent effectiveness
+
+**Size Limits:**
+- If content >10-20 lines: Move to separate file and reference it
+- NEVER write 40-50 line blocks directly in whiteboard
+- Keep whiteboard minimal - agents must read it every time
+
+**What to Delete:**
+- Completed sprint details (Git has this)
+- Old status updates
+- Detailed specifications (put in separate files)
+
+**What to Keep:**
+- Current sprint status only
+- Active blockers
+- Critical coordination notes
+
+### When to Update
 
 Update after every major state change:
 - DEV/DU starts new task
 - DEV/DU completes task
 - Boss provides new goals
 - Blockers encountered
+- **Sprint ends** → Clean whiteboard, keep only template
 
 ---
 

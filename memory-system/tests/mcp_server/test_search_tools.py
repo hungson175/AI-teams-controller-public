@@ -22,7 +22,7 @@ class TestSearchMemory:
     async def test_search_with_results_returns_previews_only(self):
         """Test search returns previews (title + description) without full content."""
         params = SearchMemoryInput(
-            query="backend API testing patterns",
+            query="backend API testing patterns for REST services with error handling",
             roles=["backend", "frontend"],
             limit=10
         )
@@ -50,7 +50,7 @@ class TestSearchMemory:
     async def test_search_empty_results(self):
         """Test search with non-existent collection returns empty."""
         params = SearchMemoryInput(
-            query="any query here",
+            query="any query here with sufficient length for validation requirements",
             roles=["nonexistent-collection-xyz-12345"],
             limit=10
         )
@@ -67,7 +67,7 @@ class TestSearchMemory:
     async def test_search_with_multiple_roles(self):
         """Test search across multiple role collections."""
         params = SearchMemoryInput(
-            query="testing patterns",
+            query="testing patterns for backend frontend and QA teams integration",
             roles=["backend", "frontend", "qa"],
             limit=20
         )
@@ -86,7 +86,7 @@ class TestSearchMemory:
     async def test_search_respects_limit_parameter(self):
         """Test search respects limit parameter."""
         params = SearchMemoryInput(
-            query="testing",
+            query="testing patterns and best practices for software development",
             roles=None,  # Search all roles
             limit=5
         )
@@ -101,7 +101,7 @@ class TestSearchMemory:
     async def test_search_with_invalid_role_graceful_handling(self):
         """Test search handles invalid role gracefully (empty results or error)."""
         params = SearchMemoryInput(
-            query="test query",
+            query="test query with sufficient length to meet validation requirements",
             roles=["nonexistent-role-xyz"],
             limit=10
         )
@@ -130,12 +130,11 @@ class TestGetMemory:
 **Content:** Test content with full details for retrieval verification.
 
 **Tags:** #fetch #test""",
+            role="backend",
             metadata={
-                "memory_type": "semantic",
-                "role": "backend",
-                "tags": ["fetch", "test"],
                 "title": "Test Document For Fetch",
-                "description": "This document will be fetched"
+                "preview": "This document will be fetched in the test",
+                "content": "Test content with full details for retrieval verification"
             }
         )
 
@@ -157,13 +156,14 @@ class TestGetMemory:
         assert "doc_id" in result
         assert "document" in result  # Full formatted content
         assert "metadata" in result
+        assert "role" in result  # Role is top-level, NOT in metadata
 
-        # Verify metadata structure
+        # Verify metadata structure (Boss: ONLY title, preview, content)
         metadata = result["metadata"]
-        assert "memory_type" in metadata
-        assert "role" in metadata
-        assert "tags" in metadata
         assert "title" in metadata
+        assert "preview" in metadata
+        assert "content" in metadata
+        assert len(metadata) == 3  # ONLY 3 fields
 
         # Verify document content format
         document = result["document"]

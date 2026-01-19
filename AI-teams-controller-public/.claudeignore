@@ -1,0 +1,27 @@
+# Node modules - ignore all the noise
+node_modules/
+**/node_modules/
+
+# Build outputs
+.next/
+dist/
+build/
+out/
+
+# Cache directories
+.cache/
+.turbo/
+
+# Python virtual environments
+.venv/
+__pycache__/
+*.pyc
+
+# IDE and editor
+.idea/
+.vscode/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db

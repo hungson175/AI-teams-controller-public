@@ -1,0 +1,67 @@
+# Standard Team Template
+# 5 roles: PM, SA, FS, CR, DK - full development team
+
+name: standard
+display_name: Standard Development Team
+description: Full team with architecture, development, review, and documentation
+version: "1.0.0"
+
+roles:
+  - id: PM
+    name: Project Manager
+    prompt: prompts/PM.md
+    description: Coordinates work, delegates to specialists
+    optional: false
+
+  - id: SA
+    name: Solution Architect
+    prompt: prompts/SA.md
+    description: Designs architecture, writes ADRs
+    optional: false
+
+  - id: FS
+    name: Full-Stack Engineer
+    prompt: prompts/FS.md
+    description: Implements frontend and backend code
+    optional: false
+
+  - id: CR
+    name: Code Reviewer
+    prompt: prompts/CR.md
+    description: Reviews code quality and best practices
+    optional: false
+
+  - id: DK
+    name: Document Keeper
+    prompt: prompts/DK.md
+    description: Maintains documentation in sync with code
+    optional: true
+
+workflow:
+  simple:
+    pattern: "PM -> FS -> CR -> merge"
+    description: For small bugs and simple features
+
+  complex:
+    pattern: "PM <-> SA (ADR) -> FS -> CR -> Boss -> merge -> DK"
+    description: For features requiring architectural decisions
+
+  steps:
+    - "1-3: PM <-> SA (architecture discussion, ADR)"
+    - "4: PM assigns to FS with ADR reference"
+    - "5-7: FS implements with progressive commits"
+    - "8: FS reports completion to PM"
+    - "9-10: CR review loop"
+    - "Post: Boss approval -> merge -> DK syncs docs"
+
+files:
+  - name: README.md
+    template: auto
+  - name: WHITEBOARD.md
+    template: auto
+  - name: BACKLOG.md
+    template: auto
+
+defaults:
+  session_prefix: "team"
+  output_base: "~/.claude/dev"

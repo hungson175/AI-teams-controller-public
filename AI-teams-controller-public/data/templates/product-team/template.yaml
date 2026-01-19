@@ -1,0 +1,73 @@
+# Product Team Template
+# 6 roles: PdM, PM, SA, FS, CR, DK - full product development team
+
+name: product-team
+display_name: Product Development Team
+description: Complete team with product research, architecture, full-stack development, review, and documentation
+version: "1.0.0"
+
+roles:
+  - id: PdM
+    name: Product Manager
+    prompt: prompts/PdM.md
+    description: Researches ideas, writes PRD, passes to PM
+    optional: false
+
+  - id: PM
+    name: Project Manager
+    prompt: prompts/PM.md
+    description: Coordinates work, delegates to specialists
+    optional: false
+
+  - id: SA
+    name: Solution Architect
+    prompt: prompts/SA.md
+    description: Designs architecture, writes ADRs
+    optional: false
+
+  - id: FS
+    name: Full-Stack Engineer
+    prompt: prompts/FS.md
+    description: Implements frontend and backend code
+    optional: false
+
+  - id: CR
+    name: Code Reviewer
+    prompt: prompts/CR.md
+    description: Reviews code quality and best practices
+    optional: false
+
+  - id: DK
+    name: Document Keeper
+    prompt: prompts/DK.md
+    description: Maintains documentation in sync with code
+    optional: true
+
+workflow:
+  full:
+    pattern: "Boss -> PdM (research, PRD) -> PM <-> SA (ADR) -> FS -> CR -> Boss -> merge -> DK"
+    description: Complete workflow from idea to documentation
+
+  steps:
+    - "1: Boss gives idea/description to PdM"
+    - "2-3: PdM researches using quick-research skill"
+    - "4: PdM writes PRD markdown file"
+    - "5: PdM passes PRD to PM"
+    - "6-8: PM <-> SA (architecture discussion, ADR)"
+    - "9: PM assigns to FS with ADR reference"
+    - "10-12: FS implements with progressive commits"
+    - "13: FS reports completion to PM"
+    - "14-15: CR review loop"
+    - "Post: Boss approval -> merge -> DK syncs docs"
+
+files:
+  - name: README.md
+    template: auto
+  - name: WHITEBOARD.md
+    template: auto
+  - name: BACKLOG.md
+    template: auto
+
+defaults:
+  session_prefix: "product"
+  output_base: "~/.claude/dev"

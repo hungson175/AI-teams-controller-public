@@ -19,9 +19,8 @@ class SearchMemoryInput(BaseModel):
 
     query: str = Field(
         ...,
-        description="Search query text (e.g., 'API error handling patterns', 'React testing strategies')",
-        min_length=2,
-        max_length=500
+        description="Search query with full context. AI coding agents provide extensive, detailed search context describing exactly what they need.",
+        min_length=32
     )
     roles: Optional[List[str]] = Field(
         default=None,
@@ -108,28 +107,29 @@ class StoreMemoryInput(BaseModel):
         description="Full formatted memory text with Title, Description, Content, and Tags sections",
         min_length=10
     )
+    role: str = Field(
+        ...,
+        description="Collection name / role (e.g., 'backend', 'frontend', 'qa'). Determines which collection to store in."
+    )
     metadata: Dict[str, Any] = Field(
         ...,
-        description="Metadata including memory_type, role, tags, title, description, and optional fields"
+        description="Metadata with ONLY 3 fields: title, preview, content. Role is specified separately, NOT in metadata."
     )
 
     @field_validator('metadata')
     @classmethod
     def validate_required_fields(cls, v: Dict[str, Any]) -> Dict[str, Any]:
-        """Validate required metadata fields are present."""
-        required = ['memory_type', 'role', 'tags', 'title', 'description']
+        """Validate metadata has ONLY title, preview, content (per Boss requirements)."""
+        required = ['title', 'preview', 'content']
         missing = [field for field in required if field not in v]
         if missing:
             raise ValueError(f"Missing required metadata fields: {', '.join(missing)}")
 
-        # Validate memory_type
-        valid_types = ['episodic', 'semantic', 'procedural']
-        if v['memory_type'] not in valid_types:
-            raise ValueError(f"memory_type must be one of: {', '.join(valid_types)}")
-
-        # Validate tags is a list
-        if not isinstance(v['tags'], list):
-            raise ValueError("tags must be a list")
+        # Boss: Metadata ONLY has title, preview, content - nothing else
+        allowed = {'title', 'preview', 'content'}
+        extra = set(v.keys()) - allowed
+        if extra:
+            raise ValueError(f"Unauthorized metadata fields: {', '.join(extra)}. Only title, preview, content allowed.")
 
         return v
 
@@ -154,9 +154,13 @@ class UpdateMemoryInput(BaseModel):
         description="New formatted memory text",
         min_length=10
     )
+    role: str = Field(
+        ...,
+        description="Collection name / role (e.g., 'backend', 'frontend', 'qa'). Determines which collection to update in."
+    )
     metadata: Dict[str, Any] = Field(
         ...,
-        description="Updated metadata"
+        description="Updated metadata with ONLY 3 fields: title, preview, content"
     )
 
     @field_validator('doc_id')
@@ -170,11 +174,18 @@ class UpdateMemoryInput(BaseModel):
     @field_validator('metadata')
     @classmethod
     def validate_required_fields(cls, v: Dict[str, Any]) -> Dict[str, Any]:
-        """Validate required metadata fields."""
-        required = ['memory_type', 'role', 'tags', 'title', 'description']
+        """Validate metadata has ONLY title, preview, content (per Boss requirements)."""
+        required = ['title', 'preview', 'content']
         missing = [field for field in required if field not in v]
         if missing:
             raise ValueError(f"Missing required metadata fields: {', '.join(missing)}")
+
+        # Boss: Metadata ONLY has title, preview, content - nothing else
+        allowed = {'title', 'preview', 'content'}
+        extra = set(v.keys()) - allowed
+        if extra:
+            raise ValueError(f"Unauthorized metadata fields: {', '.join(extra)}. Only title, preview, content allowed.")
+
         return v
 
 

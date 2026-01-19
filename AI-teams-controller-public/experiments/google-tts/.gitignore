@@ -1,0 +1,13 @@
+# Google Cloud credentials
+google-credentials.json
+*.json
+
+# Output files
+output/
+*.mp3
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/

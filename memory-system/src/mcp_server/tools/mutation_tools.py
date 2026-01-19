@@ -82,8 +82,8 @@ async def store_memory(params: StoreMemoryInput) -> str:
         qdrant = _get_qdrant_client()
         voyage = _get_voyage_client()
 
-        # Extract collection from metadata
-        collection = params.metadata['role']
+        # Extract collection from role field (NOT metadata)
+        collection = params.role
 
         # Generate unique int ID (timestamp-based)
         int_id = _generate_next_id(collection, qdrant)
@@ -159,8 +159,8 @@ async def update_memory(params: UpdateMemoryInput) -> str:
         if int_id is None:
             return json.dumps({"error": "Document not found", "type": "NotFoundError"})
 
-        # Extract collection from metadata
-        collection = params.metadata['role']
+        # Extract collection from role field (NOT metadata)
+        collection = params.role
 
         # Check if document exists
         try:

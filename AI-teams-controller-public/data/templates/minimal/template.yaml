@@ -1,0 +1,39 @@
+# Minimal Team Template
+# 2 roles: PM + Coder - for quick projects or solo development
+
+name: minimal
+display_name: Minimal Team
+description: Lightweight 2-person team for quick projects
+version: "1.0.0"
+
+roles:
+  - id: PM
+    name: Project Manager
+    prompt: prompts/PM.md
+    description: Coordinates work and tracks progress
+    optional: false
+
+  - id: CODER
+    name: Full-Stack Coder
+    prompt: prompts/CODER.md
+    description: Implements all code (frontend + backend)
+    optional: false
+
+workflow:
+  simple:
+    pattern: "PM -> CODER -> merge"
+    description: Direct implementation without review
+
+  with_review:
+    pattern: "PM -> CODER -> PM (verify) -> merge"
+    description: PM verifies before merge
+
+files:
+  - name: README.md
+    template: auto
+  - name: WHITEBOARD.md
+    template: auto
+
+defaults:
+  session_prefix: "team"
+  output_base: "~/.claude/dev"

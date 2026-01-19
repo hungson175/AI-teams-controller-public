@@ -1,0 +1,120 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.python-version
+
+# Build outputs
+.next/
+dist/
+build/
+out/
+*.egg-info/
+.eggs/
+
+# Environment & Secrets (CRITICAL - never commit)
+.env
+.env.local
+.env.*.local
+.env.test
+.env.development
+.env.production
+.env.staging
+*.pem
+*.key
+google-tts-key.json
+*-key.json
+credentials.json
+*credentials*.json
+*.secret
+google-services.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing & Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+coverage.xml
+*.cover
+.playwright
+.playwright-mcp/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# Cache
+.cache/
+.turbo/
+.ruff_cache/
+cache/
+*.cache
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Database files (local dev)
+*.db
+*.sqlite
+*.sqlite3
+
+# Claude Code conversation history
+*.jsonl
+history.jsonl
+.claude/projects/
+
+# TTS cache files
+backend/cache/tts/
+
+# Android sample projects reference code
+sample_codes/
+
+# Package artifacts (keep for distribution)
+# tmux-team-creator/*.skill  # Keep these
+
+# Python
+*.egg
+MANIFEST
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Test screenshots (can be large)
+test_screenshots/
+
+# Editor backups
+*.bak
+*.orig
+
+# Gradle (Android)
+.gradle/
+/local.properties
+captures/
+.externalNativeBuild/
+
+# Java
+*.class
+*.jar
+*.war
+bin/
+gen/

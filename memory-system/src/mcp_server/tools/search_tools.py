@@ -127,16 +127,11 @@ async def get_memory(params: GetMemoryInput) -> str:
                 return json.dumps({
                     "doc_id": params.doc_id,
                     "document": doc['content'],
+                    "role": collection,  # Role is collection name, NOT in metadata
                     "metadata": {
-                        "memory_type": "semantic",
-                        "role": collection,
-                        "tags": [],
                         "title": doc['title'],
-                        "confidence": "high",
-                        "frequency": 1,
-                        "created_at": "2026-01-01T00:00:00",
-                        "last_synced": "2026-01-01T00:00:00",
-                        "description": doc['preview']
+                        "preview": doc['preview'],
+                        "content": doc['content']
                     }
                 })
             except ValueError:
@@ -194,16 +189,11 @@ async def batch_get_memories(params: BatchGetMemoriesInput) -> str:
             memories.append({
                 "doc_id": uuid_str,
                 "document": doc['content'],
+                "role": doc['collection'],  # Role is collection name, NOT in metadata
                 "metadata": {
-                    "memory_type": "semantic",
-                    "role": doc['collection'],
-                    "tags": [],
                     "title": doc['title'],
-                    "confidence": "high",
-                    "frequency": 1,
-                    "created_at": "2026-01-01T00:00:00",
-                    "last_synced": "2026-01-01T00:00:00",
-                    "description": doc['preview']
+                    "preview": doc['preview'],
+                    "content": doc['content']
                 }
             })
 

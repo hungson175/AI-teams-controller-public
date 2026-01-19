@@ -1,0 +1,5 @@
+{
+	"dependencies": {
+		"@codemirror/lang-yaml": "^6.1.2"
+	}
+}

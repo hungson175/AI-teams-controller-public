@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hand-Free JS Talk</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+    }
+    h1 {
+      text-align: center;
+      color: #00d9ff;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px 0;
+    }
+    .toggle-btn {
+      padding: 20px 40px;
+      font-size: 24px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: bold;
+    }
+    .toggle-btn.off {
+      background: #333;
+      color: #888;
+    }
+    .toggle-btn.on {
+      background: #00d9ff;
+      color: #000;
+      box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+    }
+    .toggle-btn:hover {
+      transform: scale(1.05);
+    }
+    .status {
+      text-align: center;
+      font-size: 18px;
+      margin: 20px 0;
+      padding: 15px;
+      border-radius: 10px;
+      background: #222;
+    }
+    .status.listening {
+      background: #003322;
+      color: #00ff88;
+    }
+    .status.speaking {
+      background: #332200;
+      color: #ffaa00;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .current-text {
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      min-height: 100px;
+      margin: 20px 0;
+      font-size: 16px;
+      line-height: 1.6;
+      border-left: 4px solid #00d9ff;
+    }
+    .current-text.empty {
+      color: #666;
+      font-style: italic;
+    }
+    .transcripts {
+      margin-top: 40px;
+    }
+    .transcripts h2 {
+      color: #00d9ff;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+    }
+    .transcript-item {
+      background: #222;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    .transcript-item .filename {
+      color: #888;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+    .transcript-item .content {
+      color: #ddd;
+    }
+    .error {
+      background: #331111;
+      color: #ff6666;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 10px 0;
+    }
+    .info {
+      background: #112233;
+      color: #66aaff;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hand-Free JS Talk</h1>
+
+  <div class="info">
+    Toggle ON to start listening. Speak naturally - after 5 seconds of silence,
+    your speech will be transcribed and saved to a file.
+  </div>
+
+  <div class="controls">
+    <button id="toggleBtn" class="toggle-btn off">OFF</button>
+  </div>
+
+  <div id="status" class="status">Ready</div>
+
+  <div id="currentText" class="current-text empty">
+    Waiting for voice input...
+  </div>
+
+  <div id="error" class="error" style="display: none;"></div>
+
+  <div class="transcripts">
+    <h2>Recent Transcripts</h2>
+    <div id="transcriptList"></div>
+  </div>
+
+  <script>
+    /**
+     * Hand-Free JS Talk - Frontend
+     *
+     * Flow:
+     * 1. User toggles ON
+     * 2. Get ephemeral token from backend
+     * 3. Connect to OpenAI Realtime API via WebSocket
+     * 4. Capture microphone audio, send to API
+     * 5. On 5s silence: receive transcription, save to file
+     * 6. Continue listening until user toggles OFF
+     */
+
+    const toggleBtn = document.getElementById('toggleBtn');
+    const statusEl = document.getElementById('status');
+    const currentTextEl = document.getElementById('currentText');
+    const errorEl = document.getElementById('error');
+    const transcriptListEl = document.getElementById('transcriptList');
+
+    let isActive = false;
+    let websocket = null;
+    let audioContext = null;
+    let mediaStream = null;
+    let processor = null;
+    let currentTranscript = '';
+
+    // Load recent transcripts on page load
+    loadTranscripts();
+
+    toggleBtn.addEventListener('click', async () => {
+      if (!isActive) {
+        await startListening();
+      } else {
+        stopListening();
+      }
+    });
+
+    async function startListening() {
+      try {
+        showError(null);
+        setStatus('Initializing...', '');
+
+        // Get ephemeral token
+        const tokenRes = await fetch('/api/token');
+        if (!tokenRes.ok) {
+          throw new Error('Failed to get API token');
+        }
+        const { token } = await tokenRes.json();
+
+        // Connect to OpenAI Realtime API
+        const wsUrl = 'wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-12-17';
+        websocket = new WebSocket(wsUrl, [
+          'realtime',
+          `openai-insecure-api-key.${token}`,
+          'openai-beta.realtime-v1'
+        ]);
+
+        websocket.onopen = () => {
+          console.log('WebSocket connected');
+
+          // Configure session with VAD (5 second silence detection)
+          websocket.send(JSON.stringify({
+            type: 'session.update',
+            session: {
+              modalities: ['text'],
+              input_audio_transcription: { model: 'whisper-1' },
+              turn_detection: {
+                type: 'server_vad',
+                threshold: 0.5,
+                prefix_padding_ms: 300,
+                silence_duration_ms: 5000  // 5 seconds
+              }
+            }
+          }));
+
+          // Start audio capture
+          startAudioCapture();
+        };
+
+        websocket.onmessage = (event) => {
+          const msg = JSON.parse(event.data);
+          handleRealtimeMessage(msg);
+        };
+
+        websocket.onerror = (error) => {
+          console.error('WebSocket error:', error);
+          showError('WebSocket connection error');
+          stopListening();
+        };
+
+        websocket.onclose = () => {
+          console.log('WebSocket closed');
+          if (isActive) {
+            // Reconnect if still active
+            setTimeout(() => {
+              if (isActive) startListening();
+            }, 1000);
+          }
+        };
+
+        isActive = true;
+        toggleBtn.textContent = 'ON';
+        toggleBtn.classList.remove('off');
+        toggleBtn.classList.add('on');
+
+      } catch (error) {
+        console.error('Start error:', error);
+        showError(error.message);
+        stopListening();
+      }
+    }
+
+    function stopListening() {
+      isActive = false;
+      toggleBtn.textContent = 'OFF';
+      toggleBtn.classList.remove('on');
+      toggleBtn.classList.add('off');
+      setStatus('Ready', '');
+
+      // Cleanup
+      if (websocket) {
+        websocket.close();
+        websocket = null;
+      }
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+        mediaStream = null;
+      }
+      if (audioContext) {
+        audioContext.close();
+        audioContext = null;
+      }
+      if (processor) {
+        processor.disconnect();
+        processor = null;
+      }
+    }
+
+    async function startAudioCapture() {
+      try {
+        // Get microphone
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            channelCount: 1,
+            sampleRate: 24000
+          }
+        });
+
+        // Setup audio processing
+        audioContext = new AudioContext({ sampleRate: 24000 });
+        const source = audioContext.createMediaStreamSource(mediaStream);
+        processor = audioContext.createScriptProcessor(4096, 1, 1);
+
+        processor.onaudioprocess = (e) => {
+          if (!websocket || websocket.readyState !== WebSocket.OPEN) return;
+
+          const float32 = e.inputBuffer.getChannelData(0);
+          const int16 = convertFloat32ToInt16(float32);
+          const base64 = arrayBufferToBase64(int16.buffer);
+
+          websocket.send(JSON.stringify({
+            type: 'input_audio_buffer.append',
+            audio: base64
+          }));
+        };
+
+        source.connect(processor);
+        processor.connect(audioContext.destination);
+
+        setStatus('Listening...', 'listening');
+
+      } catch (error) {
+        console.error('Audio capture error:', error);
+        showError('Microphone access denied');
+        stopListening();
+      }
+    }
+
+    function handleRealtimeMessage(msg) {
+      console.log('Received:', msg.type);
+
+      switch (msg.type) {
+        case 'session.created':
+        case 'session.updated':
+          console.log('Session ready');
+          break;
+
+        case 'input_audio_buffer.speech_started':
+          setStatus('Speaking...', 'speaking');
+          currentTranscript = '';
+          break;
+
+        case 'input_audio_buffer.speech_stopped':
+          setStatus('Processing...', 'listening');
+          break;
+
+        case 'conversation.item.input_audio_transcription.completed':
+          const transcript = msg.transcript;
+          if (transcript && transcript.trim()) {
+            currentTranscript = transcript;
+            currentTextEl.textContent = transcript;
+            currentTextEl.classList.remove('empty');
+            saveTranscript(transcript);
+          }
+          setStatus('Listening...', 'listening');
+          break;
+
+        case 'error':
+          console.error('API Error:', msg.error);
+          showError(msg.error?.message || 'Unknown API error');
+          break;
+      }
+    }
+
+    async function saveTranscript(text) {
+      try {
+        const res = await fetch('/api/save-transcript', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+
+        if (res.ok) {
+          const { filename } = await res.json();
+          console.log('Saved:', filename);
+          loadTranscripts();  // Refresh list
+        }
+      } catch (error) {
+        console.error('Save error:', error);
+      }
+    }
+
+    async function loadTranscripts() {
+      try {
+        const res = await fetch('/api/transcripts');
+        const transcripts = await res.json();
+
+        transcriptListEl.innerHTML = transcripts.map(t => `
+          <div class="transcript-item">
+            <div class="filename">${t.filename}</div>
+            <div class="content">${escapeHtml(t.content)}</div>
+          </div>
+        `).join('') || '<div style="color: #666;">No transcripts yet</div>';
+      } catch (error) {
+        console.error('Load error:', error);
+      }
+    }
+
+    function setStatus(text, className) {
+      statusEl.textContent = text;
+      statusEl.className = 'status ' + (className || '');
+    }
+
+    function showError(message) {
+      if (message) {
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+      } else {
+        errorEl.style.display = 'none';
+      }
+    }
+
+    function convertFloat32ToInt16(float32Array) {
+      const int16 = new Int16Array(float32Array.length);
+      for (let i = 0; i < float32Array.length; i++) {
+        const s = Math.max(-1, Math.min(1, float32Array[i]));
+        int16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+      }
+      return int16;
+    }
+
+    function arrayBufferToBase64(buffer) {
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.length; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

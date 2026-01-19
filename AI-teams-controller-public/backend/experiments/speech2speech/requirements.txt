@@ -1,0 +1,21 @@
+# OpenAI Realtime API Speech-to-Speech Demo
+# Python 3.10+ required
+
+# OpenAI SDK with realtime support
+openai>=1.58.0
+
+# WebSocket client (for direct implementation)
+websockets>=13.0
+
+# Audio capture and playback
+sounddevice>=0.5.0
+numpy>=1.26.0
+
+# Sample rate conversion
+soxr>=0.5.0
+
+# Environment variables
+python-dotenv>=1.0.0
+
+# For TUI demo (optional)
+rich>=13.0.0

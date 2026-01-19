@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soniox Real-time Transcription Demo</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        h1 {
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #888;
+            margin-bottom: 30px;
+        }
+        .config-section {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .config-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        label {
+            font-weight: 500;
+            min-width: 120px;
+        }
+        input[type="text"], input[type="password"], input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: #0f0f23;
+            color: #eee;
+            font-size: 14px;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+        }
+        .mode-btn {
+            padding: 10px 20px;
+            border: 2px solid #333;
+            background: transparent;
+            color: #888;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mode-btn:hover {
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+        .mode-btn.active {
+            border-color: #00d4ff;
+            background: #00d4ff22;
+            color: #00d4ff;
+        }
+        .stopword-config {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+        }
+        .stopword-config.visible {
+            display: block;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        #startBtn {
+            background: #00d4ff;
+            color: #000;
+        }
+        #startBtn:hover {
+            background: #00b8e6;
+        }
+        #startBtn:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+        #stopBtn {
+            background: #ff4757;
+            color: #fff;
+        }
+        #stopBtn:hover {
+            background: #ff3344;
+        }
+        #stopBtn:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #666;
+        }
+        .status-dot.connected {
+            background: #2ed573;
+            animation: pulse 1.5s infinite;
+        }
+        .status-dot.recording {
+            background: #ff4757;
+            animation: pulse 0.8s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .transcript-box {
+            background: #0f0f23;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 200px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 16px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .interim {
+            color: #666;
+        }
+        .final {
+            color: #2ed573;
+        }
+        .command-detected {
+            background: #00d4ff22;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #00d4ff;
+        }
+        .command-detected h3 {
+            margin: 0 0 10px 0;
+            color: #00d4ff;
+        }
+        .audio-level {
+            height: 20px;
+            background: #0f0f23;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .audio-level-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #2ed573, #ffa502, #ff4757);
+            transition: width 0.05s;
+        }
+        .debug {
+            background: #0f0f23;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            color: #666;
+        }
+        .debug-line {
+            margin: 2px 0;
+        }
+        .debug-line.error {
+            color: #ff4757;
+        }
+        .debug-line.success {
+            color: #2ed573;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎤 Soniox Real-time Demo</h1>
+    <p class="subtitle">Test Soniox STT with silence detection or stop word trigger</p>
+
+    <div class="config-section">
+        <div class="config-row">
+            <label>API Key:</label>
+            <input type="password" id="apiKey" placeholder="Enter Soniox API key" style="width: 300px;">
+        </div>
+        <div class="config-row">
+            <label>Model:</label>
+            <input type="text" id="model" value="stt-rt-preview" style="width: 200px;">
+        </div>
+        <div class="config-row">
+            <label>Detection Mode:</label>
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="silence">5s Silence</button>
+                <button class="mode-btn" data-mode="stopword">Stop Word</button>
+            </div>
+        </div>
+        <div class="stopword-config" id="stopwordConfig">
+            <div class="config-row">
+                <label>Stop Word:</label>
+                <input type="text" id="stopWord" value="go go go" style="width: 200px;">
+            </div>
+        </div>
+        <div class="config-row" id="silenceConfig">
+            <label>Silence Duration:</label>
+            <input type="number" id="silenceDuration" value="5000" style="width: 100px;"> ms
+        </div>
+    </div>
+
+    <div class="controls">
+        <button id="startBtn">▶ Start Recording</button>
+        <button id="stopBtn" disabled>⬛ Stop</button>
+    </div>
+
+    <div class="status">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Ready</span>
+    </div>
+
+    <div class="audio-level">
+        <div class="audio-level-bar" id="audioLevel"></div>
+    </div>
+
+    <h3>Transcript:</h3>
+    <div class="transcript-box" id="transcript">
+        <span class="final" id="finalText"></span><span class="interim" id="interimText"></span>
+    </div>
+
+    <div class="command-detected" id="commandBox" style="display: none;">
+        <h3>✅ Command Detected!</h3>
+        <div id="commandText"></div>
+    </div>
+
+    <h3>Debug Log:</h3>
+    <div class="debug" id="debug"></div>
+
+    <script src="soniox-demo.js"></script>
+</body>
+</html>

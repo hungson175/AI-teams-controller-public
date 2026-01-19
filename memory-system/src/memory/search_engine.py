@@ -40,7 +40,7 @@ def _get_voyage_client():
     return _voyage_client
 
 
-def search(query: str, collection: str, limit: int = 20,
+def search(query: str, collection: str, limit: int = 50,
            qdrant_client=None, voyage_client=None) -> List[Dict]:
     """
     Search for memories and return preview-only results (like Google search results).
