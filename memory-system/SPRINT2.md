@@ -16,7 +16,7 @@
 
 ## Deliverables
 
-### 1. Test Script: `sprint2_test.py` (230 lines)
+### 1. Test Script: `experiments/sprint2_voyage_test.py` (230 lines)
 
 **Key Components**:
 - Voyage API client initialization
@@ -117,7 +117,7 @@ Possible directions:
 
 ## Files Created/Modified
 
-- ✅ `sprint2_test.py` - Test script (230 lines)
+- ✅ `experiments/sprint2_voyage_test.py` - Test script (230 lines)
 - ✅ `SPRINT2.md` - This completion document
 
 ## Dependencies Installed
