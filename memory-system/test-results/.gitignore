@@ -1,0 +1,6 @@
+# Exclude large HTML coverage reports (can be regenerated)
+*/htmlcov/
+
+# Keep summary reports
+!*/COVERAGE_REPORT.txt
+!*/coverage.json
