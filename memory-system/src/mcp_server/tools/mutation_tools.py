@@ -244,7 +244,7 @@ async def delete_memory(params: DeleteMemoryInput) -> str:
             return json.dumps({"error": "Document not found", "type": "NotFoundError"})
 
         # Determine collections to try
-        collections = params.roles if params.roles else ["backend", "frontend", "qa", "devops", "scrum-master"]
+        collections = params.roles if params.roles else ["backend", "frontend", "qa", "devops", "scrum-master", "tech-leader"]
 
         # Try deleting from each collection
         deleted_from = None

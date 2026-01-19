@@ -80,7 +80,7 @@ class TestSearchMemory:
         if result["results"]:
             roles_found = {r["role"] for r in result["results"]}
             # At least one of the requested roles should appear
-            assert roles_found.issubset({"backend", "frontend", "qa", "devops", "scrum-master"})
+            assert roles_found.issubset({"backend", "frontend", "qa", "devops", "scrum-master", "tech-leader"})
 
     @pytest.mark.asyncio
     async def test_search_respects_limit_parameter(self):
@@ -221,7 +221,7 @@ class TestBatchGetMemories:
                 "c226fff1-7d09-457f-8264-728d249d3490",
                 "0a3d4b66-6e04-4178-bc8c-68a69f245a76"
             ],
-            roles=["backend", "universal"]
+            roles=["backend", "frontend"]
         )
 
         result_str = await search_tools.batch_get_memories(params)
@@ -241,7 +241,7 @@ class TestBatchGetMemories:
                 "c226fff1-7d09-457f-8264-728d249d3490",  # Exists
                 "00000000-0000-0000-0000-000000000000"   # Doesn't exist
             ],
-            roles=["backend", "universal"]
+            roles=["backend", "frontend"]
         )
 
         result_str = await search_tools.batch_get_memories(params)

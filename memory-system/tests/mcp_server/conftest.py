@@ -25,7 +25,8 @@ def ensure_test_collections():
         "frontend",
         "qa",
         "devops",
-        "scrum-master"
+        "scrum-master",
+        "tech-leader"
     ]
 
     # Create event loop to run async code

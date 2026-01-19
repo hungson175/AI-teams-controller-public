@@ -50,7 +50,7 @@ async def search_memory(params: SearchMemoryInput) -> str:
     """
     try:
         # Determine collections to search
-        collections = params.roles if params.roles else ["backend", "frontend", "qa", "devops", "scrum-master"]
+        collections = params.roles if params.roles else ["backend", "frontend", "qa", "devops", "scrum-master", "tech-leader"]
 
         # Search across all specified collections
         all_results = []
@@ -118,7 +118,7 @@ async def get_memory(params: GetMemoryInput) -> str:
             return json.dumps({"error": "Document not found", "type": "NotFoundError"})
 
         # Determine collections to search
-        collections = params.roles if params.roles else ["backend", "frontend", "qa", "devops", "scrum-master"]
+        collections = params.roles if params.roles else ["backend", "frontend", "qa", "devops", "scrum-master", "tech-leader"]
 
         # Try each collection
         for collection in collections:
@@ -175,7 +175,7 @@ async def batch_get_memories(params: BatchGetMemoriesInput) -> str:
     try:
         # Convert UUIDs to (int, collection) pairs
         doc_refs = []
-        collections = params.roles if params.roles else ["backend", "frontend", "universal", "qa", "devops", "scrum-master"]
+        collections = params.roles if params.roles else ["backend", "frontend", "qa", "devops", "scrum-master", "tech-leader"]
 
         for uuid_str in params.doc_ids:
             int_id = _uuid_to_int_id(uuid_str)

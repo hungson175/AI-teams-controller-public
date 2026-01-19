@@ -25,7 +25,7 @@ class SearchMemoryInput(BaseModel):
     )
     roles: Optional[List[str]] = Field(
         default=None,
-        description="List of roles to search (e.g., ['backend', 'universal']). If None, searches all roles."
+        description="List of roles to search (e.g., ['backend', 'frontend']). If None, searches all roles."
     )
     limit: int = Field(
         default=20,
