@@ -43,17 +43,47 @@ graph LR
     B --> D[Qdrant Collection]
     C --> D
     D --> E[Role-based Collections]
-    E --> F[universal-patterns]
-    E --> G[backend-patterns]
-    E --> H[frontend-patterns]
-    E --> I[ai-patterns]
+    E --> F[universal]
+    E --> G[backend]
+    E --> H[frontend]
+    E --> I[scrum-master]
+    E --> J[product-owner]
 ```
 
 **Key design:**
 - MCP server (`src/qdrant_memory_mcp/__main__.py`)
 - Two-stage retrieval (mini search engine - see [appendix](#mini-search-engine))
-- Role-based collections: backend, frontend, AI, etc.
+- Role-based collections: Each collection = one specialized role (backend, frontend, scrum-master, product-owner, etc.)
+- Collection name IS the role (simple, no redundancy)
 - In-memory embedding cache
+
+**Data Structure:**
+
+**Metadata (3 fields):**
+```json
+{
+  "title": "FastMCP: Minimal Python MCP Server",
+  "preview": "Use FastMCP for rapid prototyping MCP servers...",
+  "content": "[full formatted document below]"
+}
+```
+
+**Content field format (what gets embedded):**
+```markdown
+**Title:** [title]
+**Preview:** [2-3 sentence description for snippets]
+
+**Content:** [full content with problem, solution, why it works, when to apply]
+
+**Tags:** #tag1 #tag2 #tag3
+```
+
+**Key points:**
+- The `content` field contains the full formatted markdown document
+- This `content` field gets embedded as the vector
+- Tags are INSIDE the content (part of what gets embedded)
+- Collection name = role (e.g., "backend", "frontend", "scrum-master")
+- Search within specific collection (role) for targeted retrieval
 
 ---
 
