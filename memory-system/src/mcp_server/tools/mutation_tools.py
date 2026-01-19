@@ -23,28 +23,9 @@ from ..models import StoreMemoryInput, UpdateMemoryInput, DeleteMemoryInput
 # Import Sprint 3 functions
 from src.memory.search_engine import _get_qdrant_client, _get_voyage_client
 
-# UUID ↔ int mapping (same as search_tools.py)
-_uuid_to_int_cache = {}
-_int_to_uuid_cache = {}
-
-
-def _int_to_deterministic_uuid(doc_id: int) -> str:
-    """Generate stable, deterministic UUID from int doc_id."""
-    namespace = "memory-doc"
-    hash_input = f"{namespace}-{doc_id}".encode()
-    hash_digest = hashlib.sha256(hash_input).digest()
-    uuid_str = str(UUID(bytes=hash_digest[:16], version=4))
-
-    # Cache bidirectional mapping
-    _int_to_uuid_cache[doc_id] = uuid_str
-    _uuid_to_int_cache[uuid_str] = doc_id
-
-    return uuid_str
-
-
-def _uuid_to_int_id(uuid_str: str) -> int:
-    """Convert UUID back to int doc_id using cache."""
-    return _uuid_to_int_cache.get(uuid_str)
+# Import shared UUID cache (shared across all MCP tools)
+from .uuid_cache import int_to_deterministic_uuid as _int_to_deterministic_uuid
+from .uuid_cache import uuid_to_int_id as _uuid_to_int_id
 
 
 def _generate_next_id(collection: str, qdrant_client) -> int:
@@ -263,7 +244,7 @@ async def delete_memory(params: DeleteMemoryInput) -> str:
             return json.dumps({"error": "Document not found", "type": "NotFoundError"})
 
         # Determine collections to try
-        collections = params.roles if params.roles else ["backend", "frontend", "universal", "qa", "devops", "scrum-master"]
+        collections = params.roles if params.roles else ["backend", "frontend", "qa", "devops", "scrum-master"]
 
         # Try deleting from each collection
         deleted_from = None

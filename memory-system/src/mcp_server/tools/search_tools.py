@@ -21,29 +21,9 @@ from ..models import SearchMemoryInput, GetMemoryInput, BatchGetMemoriesInput
 # Import Sprint 3 functions
 from src.memory.search_engine import search, fetch, batch_fetch
 
-# UUID ↔ int mapping (deterministic based on mcp-builder review recommendation)
-_uuid_to_int_cache: Dict[str, int] = {}
-_int_to_uuid_cache: Dict[int, str] = {}
-
-
-def _int_to_deterministic_uuid(doc_id: int) -> str:
-    """Generate stable, deterministic UUID from int doc_id."""
-    namespace = "memory-doc"
-    hash_input = f"{namespace}-{doc_id}".encode()
-    hash_digest = hashlib.sha256(hash_input).digest()
-    # Create UUID from first 16 bytes of hash
-    uuid_str = str(UUID(bytes=hash_digest[:16], version=4))
-
-    # Cache bidirectional mapping
-    _int_to_uuid_cache[doc_id] = uuid_str
-    _uuid_to_int_cache[uuid_str] = doc_id
-
-    return uuid_str
-
-
-def _uuid_to_int_id(uuid_str: str) -> Optional[int]:
-    """Convert UUID back to int doc_id using cache."""
-    return _uuid_to_int_cache.get(uuid_str)
+# Import shared UUID cache (shared across all MCP tools)
+from .uuid_cache import int_to_deterministic_uuid as _int_to_deterministic_uuid
+from .uuid_cache import uuid_to_int_id as _uuid_to_int_id
 
 
 @mcp.tool(
@@ -70,7 +50,7 @@ async def search_memory(params: SearchMemoryInput) -> str:
     """
     try:
         # Determine collections to search
-        collections = params.roles if params.roles else ["backend", "frontend", "universal", "qa", "devops", "scrum-master"]
+        collections = params.roles if params.roles else ["backend", "frontend", "qa", "devops", "scrum-master"]
 
         # Search across all specified collections
         all_results = []
@@ -138,7 +118,7 @@ async def get_memory(params: GetMemoryInput) -> str:
             return json.dumps({"error": "Document not found", "type": "NotFoundError"})
 
         # Determine collections to search
-        collections = params.roles if params.roles else ["backend", "frontend", "universal", "qa", "devops", "scrum-master"]
+        collections = params.roles if params.roles else ["backend", "frontend", "qa", "devops", "scrum-master"]
 
         # Try each collection
         for collection in collections:

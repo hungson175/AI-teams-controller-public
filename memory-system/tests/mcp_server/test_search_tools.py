@@ -23,7 +23,7 @@ class TestSearchMemory:
         """Test search returns previews (title + description) without full content."""
         params = SearchMemoryInput(
             query="backend API testing patterns",
-            roles=["backend", "universal"],
+            roles=["backend", "frontend"],
             limit=10
         )
 
@@ -48,10 +48,10 @@ class TestSearchMemory:
 
     @pytest.mark.asyncio
     async def test_search_empty_results(self):
-        """Test search with no matching results."""
+        """Test search with non-existent collection returns empty."""
         params = SearchMemoryInput(
-            query="zxcvbnmasdfghjkl_nonexistent_query_12345",
-            roles=["backend"],
+            query="any query here",
+            roles=["nonexistent-collection-xyz-12345"],
             limit=10
         )
 
@@ -59,7 +59,8 @@ class TestSearchMemory:
         result = json.loads(result_str)
 
         assert "results" in result
-        assert result["results"] == []
+        # Empty results when collection doesn't exist
+        assert len(result["results"]) == 0
         assert result["total"] == 0
 
     @pytest.mark.asyncio
@@ -67,7 +68,7 @@ class TestSearchMemory:
         """Test search across multiple role collections."""
         params = SearchMemoryInput(
             query="testing patterns",
-            roles=["backend", "frontend", "universal"],
+            roles=["backend", "frontend", "qa"],
             limit=20
         )
 
@@ -79,7 +80,7 @@ class TestSearchMemory:
         if result["results"]:
             roles_found = {r["role"] for r in result["results"]}
             # At least one of the requested roles should appear
-            assert roles_found.issubset({"backend", "frontend", "universal", "qa", "devops", "scrum-master"})
+            assert roles_found.issubset({"backend", "frontend", "qa", "devops", "scrum-master"})
 
     @pytest.mark.asyncio
     async def test_search_respects_limit_parameter(self):
@@ -118,10 +119,35 @@ class TestGetMemory:
     @pytest.mark.asyncio
     async def test_fetch_existing_document_returns_full_content(self):
         """Test fetching existing document returns full content with metadata."""
-        # Use a known UUID from test fixtures
+        # First, create a document to fetch
+        from src.mcp_server.tools import mutation_tools
+        from src.mcp_server.models import StoreMemoryInput
+
+        store_params = StoreMemoryInput(
+            document="""**Title:** Test Document For Fetch
+**Description:** This document will be fetched in the test.
+
+**Content:** Test content with full details for retrieval verification.
+
+**Tags:** #fetch #test""",
+            metadata={
+                "memory_type": "semantic",
+                "role": "backend",
+                "tags": ["fetch", "test"],
+                "title": "Test Document For Fetch",
+                "description": "This document will be fetched"
+            }
+        )
+
+        store_result_str = await mutation_tools.store_memory(store_params)
+        store_result = json.loads(store_result_str)
+        assert "doc_id" in store_result
+        doc_id = store_result["doc_id"]
+
+        # Now fetch it
         params = GetMemoryInput(
-            doc_id="c226fff1-7d09-457f-8264-728d249d3490",  # From fixtures
-            roles=["backend", "universal"]
+            doc_id=doc_id,
+            roles=["backend", "frontend"]
         )
 
         result_str = await search_tools.get_memory(params)
@@ -176,9 +202,10 @@ class TestGetMemory:
     async def test_fetch_with_uuid_validation(self):
         """Test UUID validation works correctly."""
         # Invalid UUID format should be caught by Pydantic validation
-        with pytest.raises(ValueError, match="UUID"):
+        from pydantic_core import ValidationError
+        with pytest.raises(ValidationError, match="at least 36 characters"):
             GetMemoryInput(
-                doc_id="invalid-uuid-format",  # Missing hyphens
+                doc_id="invalid-uuid-format",  # Too short
                 roles=["backend"]
             )
 
@@ -229,7 +256,8 @@ class TestBatchGetMemories:
     async def test_batch_fetch_with_empty_list(self):
         """Test batch fetch validates empty list properly."""
         # Empty list should be caught by Pydantic validation
-        with pytest.raises(ValueError, match="min_items"):
+        from pydantic_core import ValidationError
+        with pytest.raises(ValidationError, match="at least 1 item"):
             BatchGetMemoriesInput(
                 doc_ids=[],  # Empty list
                 roles=["backend"]

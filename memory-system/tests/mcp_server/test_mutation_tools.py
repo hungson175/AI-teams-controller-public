@@ -56,7 +56,7 @@ class TestStoreMemory:
             document="**Title:** Minimal\n**Content:** Minimal content.",
             metadata={
                 "memory_type": "semantic",
-                "role": "universal",
+                "role": "backend",
                 "tags": ["minimal"],
                 "title": "Minimal",
                 "description": "Minimal description"
@@ -134,8 +134,31 @@ class TestUpdateMemory:
     @pytest.mark.asyncio
     async def test_update_existing_document(self):
         """Test updating existing document succeeds."""
+        # First, create a document to update
+        store_params = StoreMemoryInput(
+            document="""**Title:** Original Title
+**Description:** Original description.
+
+**Content:** Original content to be updated.
+
+**Tags:** #original #test""",
+            metadata={
+                "memory_type": "semantic",
+                "role": "backend",
+                "tags": ["original", "test"],
+                "title": "Original Title",
+                "description": "Original description"
+            }
+        )
+
+        store_result_str = await mutation_tools.store_memory(store_params)
+        store_result = json.loads(store_result_str)
+        assert "doc_id" in store_result
+        doc_id = store_result["doc_id"]
+
+        # Now update it
         params = UpdateMemoryInput(
-            doc_id="c226fff1-7d09-457f-8264-728d249d3490",  # From fixtures
+            doc_id=doc_id,
             document="""**Title:** Updated Title
 **Description:** Updated description.
 
@@ -156,7 +179,7 @@ class TestUpdateMemory:
 
         assert "status" in result
         assert result["status"] in ["success", "updated"]
-        assert result.get("doc_id") == "c226fff1-7d09-457f-8264-728d249d3490"
+        assert result.get("doc_id") == doc_id
 
     @pytest.mark.asyncio
     async def test_update_nonexistent_document_returns_error(self):
@@ -204,7 +227,7 @@ class TestUpdateMemory:
         """Test update modifies timestamps correctly."""
         params = UpdateMemoryInput(
             doc_id="c226fff1-7d09-457f-8264-728d249d3490",
-            document="Updated",
+            document="Updated content with proper length for validation",
             metadata={
                 "memory_type": "semantic",
                 "role": "backend",
@@ -229,8 +252,31 @@ class TestDeleteMemory:
     @pytest.mark.asyncio
     async def test_delete_existing_document(self):
         """Test deleting existing document succeeds."""
+        # First, create a document to delete
+        store_params = StoreMemoryInput(
+            document="""**Title:** Document To Delete
+**Description:** This document will be deleted in the test.
+
+**Content:** Test content for deletion.
+
+**Tags:** #delete #test""",
+            metadata={
+                "memory_type": "semantic",
+                "role": "backend",
+                "tags": ["delete", "test"],
+                "title": "Document To Delete",
+                "description": "This document will be deleted"
+            }
+        )
+
+        store_result_str = await mutation_tools.store_memory(store_params)
+        store_result = json.loads(store_result_str)
+        assert "doc_id" in store_result
+        doc_id = store_result["doc_id"]
+
+        # Now delete it
         params = DeleteMemoryInput(
-            doc_id="c226fff1-7d09-457f-8264-728d249d3490",
+            doc_id=doc_id,
             roles=["backend"]
         )
 
@@ -261,7 +307,7 @@ class TestDeleteMemory:
         """Test delete returns remaining document count in collection."""
         params = DeleteMemoryInput(
             doc_id="c226fff1-7d09-457f-8264-728d249d3490",
-            roles=["backend", "universal"]
+            roles=["backend", "frontend"]
         )
 
         result_str = await mutation_tools.delete_memory(params)
