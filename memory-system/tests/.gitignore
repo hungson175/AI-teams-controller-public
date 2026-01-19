@@ -1,0 +1,6 @@
+# Test results and coverage artifacts
+results/*/htmlcov/
+
+# Keep summary reports
+!results/*/COVERAGE_REPORT.txt
+!results/*/coverage.json

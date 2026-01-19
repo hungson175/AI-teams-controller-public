@@ -53,9 +53,9 @@ Note: Missing lines are acceptable because:
 =============================================================================
 ARTIFACTS
 =============================================================================
-- HTML Coverage Report: test-results/sprint3/htmlcov/index.html
-- JSON Coverage Data: test-results/sprint3/coverage.json
-- This Report: test-results/sprint3/COVERAGE_REPORT.txt
+- HTML Coverage Report: tests/results/sprint3/htmlcov/index.html
+- JSON Coverage Data: tests/results/sprint3/coverage.json
+- This Report: tests/results/sprint3/COVERAGE_REPORT.txt
 
 =============================================================================
 CONCLUSION

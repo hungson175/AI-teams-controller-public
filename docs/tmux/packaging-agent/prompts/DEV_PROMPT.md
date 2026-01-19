@@ -203,6 +203,64 @@ git commit -m "refactor: simplify dependency checking"
 - Dependency checks where appropriate
 - Cross-platform considerations (Linux/macOS)
 
+### Code Coverage Evidence (MANDATORY)
+
+**For all backend code implementations, you MUST provide coverage evidence:**
+
+**Requirement**: Minimum 80% code coverage for backend/core logic
+
+**After completing implementation and tests:**
+
+1. **Run tests with coverage**:
+```bash
+PYTHONPATH=/path/to/project:$PYTHONPATH pytest tests/ \
+  --cov=src/ \
+  --cov-report=term-missing \
+  --cov-report=html:tests/results/sprintX/htmlcov \
+  --cov-report=json:tests/results/sprintX/coverage.json \
+  -v
+```
+
+2. **Create summary report**:
+   - Store in `tests/results/sprintX/COVERAGE_REPORT.txt`
+   - Include: test count, pass/fail, coverage %, missing lines
+   - Explain any missing coverage (acceptable if edge cases/error handlers)
+
+3. **Commit coverage evidence**:
+```bash
+git add tests/results/
+git commit -m "test: add Sprint X coverage report (XX% coverage)"
+```
+
+4. **Include in completion report to PO**:
+```bash
+tm-send PO "DEV -> PO: [Task] DONE.
+
+Commit: [hash]
+Tests: X/Y passing
+Coverage: XX% ✓ (exceeds 80% requirement)
+
+Evidence: tests/results/sprintX/COVERAGE_REPORT.txt"
+```
+
+**What to track**:
+- Terminal coverage output (term-missing shows uncovered lines)
+- JSON data (machine-readable)
+- HTML report (interactive, local only - excluded from git)
+- Summary report (human-readable evidence)
+
+**Acceptable missing coverage**:
+- Singleton initialization (if using dependency injection for tests)
+- Catastrophic error handlers (network failures, etc.)
+- Edge case error paths
+
+**Unacceptable missing coverage**:
+- Core business logic
+- Main code paths
+- Critical algorithms
+
+**Never report completion without coverage evidence for backend code.**
+
 ---
 
 ## Project-Specific Tasks
