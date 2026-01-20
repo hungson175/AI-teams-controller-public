@@ -338,7 +338,98 @@ except Exception as e:
         log_warning "Voyage API key not configured - skipping verification"
     fi
 
+    # Verify skills installation
+    log_info "Verifying skills installation..."
+    if [ -d "$HOME/.claude/skills/project-memory-store" ] && [ -d "$HOME/.claude/skills/project-memory-recall" ]; then
+        log_success "Skills verified (project-memory-store, project-memory-recall)"
+    else
+        log_error "Skills verification failed"
+        return 1
+    fi
+
+    # Verify subagent installation
+    log_info "Verifying subagent installation..."
+    if [ -f "$HOME/.claude/agents/memory-agent.md" ]; then
+        log_success "Subagent verified (memory-agent)"
+    else
+        log_error "Subagent verification failed"
+        return 1
+    fi
+
+    # Verify hooks installation
+    log_info "Verifying hooks installation..."
+    if [ -x "$HOME/.claude/hooks/memory_store_reminder.py" ] && [ -x "$HOME/.claude/hooks/todowrite_memory_recall.py" ]; then
+        log_success "Hooks verified (memory_store_reminder.py, todowrite_memory_recall.py)"
+    else
+        log_error "Hooks verification failed"
+        return 1
+    fi
+
     log_success "Installation verification complete"
+}
+
+# Install memory skills
+install_skills() {
+    log_info "Installing memory skills..."
+
+    local skills_dir="$HOME/.claude/skills"
+    mkdir -p "$skills_dir"
+
+    # Install project-memory-store
+    if [ -d "$skills_dir/project-memory-store" ]; then
+        log_info "project-memory-store already installed, updating..."
+        rm -rf "$skills_dir/project-memory-store"
+    fi
+    cp -r "$(pwd)/skills/project-memory-store" "$skills_dir/"
+    log_success "Installed project-memory-store skill"
+
+    # Install project-memory-recall
+    if [ -d "$skills_dir/project-memory-recall" ]; then
+        log_info "project-memory-recall already installed, updating..."
+        rm -rf "$skills_dir/project-memory-recall"
+    fi
+    cp -r "$(pwd)/skills/project-memory-recall" "$skills_dir/"
+    log_success "Installed project-memory-recall skill"
+
+    log_success "Memory skills installation complete"
+}
+
+# Install memory subagent
+install_subagent() {
+    log_info "Installing memory subagent..."
+
+    local agents_dir="$HOME/.claude/agents"
+    mkdir -p "$agents_dir"
+
+    # Install memory-agent
+    if [ -f "$agents_dir/memory-agent.md" ]; then
+        log_info "memory-agent already installed, updating..."
+    fi
+    cp "$(pwd)/subagents/memory-agent/memory-agent.md" "$agents_dir/"
+    log_success "Installed memory-agent subagent"
+
+    log_success "Memory subagent installation complete"
+}
+
+# Install memory hooks
+install_hooks() {
+    log_info "Installing memory hooks..."
+
+    local hooks_dir="$HOME/.claude/hooks"
+    mkdir -p "$hooks_dir"
+
+    # Install hooks
+    for hook_file in hooks/*.py; do
+        local hook_name=$(basename "$hook_file")
+        if [ -f "$hooks_dir/$hook_name" ]; then
+            log_info "$hook_name already installed, updating..."
+        fi
+        cp "$hook_file" "$hooks_dir/"
+        chmod +x "$hooks_dir/$hook_name"
+        log_success "Installed $hook_name"
+    done
+
+    log_success "Memory hooks installation complete"
 }
 
 # Print next steps
@@ -361,9 +452,17 @@ print_next_steps() {
     echo "3. Or configure Claude Code to use this MCP server"
     echo "   (see README.md for configuration instructions)"
     echo ""
-    echo "Services:"
+    echo "Installed Components:"
     echo "  - Qdrant: http://localhost:${QDRANT_PORT}"
     echo "  - MCP Server: stdio transport"
+    echo "  - Skills: project-memory-store, project-memory-recall"
+    echo "  - Subagent: memory-agent"
+    echo "  - Hooks: memory_store_reminder.py, todowrite_memory_recall.py"
+    echo ""
+    echo "Memory Skills Usage:"
+    echo "  - Use 'project-memory-store' to save coding patterns"
+    echo "  - Use 'project-memory-recall' to retrieve relevant memories"
+    echo "  - Hooks automatically trigger skills when appropriate"
     echo ""
 
     if ! grep -q "VOYAGE_API_KEY=.*[a-zA-Z0-9]" .env || grep -q "VOYAGE_API_KEY=your-voyage-api-key-here" .env; then
@@ -395,7 +494,19 @@ main() {
     configure_environment
     echo ""
 
-    # Step 5: Verify installation
+    # Step 5: Install memory skills
+    install_skills
+    echo ""
+
+    # Step 6: Install memory subagent
+    install_subagent
+    echo ""
+
+    # Step 7: Install memory hooks
+    install_hooks
+    echo ""
+
+    # Step 8: Verify installation
     verify_installation
     echo ""
 
