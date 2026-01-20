@@ -46,9 +46,9 @@ su - developer
 
 **Installation**:
 1. Clone this repository
-2. Open project in Claude Code with required flag:
+2. Open project in Claude Code with required flags:
    ```bash
-   claude --dangerously-skip-permissions
+   claude --settings ~/.claude/settings.json --dangerously-skip-permissions
    ```
 3. Ask Claude Code: "Read docs/README/INSTALLATION-FOR-CLAUDE-CODE.md and install the system"
 4. Claude Code will read the installation guide and handle everything
