@@ -30,12 +30,12 @@ A production-ready autonomous AI software development system built on Claude Cod
 **Installation**:
 1. Clone this repository
 2. Open project in Claude Code
-3. Ask Claude Code: "Read INSTALLATION-FOR-CLAUDE-CODE.md and install the system"
+3. Ask Claude Code: "Read docs/README/INSTALLATION-FOR-CLAUDE-CODE.md and install the system"
 4. Claude Code will read the installation guide and handle everything
 
 **Why Claude Code handles installation?** AI-guided setup adapts to your system and resolves issues automatically. Better than rigid bash scripts.
 
-**For detailed installation instructions**, see: [INSTALLATION-FOR-CLAUDE-CODE.md](./INSTALLATION-FOR-CLAUDE-CODE.md)
+**For detailed installation instructions**, see: [docs/README/INSTALLATION-FOR-CLAUDE-CODE.md](./docs/README/INSTALLATION-FOR-CLAUDE-CODE.md)
 
 ---
 
@@ -66,7 +66,7 @@ Next.js + FastAPI web application for visual team management, monitoring, and vo
 
 ## Installation Instructions for Claude Code
 
-**See**: [INSTALLATION-FOR-CLAUDE-CODE.md](./INSTALLATION-FOR-CLAUDE-CODE.md)
+**See**: [docs/README/INSTALLATION-FOR-CLAUDE-CODE.md](./docs/README/INSTALLATION-FOR-CLAUDE-CODE.md)
 
 This file contains detailed step-by-step instructions designed for Claude Code to read and execute. Includes installation for all three components.
 
