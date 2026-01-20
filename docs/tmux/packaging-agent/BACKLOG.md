@@ -8,6 +8,35 @@
 
 ## P0 - MUST DO (Prevents Ship)
 
+### 🔄 IN PROGRESS: LXD-Based Installation Testing
+**Status**: DEV executing Phases 1-6, DU awaiting Phase 7
+**Started**: 2026-01-20 23:09
+**Blocker**: LXD installation (RESOLVED 23:11 - authorized sudo install)
+
+Final validation before ship. Test all 3 components in isolated LXD environment.
+
+**Phases**:
+- Phase 1: LXD container setup (DEV - IN PROGRESS)
+- Phase 2: Component 1 (tmux-team-creator) testing (DEV - PENDING)
+- Phase 3: Component 2 (Memory System) testing (DEV - PENDING)
+- Phase 4: Component 3 (Web UI) testing (DEV - PENDING)
+- Phase 5: Integration testing (DEV - PENDING)
+- Phase 6: Claude Code auto-install test (DEV - PENDING)
+- Phase 7: Test report documentation (DU - PENDING)
+
+**Critical Testing Patterns**:
+1. Smoke test FIRST before detailed testing
+2. Start services in dependency order: Qdrant → Memory → Web UI
+3. Use bash TCP checks for Qdrant healthcheck
+4. Verify deployment config in container
+5. Graceful shutdown for Qdrant data integrity
+
+**Deliverables**:
+- DEV: Technical execution log with findings
+- DU: Test report at docs/testing/INSTALLATION_TEST_REPORT.md
+
+---
+
 ### ⚠️ CRITICAL REVIEW: Memory Skills Implementation (PERSISTENT REMINDER)
 **Boss directive**: "Keep reminding me until I say I've reviewed it. Otherwise it's careless and nothing gets done."
 

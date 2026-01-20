@@ -135,18 +135,38 @@ install_backend() {
         log_info ".env file already exists"
     fi
 
-    # Install Python dependencies
-    if [ -f "pyproject.toml" ]; then
-        log_info "Installing Python dependencies with uv..."
+    # Create virtual environment (PEP 668 compliance for Ubuntu 24.04+)
+    if [ ! -d ".venv" ]; then
+        log_info "Creating Python virtual environment..."
+        python3 -m venv .venv
+        log_success "Virtual environment created"
+    else
+        log_info "Virtual environment already exists"
+    fi
+
+    # Activate virtual environment
+    log_info "Activating virtual environment..."
+    source .venv/bin/activate
+
+    # Upgrade pip in venv
+    log_info "Upgrading pip..."
+    pip install --upgrade pip >/dev/null 2>&1
+
+    # Install Python dependencies from requirements.txt
+    if [ -f "requirements.txt" ]; then
+        log_info "Installing Python dependencies from requirements.txt..."
+        pip install -r requirements.txt
+        log_success "Backend dependencies installed"
+    elif [ -f "pyproject.toml" ]; then
+        log_warning "requirements.txt not found, falling back to pyproject.toml..."
         if command_exists uv; then
             uv pip install -e .
         else
-            log_warning "uv not found, using pip..."
             pip install -e .
         fi
         log_success "Backend dependencies installed"
     else
-        log_error "pyproject.toml not found"
+        log_error "Neither requirements.txt nor pyproject.toml found"
         exit 1
     fi
 
@@ -154,6 +174,9 @@ install_backend() {
     log_info "Creating demo database with test user..."
     python scripts/init_sqlite_demo.py
     log_success "Demo database initialized"
+
+    # Deactivate venv
+    deactivate
 
     # Display demo credentials prominently
     echo ""
@@ -244,6 +267,7 @@ print_next_steps() {
     echo ""
     echo "1. Start the backend:"
     echo "   cd backend"
+    echo "   source .venv/bin/activate"
     echo "   uvicorn app.main:app --reload --port 17063"
     echo ""
     echo "2. In another terminal, start the frontend:"

@@ -7,32 +7,17 @@
 - Git history manages past work, not whiteboard
 - Context pollution kills AI agent effectiveness
 
-**Last Updated**: 2026-01-20 15:20
+**Last Updated**: 2026-01-20 23:10
 
 ---
 
-## Current Status: GLOBAL Memory Rename Complete
+## Last Sprint: P0 Claude Code Autonomous Installation Testing (COMPLETE)
 
-**Just Completed** (2026-01-20 15:17):
-- ✅ Skills renamed: project-memory-* → coder-memory-* (commit afba44a)
-- ✅ Subagent renamed: memory-agent → memory-only
-- ✅ All references updated (install script, hooks, docs)
-- ✅ PO verification passed
-- ✅ Matches V7 design exactly
+**Objective**: Can Claude Code read our installation docs and autonomously install all 3 components? Document what Claude Code struggles with.
 
-**Correct Names** (GLOBAL cross-project learning):
-- coder-memory-store (NOT project-memory-store)
-- coder-memory-recall (NOT project-memory-recall)
-- memory-only subagent (NOT memory-agent)
+**Approach**: Fresh LXD container → Install Claude Code → Point at README → Let Claude Code autonomously install → Document friction
 
-**Component Status**:
-- Component 1 (tmux-team-creator): ✅ Ready
-- Component 2 (Memory System): ✅ **Ready for Boss final architecture review**
-- Component 3 (Web UI): ✅ Ready
-
-**All 3 Components Packaged and Ready**
-
-**Next**: Boss final review of memory system architecture
+**Key Insight**: Installation guides are written FOR CLAUDE CODE to read, not manual steps for humans
 
 ---
 
@@ -40,28 +25,58 @@
 
 | Role | Status | Current Task |
 |------|--------|--------------|
-| PO | ACTIVE | Waiting for DEV metadata fix, will verify before Boss final review |
-| DEV | IMPLEMENTING | Fixing metadata mismatch (P1 critical - update skills to 3 fields) |
-| DU | STANDBY | Awaiting assignment |
+| PO | STANDBY | P0 testing complete - awaiting Boss assignment |
+| DEV | STANDBY | All critical fixes committed - container cleaned |
+| DU | STANDBY | Test report complete - awaiting next assignment |
+
+**Auth Resolved** (00:02): Environment variables approach worked (settings.json failed)
+
+**Test Complete** (00:09):
+- ✅ Duration: 4m 50s autonomous work
+- ✅ 2/3 components installed (tmux + Web UI)
+- ⚠️ 1/3 blocked (Memory - Docker permissions)
+- ✅ 8 critical findings documented
+- ✅ Claude Code validated installation docs work
+
+**Test in Progress**:
+- Repo: https://github.com/hungson175/AI-teams-controller-public
+- Claude Code reading README and installing autonomously
+- DEV monitoring and documenting issues
+
+**Issues Found & Fixed**:
+1. ✅ --dangerously-skip-permissions flag (646c566)
+2. ✅ Root user restriction (953cf55)
+3. ✅ Auth via env vars (60a228f)
+4. ✅ Sudo requirement (2d0b9c4)
+5. ✅ PATH troubleshooting (056bab5)
+9. ✅ Frontend @codemirror/lang-yaml (a20e127) - P0
+10. ✅ /init-role command installation (667ae45) - P0
+
+**Remaining Issues** (documented in findings report):
+6. 📋 Docker group permission
+7. 📋 PEP 668 venv requirement
+8. 📋 pyproject.toml flat-layout
+
+**DEV Deliverables**: Technical execution log (6 phases), findings, error captures
+**DU Deliverables**: Test report at docs/testing/INSTALLATION_TEST_REPORT.md
 
 ---
 
-## Blockers
+## Component Status
 
-**⚠️ CRITICAL: Boss Memory Skills Review** (PERSISTENT REMINDER)
-- Boss must review: project-memory-store, project-memory-recall, memory-agent architecture
-- Questions: MCP stability? Subagent stability? ROM of memory-agent? Keep or redesign?
-- Boss directive: "Keep reminding me until I say I've reviewed it"
-- **Status**: ❌ NOT REVIEWED - BLOCKS FINALIZATION
-- **PO must remind Boss every session**
+- Component 1 (tmux-team-creator): ✅ Ready for testing
+- Component 2 (Memory System): ✅ Ready for testing
+- Component 3 (Web UI): ✅ Ready for testing
 
 ---
 
-## Cross-Team Coordination
+## Critical Testing Patterns (from memory recall)
 
-When memory system complete → Report to:
-1. Boss
-2. PO@packaging-comandcenter via: `tm-send -s packaging-comandcenter PO "message"`
+1. **Smoke test FIRST** before detailed testing
+2. **Start services in dependency order**: Qdrant → Memory → Web UI
+3. **Use bash TCP checks** for Qdrant healthcheck (no curl in minimal image)
+4. **Verify deployment config** in container (env vars, API keys)
+5. **Graceful shutdown** for Qdrant data integrity
 
 ---
 
@@ -69,4 +84,3 @@ When memory system complete → Report to:
 
 - Backlog: `docs/tmux/packaging-agent/BACKLOG.md`
 - Workflow: `docs/tmux/packaging-agent/workflow.md`
-- Sprint 3 Spec: `memory-system/SPRINT3_SPEC.md`
