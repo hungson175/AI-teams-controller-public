@@ -8,13 +8,39 @@
 
 ## P0 - MUST DO (Prevents Ship)
 
+### ⚠️ CRITICAL REVIEW: Memory Skills Implementation (PERSISTENT REMINDER)
+**Boss directive**: "Keep reminding me until I say I've reviewed it. Otherwise it's careless and nothing gets done."
+
+**PO MUST REMIND BOSS EVERY SESSION** until Boss confirms review complete.
+
+**What Boss needs to review**:
+- project-memory-store implementation
+- project-memory-recall implementation
+- memory-agent subagent architecture
+
+**Questions Boss must answer**:
+1. Is using MCP for memory skills stable enough?
+2. Is using subagent approach stable enough?
+3. What is the ROM (role/responsibility) of the memory-agent subagent?
+4. Should we keep current architecture or redesign?
+
+**Current Implementation** (Sprint 5):
+- project-memory-store: Uses Task tool → memory-agent subagent → MCP tools
+- project-memory-recall: Uses Task tool → memory-agent subagent → MCP tools
+- memory-agent: ONLY has MCP memory tools (zero file access)
+
+**Location**: memory-system/skills/, memory-system/subagents/
+**Status**: ❌ NOT REVIEWED - BLOCKS FINALIZATION
+
+---
+
 ### Pre-Publishing Checklist
 Complete ALL items before public distribution: API keys, memory system, README, sensitive file cleanup, installation scripts, demo materials, final testing, GitHub setup.
 **Details**: `backlog/pre-publishing-checklist.md`
 
 ### Generate Test API Keys
 Boss: Generate 6 test API keys (xAI, Soniox, Voyage, Google TTS, OpenAI, HD-TTS) with PREPAID/spending limits, prefix with "TO-BE-REMOVED", commit to repo for easy public testing.
-**Details**: `backlog/api-keys-generation.md`
+**Details**: `backlog/api-keys-generation.md` (Updated 2026-01-20: Added API key revocation warnings)
 
 ### xAI Email
 Send to xAI team: Brief intro + annotated screenshot + demo video (delegated to friend) + GitHub link.
@@ -31,28 +57,6 @@ Rewrite V6 README (Boss: "pretty shitty"). Fix installation instructions, add me
 ---
 
 ## P1 - SHOULD DO (Required for MVP)
-
-### CRITICAL REVIEW: Memory Skills Implementation
-**Boss reminder**: Review project-memory-store and project-memory-recall implementation carefully.
-
-**Important**: These were NOT just copied from coder-memory-* - there's a reason for rewrite.
-
-**Questions Boss needs to answer during review**:
-1. Is using MCP for memory skills stable enough?
-2. Is using subagent approach stable enough?
-3. What is the ROM (role/responsibility) of the memory-agent subagent?
-4. Should we keep current architecture or redesign?
-
-**Current Implementation** (Sprint 5):
-- project-memory-store: Uses Task tool → memory-agent subagent → MCP tools
-- project-memory-recall: Uses Task tool → memory-agent subagent → MCP tools
-- memory-agent: ONLY has MCP memory tools (zero file access)
-
-**Action**: Boss to review before finalizing packaging
-**Priority**: P1 - Blocks finalization
-**Location**: memory-system/skills/, memory-system/subagents/
-
----
 
 ### Component 1: Cleanup Team Templates
 Remove unnecessary team templates from tmux-team-creator skill:

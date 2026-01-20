@@ -131,6 +131,21 @@ install_backend() {
     python scripts/init_sqlite_demo.py
     log_success "Demo database initialized"
 
+    # Display demo credentials prominently
+    echo ""
+    echo "╔════════════════════════════════════════════════════════╗"
+    echo "║                                                        ║"
+    echo "║              DEMO CREDENTIALS CREATED                 ║"
+    echo "║                                                        ║"
+    echo "╚════════════════════════════════════════════════════════╝"
+    echo ""
+    log_success "Email:    test@example.com"
+    log_success "Password: test123"
+    echo ""
+    log_warning "IMPORTANT: Revoke all API keys before public distribution!"
+    log_warning "Check backend/.env for XAI_API_KEY, OPENAI_API_KEY, etc."
+    echo ""
+
     cd "$SCRIPT_DIR"
 }
 
@@ -187,9 +202,16 @@ print_next_steps() {
     echo "║                                                        ║"
     echo "╚════════════════════════════════════════════════════════╝"
     echo ""
-    echo "Demo Credentials (auto-created):"
-    echo "  Email: test@example.com"
-    echo "  Password: test123"
+    echo "╔════════════════════════════════════════════════════════╗"
+    echo "║                                                        ║"
+    echo "║                DEMO CREDENTIALS                        ║"
+    echo "║                                                        ║"
+    echo "╚════════════════════════════════════════════════════════╝"
+    echo ""
+    log_success "Email:    test@example.com"
+    log_success "Password: test123"
+    echo ""
+    log_warning "IMPORTANT: Revoke all API keys before public distribution!"
     echo ""
     echo "Next steps:"
     echo ""

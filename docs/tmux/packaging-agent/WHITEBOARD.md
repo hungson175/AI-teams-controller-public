@@ -53,7 +53,12 @@
 
 ## Blockers
 
-None
+**⚠️ CRITICAL: Boss Memory Skills Review** (PERSISTENT REMINDER)
+- Boss must review: project-memory-store, project-memory-recall, memory-agent architecture
+- Questions: MCP stability? Subagent stability? ROM of memory-agent? Keep or redesign?
+- Boss directive: "Keep reminding me until I say I've reviewed it"
+- **Status**: ❌ NOT REVIEWED - BLOCKS FINALIZATION
+- **PO must remind Boss every session**
 
 ---
 

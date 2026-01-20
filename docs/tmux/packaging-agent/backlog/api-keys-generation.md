@@ -72,11 +72,16 @@ Boss: Remind me to create these:
 - `AI-teams-controller-public/backend/.env`
 - `memory-system/.env`
 
-**Add comments**:
+**Add comments with REVOCATION WARNING**:
 ```bash
-# TO-BE-REMOVED: Temporary test key, will be deleted after public testing period
+# ⚠️ WARNING: This test API key may be REVOKED at any time.
+# Boss cannot sponsor every user forever (prepaid limits run out).
+# If you see auth errors, configure your own API key.
+# TO-BE-REMOVED: Temporary test key for initial testing only.
 XAI_API_KEY=your-test-key-here
 ```
+
+**Format for ALL test keys**: Include revocation warning + TO-BE-REMOVED marker
 
 ---
 
@@ -107,7 +112,9 @@ Boss: Add to-do in all provider consoles:
 - [ ] Generate NEW test API keys (all prefixed with "TO-BE-REMOVED-" in comments)
 - [ ] Verify ALL keys are PREPAID or have low spending limits ($5-10)
 - [ ] Update .env files with test keys
-- [ ] Add TO-BE-REMOVED comments to all keys
+- [ ] Add REVOCATION WARNING + TO-BE-REMOVED comments to all keys in .env files
+- [ ] Add revocation warnings to ALL installation scripts (install-web-ui.sh, install-memory-system.sh)
+- [ ] Add revocation warnings to ALL documentation (Backend README, Memory INSTALLATION.md, main README)
 - [ ] Add reminders in ALL provider consoles
 - [ ] Commit keys to repo (intentional - not gitignored)
 - [ ] Boss: Delete all test keys after public testing period
