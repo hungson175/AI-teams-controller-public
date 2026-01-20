@@ -89,18 +89,61 @@ check_prerequisites() {
     log_success "Prerequisites check passed"
 }
 
-# Check Docker availability
+# Check Docker availability and permissions
 check_docker() {
-    if command_exists docker; then
-        if docker info >/dev/null 2>&1; then
-            log_success "Docker is available and running"
-            return 0
+    if ! command_exists docker; then
+        log_warning "Docker is not installed"
+        return 1
+    fi
+
+    # Check if Docker daemon is running and if we have permissions
+    if docker info >/dev/null 2>&1; then
+        log_success "Docker is available and running"
+        return 0
+    fi
+
+    # Check if it's a permission error
+    if docker info 2>&1 | grep -q "permission denied"; then
+        log_warning "Docker permission denied - user not in docker group"
+
+        # Attempt to fix automatically with sudo
+        log_info "Attempting to add user to docker group..."
+
+        if command_exists sudo; then
+            if sudo usermod -aG docker "$USER"; then
+                log_success "User added to docker group successfully"
+                echo ""
+                log_warning "IMPORTANT: You must log out and log back in for group changes to take effect"
+                log_warning "Or run: newgrp docker"
+                echo ""
+                read -p "Do you want to continue with 'newgrp docker' now? (y/n) " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Yy]$ ]]; then
+                    log_info "Attempting to activate docker group with newgrp..."
+                    # Note: newgrp spawns a new shell, so we need to re-run docker check
+                    if sg docker -c "docker info >/dev/null 2>&1"; then
+                        log_success "Docker access confirmed with new group"
+                        return 0
+                    fi
+                fi
+
+                log_error "Please log out and log back in, then run this script again"
+                exit 1
+            else
+                log_error "Failed to add user to docker group (sudo failed)"
+                log_info "Manual fix: sudo usermod -aG docker \$USER"
+                log_info "Then log out and log back in"
+                exit 1
+            fi
         else
-            log_warning "Docker is installed but not running"
-            return 1
+            log_error "sudo not available - cannot automatically fix Docker permissions"
+            log_info "Manual fix: sudo usermod -aG docker \$USER"
+            log_info "Then log out and log back in"
+            exit 1
         fi
     else
-        log_warning "Docker is not installed"
+        log_warning "Docker is installed but not running or inaccessible"
+        log_info "Try: sudo systemctl start docker"
         return 1
     fi
 }
