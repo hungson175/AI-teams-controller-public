@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Database configuration for async SQLAlchemy 2.0 with SQLite (demo mode).
+"""Database configuration for async SQLAlchemy 2.0 with SQLite.
 
 Sprint 25: Database Layer Setup
-- Async engine with aiosqlite driver (demo mode with SQLite)
+- Async engine with aiosqlite driver
 - Session factory with expire_on_commit=False
 - Base model with naming conventions
 - Dependency injection for FastAPI
-
-NOTE: For production, use PostgreSQL with asyncpg driver.
 """
 
 import os
@@ -23,30 +21,17 @@ from sqlalchemy.ext.asyncio import (
 from sqlalchemy.orm import DeclarativeBase
 
 # Load DATABASE_URL from environment
-# Default to SQLite for demo mode (easy setup, no external dependencies)
-# For production, set DATABASE_URL to PostgreSQL connection string
+# SQLite database (no external dependencies required)
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",
-    "sqlite+aiosqlite:///./aicontroller.db",  # Local SQLite file for demo
+    "sqlite+aiosqlite:///./aicontroller.db",
 )
 
-# Create async engine with appropriate settings
-# Note: SQLite doesn't support pool_size/max_overflow/pool_timeout
-if DATABASE_URL.startswith("sqlite"):
-    # SQLite settings (no pooling parameters)
-    engine = create_async_engine(
-        DATABASE_URL,
-        echo=False,  # Set to True for SQL debugging
-    )
-else:
-    # PostgreSQL settings (with connection pooling)
-    engine = create_async_engine(
-        DATABASE_URL,
-        echo=False,  # Set to True for SQL debugging
-        pool_size=10,
-        max_overflow=20,
-        pool_timeout=30,
-    )
+# Create async engine with SQLite
+engine = create_async_engine(
+    DATABASE_URL,
+    echo=False,  # Set to True for SQL debugging
+)
 
 # Create session factory with expire_on_commit=False (critical for async)
 async_session_maker = async_sessionmaker(

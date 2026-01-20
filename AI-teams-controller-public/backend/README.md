@@ -6,36 +6,21 @@ FastAPI backend for AI Teams Controller web application.
 
 ## Database
 
-### SQLite Demo Mode (Default)
+Uses SQLite for zero-configuration setup:
 
-Demo mode uses SQLite for zero-configuration setup:
-
-- **Database**: `demo.db` (auto-created)
+- **Database**: `aicontroller.db` (auto-created)
 - **Demo credentials**: test@example.com / test123
 - **Initialization**: One command
-- **Use case**: Quick demo, development, testing
+- **No external database required**
 
 **Initialize demo database**:
 ```bash
 python scripts/init_sqlite_demo.py
 ```
 
-Creates demo.db with:
+Creates aicontroller.db with:
 - Demo user (test@example.com / test123)
-- Sample teams and configurations
 - Default voice settings
-
-### Production Mode (PostgreSQL)
-
-For production deployment with PostgreSQL:
-
-**Configuration**:
-```bash
-# Set environment variable
-export DATABASE_URL=postgresql://user:password@localhost/dbname
-```
-
-Backend automatically switches to PostgreSQL when `DATABASE_URL` is set.
 
 ---
 
@@ -85,7 +70,7 @@ Backend runs on: http://localhost:8000
 ## Environment Variables
 
 **Optional**:
-- `DATABASE_URL` - PostgreSQL connection (default: SQLite demo.db)
+- `DATABASE_URL` - SQLite database path (default: sqlite+aiosqlite:///./aicontroller.db)
 - `SECRET_KEY` - JWT secret (auto-generated for demo)
 - `CORS_ORIGINS` - Allowed origins (default: http://localhost:3000)
 
@@ -101,7 +86,7 @@ python scripts/init_sqlite_demo.py
 
 **"Login failed"**:
 - Verify demo credentials: test@example.com / test123
-- Check database initialized: `ls demo.db`
+- Check database initialized: `ls aicontroller.db`
 
 **"Port 8000 in use"**:
 ```bash
@@ -111,5 +96,5 @@ uvicorn app.main:app --port 8001
 
 ---
 
-**Default Mode**: SQLite demo (no PostgreSQL required)
+**Database**: SQLite (zero configuration)
 **Demo Credentials**: test@example.com / test123

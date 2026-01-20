@@ -48,6 +48,9 @@
 - [ ] All 3 components install and run
 - [ ] No manual configuration required
 - [ ] Error handling graceful
+- [ ] **Test user created during installation** (users can login immediately)
+  - Web UI: test@example.com / test123 auto-created
+  - Verify login works without manual user setup
 
 ## 8. GitHub Repository
 - [ ] All commits pushed

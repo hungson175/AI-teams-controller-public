@@ -140,7 +140,7 @@ Password: test123
 **Installation**: TBD - will include:
 - Frontend setup (Next.js + pnpm)
 - Backend setup (FastAPI + Python 3.11+)
-- Database setup (SQLite for demo, PostgreSQL for production)
+- Database setup (SQLite - zero configuration)
 - Demo user auto-created during installation
 - One-command installer
 

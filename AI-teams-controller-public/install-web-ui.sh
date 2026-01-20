@@ -216,11 +216,6 @@ print_next_steps() {
     echo "  - Backend config: backend/.env"
     echo "  - Frontend config: frontend/.env.local (if needed)"
     echo ""
-    echo "For production PostgreSQL setup:"
-    echo "  - Edit backend/.env"
-    echo "  - Set DATABASE_URL to PostgreSQL connection string"
-    echo "  - Install asyncpg: pip install asyncpg"
-    echo ""
 }
 
 # Main installation flow
