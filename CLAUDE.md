@@ -93,7 +93,6 @@ Packaging the AI Teams Controller system for public release. Ship by 11:59 PM TO
 - **WHITEBOARD.md**: `docs/tmux/packaging-agent/WHITEBOARD.md` - Current status
 - **EPIC (Memory)**: `docs/tmux/packaging-agent/epics/EPIC_MEMORY_SYSTEM.md`
 - **Demo Script**: `docs/demo-script/v1-demo-script.md`
-- **v5 README**: `/home/hungson175/dev/coding-agents/packaging-agent/v5-README.md`
 
 ---
 
@@ -113,7 +112,6 @@ Packaging the AI Teams Controller system for public release. Ship by 11:59 PM TO
    - Script ready at docs/demo-script/v1-demo-script.md
 
 2. **README Finalization** (30 min) - Required for ship
-   - Use v5-README.md as base
    - Add memory system details after implementation
 
 ---
