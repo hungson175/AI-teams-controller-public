@@ -14,7 +14,7 @@
 
 ## Project Overview
 
-Packaging the AI Teams Controller system for public release. Ship by 11:59 PM TODAY as proof of work for job applications (xAI, Axon ASOM, international contracts).
+Packaging the AI Teams Controller system for public release. Ship by 11:59 PM TODAY.
 
 **Mission**: Ship raw truth, not perfect theory. Proof beats pitch.
 

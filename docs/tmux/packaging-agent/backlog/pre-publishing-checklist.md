@@ -41,7 +41,6 @@
 ## 6. Demo Materials Ready
 - [ ] Demo video received from friend (30s)
 - [ ] Screenshots prepared
-- [ ] LinkedIn post drafted
 
 ## 7. Final Testing
 - [ ] Boss: Fresh Docker test (read README, Claude Code auto-installs)

@@ -42,16 +42,8 @@ Complete ALL items before public distribution: API keys, memory system, README, 
 **Details**: `backlog/pre-publishing-checklist.md`
 
 ### Generate Test API Keys
-Boss: Generate 6 test API keys (xAI, Soniox, Voyage, Google TTS, OpenAI, HD-TTS) with PREPAID/spending limits, prefix with "TO-BE-REMOVED", commit to repo for easy public testing.
+Boss: Generate 6 test API keys (Soniox, Voyage, Google TTS, OpenAI, HD-TTS) with PREPAID/spending limits, prefix with "TO-BE-REMOVED", commit to repo for easy public testing.
 **Details**: `backlog/api-keys-generation.md` (Updated 2026-01-20: Added API key revocation warnings)
-
-### xAI Email
-Send to xAI team: Brief intro + annotated screenshot + demo video (delegated to friend) + GitHub link.
-**Details**: `/home/hungson175/dev/coding-agents/packaging-agent/docs/XAI_EMAIL_REMINDER.md`
-
-### LinkedIn Post
-DU writes technical post for xAI/recruiters showcasing demo. Target audience: Professional devs with 3+ months coding agent experience (NOT hobbyists).
-**Priority**: P0 | **Time**: 20 min
 
 ### README Finalization
 Rewrite README. Fix installation instructions, add memory system section, verify all paths.
@@ -158,9 +150,6 @@ DU researches why Qdrant in Docker loses data on unexpected shutdown. Document D
 ### Memory Generalization Research
 Research mechanism to generalize episodic memories into semantic patterns (e.g., multiple JWT bugs → general JWT pattern). Post-ship research.
 
-### Unlock X Account
-Contact X support to unlock suspended account. Too complicated for tonight - LinkedIn sufficient.
-
 ### CLI: Project-Specific Scrum Team Creator
 Create command to generate customized Scrum teams based on project type. Post-ship feature.
 
@@ -192,7 +181,7 @@ After ALL components complete: Full integration test in isolated Docker containe
 
 ## Critical Context
 
-**Mission**: Ship as proof of work for job applications (xAI, Axon ASOM, international contracts)
+**Mission**: Ship AI Teams Controller for public release
 
 **Constraints**:
 - NO refactoring

@@ -5,7 +5,7 @@
 ### Component 1: tmux Team Creator
 ✅ Researched Claude Code skills structure (DEV research complete)
 ✅ Installation method: One-command install script (`./install-tmux-skill.sh`)
-✅ Kept skill readable as text (for xAI application reviewers)
+✅ Kept skill readable as text (for code reviewers)
 ✅ Bundles tm-send dependency
 ✅ Clear explanation of what gets installed
 

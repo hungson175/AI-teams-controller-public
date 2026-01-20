@@ -1,7 +1,7 @@
 # AI Teams Controller - Autonomous Multi-Agent Development System
 
 **Built by**: Hung Son
-**Purpose**: Proof of work for AI/ML engineering positions (xAI, Axon, international contracts)
+**Purpose**: Autonomous multi-agent development system for public use
 **Demo Video**: [Link TBD]
 
 ---
@@ -187,7 +187,6 @@ TBD
 
 **Hung Son**
 AI/ML Engineer
-Applying to: xAI, Axon (ASOM), International contract roles
 
 **Contact**: [TBD]
 
