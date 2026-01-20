@@ -136,21 +136,6 @@ class TestProviderRegistryOCP:
         # Should be correct type from registry
         assert isinstance(provider, GoogleCloudTTSProvider)
 
-    @patch("openai.OpenAI")
-    def test_openai_provider_via_registry(self, mock_openai):
-        """OpenAI provider should be created via registry, not legacy fallback."""
-        from app.services.tts_providers import OpenAITTSProvider, TTSProviderFactory
-
-        # Verify openai is in registry
-        assert "openai" in TTSProviderFactory._registry
-
-        # Create via factory
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test_key"}):
-            provider = TTSProviderFactory.create("openai")
-
-        # Should be correct type from registry
-        assert isinstance(provider, OpenAITTSProvider)
-
     def test_unknown_provider_error_from_registry_only(self):
         """Unknown provider should raise error based on registry contents only."""
         from app.services.tts_providers import TTSProviderFactory
@@ -468,7 +453,6 @@ class TestProviderIntegration:
 
     @patch.dict(os.environ, {"GOOGLE_APPLICATION_CREDENTIALS": "/fake/path.json"})
     @patch("google.cloud.texttospeech.TextToSpeechClient")
-    @patch.dict(os.environ, {"OPENAI_API_KEY": "fake_openai_key"})
     @patch.dict(os.environ, {"HDTTS_API_KEY": "fake_hdtts_key"})
     @patch("requests.post")
     def test_factory_creates_all_providers(self, mock_requests, mock_google_client):
@@ -476,7 +460,6 @@ class TestProviderIntegration:
         from app.services.tts_providers import (
             GoogleCloudTTSProvider,
             HDTTSProvider,
-            OpenAITTSProvider,
             TTSProviderFactory,
         )
 
@@ -490,15 +473,11 @@ class TestProviderIntegration:
         google_provider = TTSProviderFactory.create("google")
         assert isinstance(google_provider, GoogleCloudTTSProvider)
 
-        openai_provider = TTSProviderFactory.create("openai")
-        assert isinstance(openai_provider, OpenAITTSProvider)
-
         hdtts_provider = TTSProviderFactory.create("hdtts")
         assert isinstance(hdtts_provider, HDTTSProvider)
 
     @patch.dict(os.environ, {"GOOGLE_APPLICATION_CREDENTIALS": "/fake/path.json"})
     @patch("google.cloud.texttospeech.TextToSpeechClient")
-    @patch.dict(os.environ, {"OPENAI_API_KEY": "fake_openai_key"})
     @patch.dict(os.environ, {"HDTTS_API_KEY": "fake_hdtts_key"})
     @patch("requests.post")
     def test_all_providers_implement_interface(self, mock_requests, mock_google_client):
@@ -513,7 +492,6 @@ class TestProviderIntegration:
 
         providers = [
             TTSProviderFactory.create("google"),
-            TTSProviderFactory.create("openai"),
             TTSProviderFactory.create("hdtts"),
         ]
 

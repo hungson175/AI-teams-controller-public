@@ -60,7 +60,7 @@ uv run celery -A celery_config worker --loglevel=info
 
 3. **Background Processing**: Celery worker picks up the task and:
    - Generates LLM summary (grok-4-fast)
-   - Generates TTS audio (OpenAI tts-1)
+   - Generates TTS audio (Google Cloud TTS or HD-TTS)
    - Publishes to Redis pub/sub channel
 
 4. **Broadcast**: FastAPI's pub/sub listener receives the message and broadcasts to ALL connected WebSocket clients
