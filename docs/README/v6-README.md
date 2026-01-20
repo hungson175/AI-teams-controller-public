@@ -61,7 +61,13 @@ MCP server + Qdrant vector database + Memory skills + Memory subagent + Automati
 ### Component 3: Web UI
 Next.js + FastAPI web application for visual team management, monitoring, and voice input.
 
-**Status**: TBD - installation instructions coming
+**Features**:
+- SQLite demo mode (default, no PostgreSQL required)
+- One-command initialization
+- Demo credentials included (test@example.com / test123)
+- Voice input integration with default settings
+
+**Status**: Ready to install (SQLite demo mode)
 
 ---
 

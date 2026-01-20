@@ -32,17 +32,78 @@ Rewrite V6 README (Boss: "pretty shitty"). Fix installation instructions, add me
 
 ## P1 - SHOULD DO (Required for MVP)
 
-### Component 1: tmux Team Creator - Packaging Upgrade
-Sprint 6 Track A IN PROGRESS: Upgrade installer to match Memory System quality. Add colored output, verification, prerequisites check, better error handling.
-**Status**: Sprint 6 Track A assigned to DEV
+### CRITICAL REVIEW: Memory Skills Implementation
+**Boss reminder**: Review project-memory-store and project-memory-recall implementation carefully.
+
+**Important**: These were NOT just copied from coder-memory-* - there's a reason for rewrite.
+
+**Questions Boss needs to answer during review**:
+1. Is using MCP for memory skills stable enough?
+2. Is using subagent approach stable enough?
+3. What is the ROM (role/responsibility) of the memory-agent subagent?
+4. Should we keep current architecture or redesign?
+
+**Current Implementation** (Sprint 5):
+- project-memory-store: Uses Task tool → memory-agent subagent → MCP tools
+- project-memory-recall: Uses Task tool → memory-agent subagent → MCP tools
+- memory-agent: ONLY has MCP memory tools (zero file access)
+
+**Action**: Boss to review before finalizing packaging
+**Priority**: P1 - Blocks finalization
+**Location**: memory-system/skills/, memory-system/subagents/
+
+---
+
+### Component 1: Cleanup Team Templates
+Remove unnecessary team templates from tmux-team-creator skill:
+- ❌ Remove: Game Development team
+- ❌ Remove: Packaging team
+- ✅ Keep only: Scrum team, Light team, Research team (3 teams total)
+**Reason**: Simplify skill, focus on core templates
+**Priority**: P1
+
+### Package Global Skills into tmux-team-creator
+Bundle global skills INSIDE tmux-team-creator folder as subfolder. One installer installs everything.
+
+**Structure**:
+```
+tmux-team-creator/
+├── install-tmux-skill.sh (installs tmux skill + all global skills)
+├── tmux-team-creator.skill
+├── tm-send
+└── skills/ (subfolder with global skills to bundle)
+    ├── quick-research/
+    ├── webapp-testing/
+    ├── android-app-testing/ (if available)
+    ├── llm-apps-creator/
+    ├── power-agent-creator/
+    ├── pdf/ (Anthropic)
+    └── docx/ (Anthropic)
+```
+
+**Installer updates**:
+- Copy skills/* to ~/.claude/skills/ (all at once)
+- Verify all skills installed
+
+**Goal**: One command (`./install-tmux-skill.sh`) installs tmux-team-creator + all bundled skills
+**Priority**: P1 | **Effort**: 2-3 hours
+
+### Spec Lock for Skills
+Implement "spec lock" mechanism to make team run smoothly:
+- Lock skill specifications to prevent drift
+- Ensure consistent behavior across team members
+- Related to skills coordination
+**Details**: Boss to clarify exact requirements
+**Priority**: P1
+
+### Component 1: tmux Team Creator
+✅ COMPLETE (Sprint 6 Track A): Professional installer (275 lines), colored output, verification, prerequisites check. Documentation complete.
 
 ### Component 2: Memory System
 ✅ COMPLETE (Sprint 1-5): MCP server, installation script, skills, subagent, hooks all packaged. Zero external dependencies.
 
-### Component 3: Web UI - SQLite Conversion
-Sprint 6 Track B IN PROGRESS: Convert PostgreSQL to SQLite for demo. Hardcoded test/test123 user. Remove PostgreSQL dependency.
-**Status**: Sprint 6 Track B assigned to DEV
-**Time**: 90 min
+### Component 3: Web UI
+✅ COMPLETE (Sprint 6 Track B): SQLite demo mode, test@example.com/test123 user, no PostgreSQL required. Documentation complete.
 
 ---
 

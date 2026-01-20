@@ -127,12 +127,21 @@ This repository contains three installable components:
 
 **Location**: `./AI-teams-controller-public/`
 
+**Demo Mode**: SQLite database with pre-configured test user (no external database setup required)
+
+**Demo Credentials**:
+```
+Email: test@example.com
+Password: test123
+```
+
 **Note**: Agents work without UI via pure tmux (for lightweight use), but UI is core feature for demonstration and control.
 
 **Installation**: TBD - will include:
-- Frontend setup (Next.js)
-- Backend setup (FastAPI)
-- Database setup (PostgreSQL)
+- Frontend setup (Next.js + pnpm)
+- Backend setup (FastAPI + Python 3.11+)
+- Database setup (SQLite for demo, PostgreSQL for production)
+- Demo user auto-created during installation
 - One-command installer
 
 ---
