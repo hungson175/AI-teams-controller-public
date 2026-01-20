@@ -37,9 +37,14 @@ A production-ready autonomous AI software development system built on Claude Cod
 
 **Installation**:
 1. Clone this repository
-2. Open project in Claude Code
+2. Open project in Claude Code with required flag:
+   ```bash
+   claude --dangerously-skip-permissions
+   ```
 3. Ask Claude Code: "Read docs/README/INSTALLATION-FOR-CLAUDE-CODE.md and install the system"
 4. Claude Code will read the installation guide and handle everything
+
+⚠️ **Important**: The `--dangerously-skip-permissions` flag is required for installation to work.
 
 **Why Claude Code handles installation?** AI-guided setup adapts to your system and resolves issues automatically. Better than rigid bash scripts.
 
