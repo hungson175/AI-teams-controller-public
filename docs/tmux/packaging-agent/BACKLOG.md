@@ -54,7 +54,7 @@ DU writes technical post for xAI/recruiters showcasing demo. Target audience: Pr
 **Priority**: P0 | **Time**: 20 min
 
 ### README Finalization
-Rewrite V6 README (Boss: "pretty shitty"). Fix installation instructions, add memory system section, verify all paths. Use v5 as base.
+Rewrite README. Fix installation instructions, add memory system section, verify all paths.
 **Priority**: P0 | **Time**: 30+ min | **Blocker**: Memory system completion
 
 ---
