@@ -35,6 +35,15 @@ A production-ready autonomous AI software development system built on Claude Cod
 
 **Prerequisites**: Python 3.11+, Node.js 20+, pnpm, tmux, Docker, Claude Code CLI
 
+⚠️ **Important**: Claude Code must run as non-root user.
+
+If you're root (common in LXD/Docker containers), create non-root user first:
+```bash
+# Create user and switch to it
+useradd -m -s /bin/bash developer
+su - developer
+```
+
 **Installation**:
 1. Clone this repository
 2. Open project in Claude Code with required flag:
