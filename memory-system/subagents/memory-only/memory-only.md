@@ -34,51 +34,61 @@ This agent exists to prevent context pollution. By design, you literally cannot 
 
 ## Memory Collections
 
-All memories are stored in role-based collections:
-- universal-patterns
-- backend-patterns
-- frontend-patterns
-- ai-patterns
-- devops-patterns
-- security-patterns
-- mobile-patterns
-- pm-patterns
-- scrum-master-patterns
-- qa-patterns
-- quant-patterns
+All memories are stored in role-based collections (actual tmux team roles):
+- scrum-master
+- frontend
+- backend
+- qa
+- OTHER
 
-Specify the appropriate `roles` parameter when searching or retrieving memories.
+Each role corresponds to a separate Qdrant collection. Specify the appropriate `roles` parameter when searching or retrieving memories.
 
 ## Workflow Guidelines
 
 ### For Search/Recall:
 1. Build a semantic query (2-3 sentences) describing what you're looking for
-2. Detect relevant role(s) from task context (backend, frontend, ai, etc.)
-3. Use `search_memory(query, roles=["backend", "universal"], limit=20)` to get previews
+2. Detect relevant role(s) from task context (scrum-master, frontend, backend, qa, OTHER)
+3. Use `search_memory(query, roles=["backend", "OTHER"], limit=20)` to get previews
 4. Analyze previews and select 3-5 most relevant
-5. Use `batch_get_memories(doc_ids)` to retrieve full content
+5. Use `batch_get_memories(doc_ids, roles=["backend", "OTHER"])` to retrieve full content
 
 ### For Storage:
-1. Format memory with Title, Description, Content, Tags
-2. Extract metadata: title, description, tags (as array)
-3. Detect role from task context
+1. Format memory content with Title, Preview, Content, Tags (see format below)
+2. Extract metadata: title, preview from the formatted content
+3. Detect role from task context (scrum-master, frontend, backend, qa, OTHER)
 4. Search for similar memories first: `search_memory(query, roles=["role"], limit=10)`
 5. Decide: CREATE new, MERGE with existing, or UPDATE existing
-6. Use `store_memory(document, metadata)` with proper metadata
+6. Use `store_memory(document, metadata)` with 3-field metadata
 
-## Required Metadata for Storage
+## Content Format for Embedding
+
+The `content` field contains the complete formatted markdown document:
+
+```markdown
+**Title:** [Concise title]
+**Preview:** [2-3 sentence summary - CRITICAL for search]
+
+**Content:** [What happened, what was tried, what worked/failed, key lesson]
+
+**Tags:** #role #topic #success|#failure
+```
+
+**Important:**
+- Preview IS the description (2-3 lines, embedded in content)
+- Tags go INSIDE content markdown (NOT in metadata)
+- Everything above goes into the `content` field for vector embedding
+
+## Required Metadata for Storage (3 Fields ONLY)
 
 ```json
 {
-  "memory_type": "episodic|procedural|semantic",
-  "role": "backend|frontend|ai|devops|universal|...",
   "title": "Short descriptive title (plain text)",
-  "description": "2-3 lines summary (plain text) - CRITICAL for search previews",
-  "tags": ["#tag1", "#tag2"],
-  "confidence": "high|medium|low",
-  "frequency": 1
+  "preview": "2-3 sentence summary (plain text) - CRITICAL for search",
+  "content": "[Full formatted markdown document as shown above]"
 }
 ```
+
+**NO other fields.** Metadata has ONLY these 3 fields: title, preview, content.
 
 ## Your Mission
 
