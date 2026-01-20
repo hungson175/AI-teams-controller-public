@@ -7,69 +7,37 @@
 - Git history manages past work, not whiteboard
 - Context pollution kills AI agent effectiveness
 
-**Last Updated**: 2026-01-19 22:50
+**Last Updated**: 2026-01-20 09:10
 
 ---
 
-## Current Sprint: Sprint 6 (Component 1 Upgrade + Component 3 SQLite)
+## Current Work: Port Assignment & PostgreSQL Removal
 
-**Status**: ✅ COMPLETE
+**Status**: IN PROGRESS
 
-**Sprint 6 Objective**: Complete packaging for Components 1 & 3
+**Objective**: Fix port conflicts, remove PostgreSQL, finalize demo install
 
-**Delivered**:
-- Track A: ✅ Component 1 installer upgraded (275 lines, professional quality, commit 932459d)
-- Track B: ✅ Component 3 SQLite conversion (demo mode, test/test123 user, commit 6ac0e40)
-- Documentation: ✅ Complete (INSTALLATION.md, backend/README.md, v6-README updated)
+**Boss Directive** (CRITICAL):
+- Standard ports (3000, 8000) = "stupid as hell" - causes conflicts
+- Use UNUSUAL ports (333X, 170XX ranges)
+- Document ALL ports persistently
+- Add new project to global ~/.claude/CLAUDE.md port registry
 
-**Next Sprint**: TBD (awaiting Boss directive)
+**Current Tasks**:
+1. ⏳ DEV: Remove ALL PostgreSQL support (SQLite only) - IN PROGRESS
+2. 🔜 DEV: Finalize demo credentials + auto-install script
 
-**Implementation**: Commit: 37834d3 (typo correction complete)
+**Recent Completed**:
+- ✅ Sprint 6 Track A: Component 1 installer (commit 932459d)
+- ✅ Sprint 6 Track B: SQLite conversion (commit 6ac0e40)
+- ✅ Port updates in project files (commit 37ebe35)
+- ✅ PORTS.md created (173 lines)
+- ✅ Global CLAUDE.md port registry updated (commit 3eec901)
 
-**PO Verification Complete**:
-✅ Tests: 33/33 passing (100%)
-✅ Coverage: 83% (exceeds 80%)
-✅ 'universal' removed: 0 references
-✅ Typo corrected: azerol → other-role
-✅ All 7 approved collections verified
-
-**Current Action**: Sprint 5 - Package Memory Skills & Dependencies
-
-**Problem Identified by Boss**:
-- Memory System depends on EXTERNAL skills (coder-memory-store, coder-memory-recall)
-- Memory System depends on EXTERNAL subagent (memory-only)
-- Not packaged → User installs but can't use system
-- Violates "install once, works immediately" requirement
-
-**Sprint 5 - COMPLETE** ✅:
-1. ✅ NEW skills: project-memory-store, project-memory-recall (commit 6c6a841)
-2. ✅ NEW subagent: memory-agent (commit 6c6a841)
-3. ✅ Hooks: memory_store_reminder.py, todowrite_memory_recall.py (commit 6c6a841)
-4. ✅ Updated install-memory-system.sh (commit 55a6039)
-5. ✅ Updated documentation (INSTALLATION.md, README)
-
-**Goal**: Zero external dependencies, self-contained packaging
-
-**Previous Sprint Complete**:
-- ✅ Sprint 4: MCP server, tests, Boss fixes
-- ✅ Option A: Installation script + README documentation
-
-**Boss Issues (5 areas to fix):**
-- models.py: query constraints + metadata fields (2 input models)
-- search_engine.py: default limit 20→50
-- search_tools.py: metadata errors
-- ENTIRE CODEBASE: audit all metadata references
-
-**Process (MANDATORY):**
-1. DEV: TDD first (write tests before fixes)
-2. DEV: Implement all fixes
-3. PO: Independent verification (DO NOT trust DEV)
-4. PO: Report to Boss ONLY after verification
-
-**Next**: DU research Qdrant Docker data loss
-
-**Previous Sprints**:
-- Sprint 1-3 ✅ Complete (see Git history)
+**New Port Assignments**:
+- Frontend: 3337 (was 3334)
+- Backend: 17063 (was 17061)
+- Terminal: 17073 (was 17071)
 
 ---
 
@@ -77,9 +45,9 @@
 
 | Role | Status | Current Task |
 |------|--------|--------------|
-| PO | ACTIVE | Demanding detailed test failure analysis from DEV |
-| DEV | ANALYZING | Detailed analysis of 8 test failures (Boss distrust) |
-| DU | ASSIGNED | Qdrant Docker data loss research (starts after Sprint 4) |
+| PO | ACTIVE | Waiting for DEV to complete PostgreSQL removal |
+| DEV | IMPLEMENTING | Removing ALL PostgreSQL support (database.py, pyproject.toml, .env.example, README) |
+| DU | STANDBY | Awaiting assignment |
 
 ---
 

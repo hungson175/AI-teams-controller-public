@@ -57,7 +57,7 @@ flowchart TB
 ```
 
 - **Auth** → JWT tokens in localStorage, auto-refresh
-- **Settings** → localStorage + PostgreSQL sync
+- **Settings** → localStorage + SQLite sync
 - **Voice** → WebSocket connection, notification queue
 
 ## API Communication

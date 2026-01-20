@@ -16,6 +16,32 @@
 
 ---
 
+## ⚠️ CRITICAL: KEY REVOCATION WARNING
+
+**IMPORTANT**: These test API keys might be REMOVED/REVOKED at ANY time.
+
+**Why**: Boss cannot sponsor every user forever. Prepaid limits will run out.
+
+**MANDATORY for ALL scripts/docs using these keys**:
+
+Add prominent warning:
+```
+⚠️ WARNING: The included test API keys may have been revoked already.
+If you see authentication errors, you need to provide your own API keys.
+These are temporary test keys for initial testing only.
+```
+
+**Files that MUST include this warning**:
+- `install-web-ui.sh` - During installation
+- `install-memory-system.sh` - During installation
+- Backend README.md - In setup instructions
+- Memory System INSTALLATION.md - In configuration section
+- Main README.md - In Quick Start section
+
+**When keys are revoked**: Users will see auth errors and MUST configure their own keys.
+
+---
+
 ## Keys to Generate
 
 Boss: Remind me to create these:

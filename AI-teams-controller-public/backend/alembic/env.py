@@ -30,7 +30,7 @@ config = context.config
 # Set the database URL from environment variable
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",
-    "postgresql+asyncpg://postgres:postgres@localhost:5432/aicontroller",
+    "sqlite+aiosqlite:///./aicontroller.db",
 )
 config.set_main_option("sqlalchemy.url", DATABASE_URL)
 

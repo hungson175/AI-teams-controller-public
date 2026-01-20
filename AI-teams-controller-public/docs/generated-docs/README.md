@@ -32,7 +32,7 @@ cd backend && uv run celery -A celery_config worker --loglevel=info
 |-------|------------|
 | Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS v4 |
 | Backend | FastAPI, Python 3.11+, Pydantic, SQLAlchemy 2.0 |
-| Database | PostgreSQL (async) |
+| Database | SQLite (async) |
 | Voice STT | Soniox API (WebSocket streaming) |
 | Voice TTS | Google Cloud TTS (default) or OpenAI TTS |
 | Background | Celery + Redis |

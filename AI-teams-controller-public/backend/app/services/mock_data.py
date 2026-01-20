@@ -52,7 +52,7 @@ Connected to knowledge base
 
 [Researcher] Recent findings:
 - JWT tokens with refresh mechanism recommended
-- PostgreSQL with proper indexing for our use case
+- SQLite for lightweight data storage
 - Consider Redis for caching layer
 
 [Researcher] Awaiting next query...""",

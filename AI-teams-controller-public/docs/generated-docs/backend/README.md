@@ -19,7 +19,7 @@ uv run celery -A celery_config worker --loglevel=info
 ```
 backend/app/
 ├── main.py              # Application entry, CORS, lifespan
-├── database.py          # Async SQLAlchemy + PostgreSQL
+├── database.py          # Async SQLAlchemy + SQLite
 ├── api/                 # Route handlers
 ├── services/            # Business logic
 └── models/              # Pydantic schemas + SQLAlchemy
@@ -46,10 +46,10 @@ backend/app/
 
 ## Database
 
-Async SQLAlchemy 2.0 with PostgreSQL:
+Async SQLAlchemy 2.0 with SQLite:
 
 ```python
-DATABASE_URL = "postgresql+asyncpg://user:pass@localhost:5432/ai_teams"
+DATABASE_URL = "sqlite+aiosqlite://user:pass@localhost:5432/ai_teams"
 ```
 
 **Models:**
@@ -70,7 +70,7 @@ uv run pytest tests/ --cov=app --cov-report=term-missing
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `DATABASE_URL` | Yes | PostgreSQL connection |
+| `DATABASE_URL` | Yes | SQLite connection |
 | `JWT_SECRET_KEY` | Yes | Token signing secret |
 | `SONIOX_API_KEY` | Yes | Speech-to-text |
 | `XAI_API_KEY` | Yes | LLM correction |

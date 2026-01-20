@@ -14,7 +14,7 @@ flowchart TB
     WebUI --> FastAPI[FastAPI<br/>port 17061]
     Voice --> FastAPI
     FastAPI --> Tmux[tmux Sessions<br/>AI Agents]
-    FastAPI --> PostgreSQL[(PostgreSQL)]
+    FastAPI --> SQLite[(SQLite)]
     FastAPI --> Redis[(Redis)]
     Redis --> Celery[Celery Workers]
 
@@ -23,7 +23,7 @@ flowchart TB
     style WebUI fill:#e8f5e9
     style Voice fill:#fce4ec
     style Tmux fill:#f3e5f5
-    style PostgreSQL fill:#e8eaf6
+    style SQLite fill:#e8eaf6
 ```
 
 ## Core Concepts
@@ -121,7 +121,7 @@ Stop Hook → FastAPI → Celery Task → LLM Summary → TTS → Redis Pub/Sub 
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `DATABASE_URL` | Yes | PostgreSQL connection |
+| `DATABASE_URL` | Yes | SQLite connection |
 | `JWT_SECRET_KEY` | Yes | JWT token signing |
 | `SONIOX_API_KEY` | Yes | Speech-to-text |
 | `XAI_API_KEY` | Yes | LLM command correction |
