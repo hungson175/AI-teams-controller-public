@@ -206,6 +206,36 @@ verify_installation() {
     log_success "Installation verification complete"
 }
 
+# Install slash command
+install_command() {
+    log_info "Installing /create-tmux-team command..."
+
+    local COMMAND_DIR="$HOME/.claude/commands"
+    local COMMAND_FILE="$SCRIPT_DIR/commands/create-tmux-team.md"
+
+    if [ ! -f "$COMMAND_FILE" ]; then
+        log_warning "Command file not found: $COMMAND_FILE (skipping)"
+        return 0
+    fi
+
+    mkdir -p "$COMMAND_DIR"
+
+    # Check if command already exists
+    if [ -f "$COMMAND_DIR/create-tmux-team.md" ]; then
+        log_info "Command already installed, updating..."
+    fi
+
+    # Copy command file
+    cp "$COMMAND_FILE" "$COMMAND_DIR/"
+
+    if [ -f "$COMMAND_DIR/create-tmux-team.md" ]; then
+        log_success "Command installed: /create-tmux-team"
+    else
+        log_warning "Command installation may have failed (file not found after copy)"
+        return 1
+    fi
+}
+
 # Print next steps
 print_next_steps() {
     echo ""
@@ -217,26 +247,28 @@ print_next_steps() {
     echo ""
     echo "Next steps:"
     echo ""
-    echo "1. Create a tmux team:"
+    echo "1. Quick start - ONE COMMAND creates and starts team:"
+    echo "   /create-tmux-team"
+    echo ""
+    echo "2. Or use skill directly:"
     echo "   /tmux-team-creator"
     echo ""
-    echo "2. Or ask Claude Code:"
+    echo "3. Or ask Claude Code:"
     echo "   'Create a Scrum team for my project'"
     echo ""
     echo "Installed Components:"
     echo "  - Skill: tmux-team-creator"
+    echo "  - Command: /create-tmux-team (one-command setup)"
     echo "  - Tool: tm-send (for agent communication)"
-    echo "  - Templates: 5 team templates"
+    echo "  - Templates: 3 team templates"
     echo ""
     echo "Documentation:"
     echo "  $SKILL_DIR/tmux-team-creator/SKILL.md"
     echo ""
     echo "Templates Included:"
-    echo "  • Scrum Team (6 roles)"
-    echo "  • Minimal Dev Team (3 roles)"
-    echo "  • Research Team (4 roles)"
-    echo "  • Packaging Team (3 roles)"
-    echo "  • Custom Team (your choice)"
+    echo "  • Scrum Team (PO, SM, TL, BE, FE, QA)"
+    echo "  • Lite Team (PO, Worker - minimal)"
+    echo "  • McKinsey Research Team (EM, RL, PR, SR, DA, QR)"
     echo ""
 }
 
@@ -263,7 +295,11 @@ main() {
     install_skill
     echo ""
 
-    # Step 5: Verify installation
+    # Step 5: Install slash command
+    install_command
+    echo ""
+
+    # Step 6: Verify installation
     verify_installation
     echo ""
 
