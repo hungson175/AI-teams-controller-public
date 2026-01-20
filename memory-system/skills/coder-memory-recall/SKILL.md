@@ -1,6 +1,6 @@
 ---
 name: coder-memory-recall
-description: Retrieve universal coding patterns from GLOBAL vector database (cross-project learning). Auto-invokes before complex tasks or when user says "--recall". Searches relevant role collections based on task context.
+description: Retrieve coding patterns from GLOBAL vector database (cross-project learning). Auto-invokes when TodoWrite has >3 tasks or when user says "--recall". Searches relevant role collections based on task context.
 ---
 
 <execution>
@@ -13,31 +13,41 @@ The memory-only agent has ZERO access to Read/Write/Edit/Glob/Bash - it can ONLY
 Search when: Non-obvious bugs, complex architectures, performance issues, unfamiliar domains, hard problems.
 
 Skip when: Obvious tasks, basic file operations, standard workflows, problems solvable with basic knowledge.
+
+**Hook Activation Condition:**
+- TodoWrite tasks >3: Activate memory-recall (complex task needs context)
+- TodoWrite tasks ≤3: Don't activate (simple task, no need)
+- One search PER TASK in TodoWrite (e.g., 4 tasks = 4 searches)
 </selectivity>
 
 <workflow>
 **Step 1: Build semantic query**
-Construct 2-3 sentences capturing: What is the problem? What is the technical context? What outcome is desired?
+Construct 5-10 sentences with full problem description (not too short, not too long):
+- What is the problem?
+- What is the technical context?
+- What outcome is desired?
+- What have you tried?
+- What are the constraints?
 
-Example: "Need to implement rate limiting for REST API to prevent abuse. Backend service in Node.js with Express. Want proven pattern that prevents thundering herd."
+Example: "Need to implement rate limiting for REST API to prevent abuse. Backend service in Node.js with Express. Want proven pattern that prevents thundering herd. Current setup uses Redis for session storage. Need to rate limit by IP address with 100 requests per minute. Must handle distributed deployments with multiple server instances. Looking for battle-tested implementation that won't add significant latency."
 
 **Step 2: Detect relevant roles**
-Determine which role collections to search based on task context. Use role_mapping below. Default to ["universal"] if unclear. Can search multiple roles when task spans domains.
+Determine which role collections to search based on task context. Use role_mapping below. Default to ["OTHER"] if unclear. Can search multiple roles when task spans domains.
 
 **Step 3: Search previews**
-Use `search_memory` with query, `roles=["detected_role", "universal"]`, `limit=20`.
+Use `search_memory` with query, `roles=["detected_role", "OTHER"]`, `limit=30`.
 
-Note: The `roles` parameter tells MCP which collections to search. Always include "universal" to catch cross-domain patterns.
+Note: The `roles` parameter tells MCP which collections to search.
 
 **Step 4: Analyze previews**
-Review returned previews (title + preview + score). Select 3-5 most relevant based on:
-- Does title match problem domain?
+Review returned previews (preview text ONLY). Select 3-5 most relevant based on:
 - Does preview indicate relevant solution?
-- Does score indicate high relevance?
-- Do embedded tags (in content) align with task?
+- Does preview match problem domain?
+
+Note: Score doesn't matter - don't trust similarity scores. Focus on analyzing the preview text content.
 
 **Step 5: Retrieve full content**
-Use `batch_get_memories` with selected doc_ids and `roles=["detected_role", "universal"]`.
+Use `batch_get_memories` with selected doc_ids and `roles=["detected_role", "OTHER"]`.
 
 Note: batch_get_memories needs roles parameter to know which collections to search in.
 
@@ -47,19 +57,14 @@ Format retrieved memories clearly. Let the main agent decide what to apply.
 
 <role_mapping>
 Available roles (maps to Qdrant collections):
-- universal: General patterns applicable across domains
 - backend: API, endpoint, database, server, auth
 - frontend: React, Vue, component, UI, CSS
 - devops: Deploy, Docker, Kubernetes, CI/CD
-- ai: Model, training, embedding, LLM
-- security: Vulnerability, encryption, JWT
-- mobile: iOS, Android, Flutter, Swift
-- pm: Project management, coordination, delegation, reporting
 - scrum-master: Agile, sprint, standup, retrospective, planning
 - qa: Testing, quality assurance, verification, validation
-- quant: Trading, backtesting, portfolio, risk
+- OTHER: General patterns, cross-domain knowledge
 
-Default to "universal" if unclear. Each role maps to a collection named "{role}-patterns" (e.g., "backend-patterns").
+Default to "OTHER" if unclear. Each role corresponds to a separate Qdrant collection.
 
-Search multiple role collections when task spans domains (e.g., ["backend", "devops", "universal"] for API deployment task).
+Search multiple role collections when task spans domains (e.g., ["backend", "devops", "OTHER"] for API deployment task).
 </role_mapping>
