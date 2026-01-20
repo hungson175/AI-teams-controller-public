@@ -39,6 +39,24 @@ A production-ready autonomous AI software development system built on Claude Cod
 
 ---
 
+## Slash Command
+
+**Quick team creation**:
+```bash
+/create-tmux-team [optional-name]
+```
+
+**What it does**: Creates and starts a tmux team for your current project in ONE command.
+
+**When to use**: For projects that don't have a team yet.
+
+**Features**:
+- Auto-detects team name from project directory
+- Checks for existing team first (prevents duplicates)
+- Starts team immediately after creation
+
+---
+
 ## What's Included
 
 This repository contains three installable components:
