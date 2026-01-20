@@ -52,6 +52,25 @@ Packaging the AI Teams Controller system with 3 components:
 
 ---
 
+## CRITICAL: No Time Estimates
+
+**NEVER give time estimates for tasks.** AI agents work differently than humans.
+
+**FORBIDDEN:**
+- "This will take 30 minutes"
+- "Estimated completion: 45 minutes"
+- "Should be done in ~2 hours"
+- Any time predictions whatsoever
+
+**CORRECT:**
+- "Task assigned to DEV"
+- "Waiting for completion"
+- "Task in progress"
+
+Focus on task status, not duration predictions.
+
+---
+
 ## Role Boundaries
 
 ### CRITICAL: NEVER WRITE CODE OR SCRIPTS
