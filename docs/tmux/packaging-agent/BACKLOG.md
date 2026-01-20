@@ -182,6 +182,24 @@ After ALL components complete: Full integration test in isolated Docker containe
 
 ## Design Notes (Non-Actionable Reminders)
 
+### Port Assignment Policy - CRITICAL
+**NEVER use standard ports** (3000, 8000, 5000, etc.) - they WILL conflict with users' existing programs.
+
+**Always use weird, unusual ports**:
+- Frontend: 333X range (avoid 3334 - Boss's existing)
+- Backend: 170XX range (avoid 17061, 17071 - Boss's existing)
+
+**MANDATORY**: Document ALL ports in README installation instructions.
+
+**Current assignments**:
+- Memory System: Qdrant 16333
+- Web UI Frontend: 3337
+- Web UI Backend: 17063
+
+---
+
+## Design Notes (Non-Actionable Reminders)
+
 ### Docker/Docker Compose Packaging - NOT NOW
 **Reminder**: If considering Docker/Docker Compose packaging in future versions - be cautious. Entire system is tmux-based (multi-session coordination). Running tmux sessions inside Docker not tested yet, likely has issues. **Avoid Docker packaging for now.** Consider for later versions only after thorough testing.
 

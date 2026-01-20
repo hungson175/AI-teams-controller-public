@@ -16,7 +16,7 @@ class TestDatabaseConfiguration:
 
     def test_database_url_from_environment(self):
         """DATABASE_URL should be read from environment variable."""
-        test_url = "postgresql+asyncpg://testuser:testpass@testhost:5432/testdb"
+        test_url = "sqlite+aiosqlite:///./test.db"
         with patch.dict(os.environ, {"DATABASE_URL": test_url}):
             # Re-import to pick up new env var
             import importlib
@@ -32,8 +32,8 @@ class TestDatabaseConfiguration:
             import importlib
             import app.database as db_module
             importlib.reload(db_module)
-            assert "postgresql+asyncpg://" in db_module.DATABASE_URL
-            assert "localhost:5432" in db_module.DATABASE_URL
+            assert "sqlite+aiosqlite://" in db_module.DATABASE_URL
+            assert "aicontroller.db" in db_module.DATABASE_URL
 
     def test_naming_convention_has_required_keys(self):
         """NAMING_CONVENTION should have all standard constraint prefixes."""
