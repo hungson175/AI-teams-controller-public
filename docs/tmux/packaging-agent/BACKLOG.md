@@ -9,7 +9,96 @@
 
 ## P0 - MUST DO (Prevents Ship)
 
-### 0. xAI Email Reminder
+### 0. Pre-Publishing Checklist - CRITICAL
+**Complete ALL items below before public distribution**
+
+- [ ] **1. API Keys Generated** (see item 0a below for details)
+  - [ ] xAI key created and added to .env
+  - [ ] Soniox key created and added to .env
+  - [ ] Voyage AI key created and added to .env
+  - [ ] Google Cloud TTS service account created and JSON added
+  - [ ] OpenAI key created and added to .env
+  - [ ] All keys prefixed with "TO-BE-REMOVED" comments
+  - [ ] Provider console reminders set (delete after testing period)
+
+- [ ] **2. Memory System Complete**
+  - [ ] Sprint 4 MCP server implemented and tested
+  - [ ] Installation script created (fully automated)
+  - [ ] Documentation added to README
+  - [ ] Qdrant setup automated (Docker or standalone)
+  - [ ] Test: Fresh install on clean Docker should work immediately
+
+- [ ] **3. README Finalized**
+  - [ ] v6 README reviewed and rewritten (Boss: "V6 overall pretty shitty")
+  - [ ] Memory system section added
+  - [ ] Installation instructions tested and validated
+  - [ ] Target audience clearly stated
+  - [ ] All file paths verified
+
+- [ ] **4. Sensitive Files Removed**
+  - [ ] CLAUDE.md removed from project root
+  - [ ] Any .claude/ directories with sensitive info cleaned
+  - [ ] No personal data in committed files
+  - [ ] Check for hardcoded credentials
+
+- [ ] **5. Installation Scripts**
+  - [ ] tmux-team-creator skill installer works
+  - [ ] Memory system installer works (zero manual setup)
+  - [ ] Web UI installer works (SQLite demo mode)
+  - [ ] All scripts tested on clean environment
+
+- [ ] **6. Demo Materials Ready**
+  - [ ] Demo video received from friend (30s)
+  - [ ] Screenshots prepared
+  - [ ] LinkedIn post drafted
+
+- [ ] **7. Final Testing**
+  - [ ] Boss: Fresh Docker test (read README, Claude Code auto-installs)
+  - [ ] All 3 components install and run
+  - [ ] No manual configuration required
+  - [ ] Error handling graceful
+
+- [ ] **8. GitHub Repository**
+  - [ ] All commits pushed
+  - [ ] Repository set to public
+  - [ ] License added
+  - [ ] Contributing guidelines (if applicable)
+
+**Status**: Template created - items to be checked off during execution
+**Owner**: Team (coordinated by PO)
+**Critical**: Nothing ships until ALL items checked
+
+### 0a. Generate Test API Keys for Public Distribution - CRITICAL
+- [ ] **Generate NEW test API keys** (all prefixed with "TO-BE-REMOVED-" in comments)
+- [ ] **⚠️ CRITICAL: Boss reminder - CHECK ALL KEYS ARE PREPAID, NOT POSTPAID**
+  - **Why critical**: Postpaid keys with public access = unlimited bill drain
+  - **Action**: Verify each key has spending limits/prepaid balance BEFORE adding to repo
+  - **Safety**: Set low spending caps ($5-10) on all test keys
+- [ ] **Keys to generate** (Boss: remind me to create these):
+  1. **XAI_API_KEY** - xAI API for Grok LLM (⚠️ CHECK: PREPAID or spending limit)
+  2. **SONIOX_API_KEY** - Soniox speech recognition (⚠️ CHECK: PREPAID or spending limit)
+  3. **VOYAGE_API_KEY** - Voyage AI embeddings (⚠️ CHECK: PREPAID or spending limit)
+  4. **GOOGLE_APPLICATION_CREDENTIALS** - Google Cloud TTS (⚠️ CHECK: PREPAID or spending limit)
+  5. **OPENAI_API_KEY** - OpenAI (⚠️ CHECK: PREPAID or spending limit)
+  6. **HDTTS_API_KEY** - HD-TTS self-hosted (⚠️ CHECK: PREPAID or spending limit)
+- [ ] **Update files with test keys**:
+  - `AI-teams-controller-public/backend/.env` (NOT .gitignored - for testing)
+  - `memory-system/.env` (NOT .gitignored - for testing)
+  - Add comments: `# TO-BE-REMOVED: Temporary test key, will be deleted after public testing period`
+- [ ] **Security note**: These are TEMPORARY test keys for public testing
+- [ ] **Provider Console Tracking** (Boss: add to-do in all 4 consoles):
+  - xAI Console: Add reminder "Delete TO-BE-REMOVED test key after public testing"
+  - Soniox Console: Add reminder "Delete TO-BE-REMOVED test key after public testing"
+  - Voyage AI Console: Add reminder "Delete TO-BE-REMOVED test key after public testing"
+  - Google Cloud Console: Add reminder "Delete TO-BE-REMOVED service account after public testing"
+- [ ] **Commit keys to repo** (NOT gitignored - intentional for easy public testing)
+- [ ] **Boss action after testing period**: Delete all test keys from provider consoles
+- **Priority**: P0 - Required before ANY public distribution
+- **Time**: 30 minutes (key generation + file updates)
+- **Why NOT gitignored**: Users can test immediately without configuring their own keys
+- **Deletion timeline**: After public testing period, Boss deletes all test keys
+
+### 0b. xAI Email Reminder
 **See**: `/home/hungson175/dev/coding-agents/packaging-agent/docs/XAI_EMAIL_REMINDER.md`
 
 Format:
