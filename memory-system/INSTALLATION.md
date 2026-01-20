@@ -90,13 +90,13 @@ python -m src.mcp_server.server
   - QDRANT_URL (auto-configured)
 
 ### 4. Memory Skills
-- **project-memory-store**: Stores coding patterns automatically after task completion
-- **project-memory-recall**: Retrieves relevant memories before complex tasks
+- **coder-memory-store**: Stores coding patterns automatically after task completion
+- **coder-memory-recall**: Retrieves relevant memories before complex tasks
 - **Location**: `~/.claude/skills/`
 - **Automatic triggering**: Via hooks (see Hooks section)
 
 ### 5. Memory Subagent
-- **memory-agent**: Specialized agent for memory operations only
+- **memory-only**: Specialized agent for memory operations only
 - **Tools**: MCP memory tools (search, store, get, list_collections)
 - **Zero file access**: Cannot read/write/edit files (security)
 - **Used by**: Memory skills for storage/retrieval operations
@@ -170,7 +170,7 @@ Add to `~/.claude/mcp.json`:
 
 Memory skills provide automatic storage and retrieval of coding patterns without manual invocation.
 
-### project-memory-store
+### coder-memory-store
 
 **Purpose**: Store coding patterns, solutions, and lessons automatically after task completion
 
@@ -184,7 +184,7 @@ Memory skills provide automatic storage and retrieval of coding patterns without
 
 **Usage**: Automatic - no manual invocation needed. Hook prompts to store when valuable lessons emerge.
 
-### project-memory-recall
+### coder-memory-recall
 
 **Purpose**: Retrieve relevant memories before complex tasks
 
@@ -200,14 +200,14 @@ Memory skills provide automatic storage and retrieval of coding patterns without
 **Manual invocation** (if needed):
 ```bash
 # In Claude Code
-/project-memory-recall
+/coder-memory-recall
 ```
 
 ---
 
 ## Memory Subagent
 
-The memory-agent is a specialized subagent dedicated to memory operations only.
+The memory-only is a specialized subagent dedicated to memory operations only.
 
 ### Purpose
 
@@ -233,13 +233,13 @@ Security and specialization:
 
 ### Usage
 
-Memory skills automatically spawn the memory-agent when needed. You don't interact with it directly.
+Memory skills automatically spawn the memory-only when needed. You don't interact with it directly.
 
 **Example workflow**:
 1. You complete a difficult task
 2. `memory_store_reminder.py` hook prompts (33% chance)
-3. You invoke `/project-memory-store`
-4. Skill spawns memory-agent to handle storage
+3. You invoke `/coder-memory-store`
+4. Skill spawns memory-only to handle storage
 5. Memory-agent searches/stores via MCP tools
 6. Done
 
@@ -278,7 +278,7 @@ If not: say 'Nothing worth storing.' and move on.
 
 **Behavior**:
 - Detects first TodoWrite (planning phase)
-- Spawns memory-agent to search for relevant memories
+- Spawns memory-only to search for relevant memories
 - Presents findings before you start planning
 - Subsequent TodoWrites don't trigger (only first one)
 

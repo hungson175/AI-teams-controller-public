@@ -37,14 +37,14 @@ Create NEW skills specific to this package (reference old ones):
 **File Structure**:
 ```
 memory-system/skills/
-├── project-memory-store/
+├── coder-memory-store/
 │   └── SKILL.md
-└── project-memory-recall/
+└── coder-memory-recall/
     └── SKILL.md
 ```
 
 **Requirements**:
-- NEW skill names: `project-memory-store`, `project-memory-recall`
+- NEW skill names: `coder-memory-store`, `coder-memory-recall`
 - Reference original skills but adapted for this package
 - Self-contained (no external dependencies)
 - Work with packaged MCP server
@@ -55,13 +55,13 @@ Create NEW subagent definition for this package:
 **File Structure**:
 ```
 memory-system/subagents/
-└── memory-agent/
+└── memory-only/
     ├── SUBAGENT.md (or config.json)
     └── README.md
 ```
 
 **Requirements**:
-- NEW subagent name: `memory-agent` (or similar)
+- NEW subagent name: `memory-only` (or similar)
 - Reference original `memory-only` subagent
 - Tools: ONLY MCP memory tools (no Read/Write/Edit/Glob/Bash)
 - Packaged in this repository
@@ -138,7 +138,7 @@ Update INSTALLATION.md and README to reflect:
 
 ## Acceptance Criteria
 
-1. ✅ NEW skills created (`project-memory-store`, `project-memory-recall`)
+1. ✅ NEW skills created (`coder-memory-store`, `coder-memory-recall`)
 2. ✅ NEW subagent defined and packaged
 3. ✅ Installation script installs skills + subagent + hooks
 4. ✅ One command: `./install-memory-system.sh` → everything works

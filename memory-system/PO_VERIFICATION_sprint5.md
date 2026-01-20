@@ -22,12 +22,12 @@
 ### 1. Skills Packaging ✅
 
 **Files Created**:
-- `skills/project-memory-store/SKILL.md` (commit 6c6a841)
-- `skills/project-memory-recall/SKILL.md` (commit 6c6a841)
+- `skills/coder-memory-store/SKILL.md` (commit 6c6a841)
+- `skills/coder-memory-recall/SKILL.md` (commit 6c6a841)
 
 **Verification**:
 - ✅ Frontmatter correct (name, description)
-- ✅ Uses `subagent_type: "memory-agent"` (packaged subagent, not external)
+- ✅ Uses `subagent_type: "memory-only"` (packaged subagent, not external)
 - ✅ Workflow preserved from original skills
 - ✅ Role mapping complete (11 collections)
 - ✅ Self-contained (no external dependencies)
@@ -35,8 +35,8 @@
 ### 2. Subagent Packaging ✅
 
 **Files Created**:
-- `subagents/memory-agent/memory-agent.md` (commit 6c6a841)
-- `subagents/memory-agent/README.md` (commit 6c6a841)
+- `subagents/memory-only/memory-only.md` (commit 6c6a841)
+- `subagents/memory-only/README.md` (commit 6c6a841)
 
 **Verification**:
 - ✅ Frontmatter complete (name, description, tools, model, color)
@@ -69,8 +69,8 @@
 ```bash
 mkdir -p "$HOME/.claude/skills"
 # Check if exists, update if needed (rm -rf then cp)
-cp -r "$(pwd)/skills/project-memory-store" "$skills_dir/"
-cp -r "$(pwd)/skills/project-memory-recall" "$skills_dir/"
+cp -r "$(pwd)/skills/coder-memory-store" "$skills_dir/"
+cp -r "$(pwd)/skills/coder-memory-recall" "$skills_dir/"
 ```
 **Status**: ✅ CORRECT
 - Idempotent (updates existing)
@@ -80,7 +80,7 @@ cp -r "$(pwd)/skills/project-memory-recall" "$skills_dir/"
 **install_subagent()** (lines 397-412):
 ```bash
 mkdir -p "$HOME/.claude/agents"
-cp "$(pwd)/subagents/memory-agent/memory-agent.md" "$agents_dir/"
+cp "$(pwd)/subagents/memory-only/memory-only.md" "$agents_dir/"
 ```
 **Status**: ✅ CORRECT
 - Creates directory if needed
@@ -171,8 +171,8 @@ done
 - ❌ Result: User installs but can't use system
 
 **After Sprint 5**:
-- ✅ Skills: Packaged (project-memory-store, project-memory-recall)
-- ✅ Subagent: Packaged (memory-agent)
+- ✅ Skills: Packaged (coder-memory-store, coder-memory-recall)
+- ✅ Subagent: Packaged (memory-only)
 - ✅ Hooks: Packaged (memory_store_reminder.py, todowrite_memory_recall.py)
 - ✅ Installation: One command installs EVERYTHING
 - ✅ Result: **Install once, works immediately**
@@ -219,8 +219,8 @@ done
 
 **Sprint 5**:
 - ✅ Research (SPRINT5_RESEARCH_FINDINGS.md)
-- ✅ Skills creation (project-memory-store, project-memory-recall)
-- ✅ Subagent creation (memory-agent)
+- ✅ Skills creation (coder-memory-store, coder-memory-recall)
+- ✅ Subagent creation (memory-only)
 - ✅ Hooks packaging (2 hooks)
 - ✅ Installation script update
 - ✅ Testing (SPRINT5_TEST_RESULTS.md)

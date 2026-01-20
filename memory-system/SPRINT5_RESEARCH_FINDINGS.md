@@ -145,8 +145,8 @@ should_remind = (
 ### For Skills
 
 **Create NEW skills** (not copies):
-- `project-memory-store` (adapted from coder-memory-store)
-- `project-memory-recall` (adapted from coder-memory-recall)
+- `coder-memory-store` (adapted from coder-memory-store)
+- `coder-memory-recall` (adapted from coder-memory-recall)
 
 **Changes needed**:
 1. Rename in frontmatter
@@ -159,8 +159,8 @@ should_remind = (
 ### For Subagent
 
 **Create NEW subagent**:
-- Name: `memory-agent` (or `project-memory-agent`)
-- Location: `memory-system/subagents/memory-agent/`
+- Name: `memory-only` (or `project-memory-only`)
+- Location: `memory-system/subagents/memory-only/`
 
 **Changes needed**:
 1. New name in frontmatter
@@ -176,8 +176,8 @@ should_remind = (
 - `memory-system/hooks/todowrite_memory_recall.py`
 
 **Changes needed**:
-1. Update skill references: coder-memory-store → project-memory-store
-2. Update skill references: coder-memory-recall → project-memory-recall
+1. Update skill references: coder-memory-store → coder-memory-store
+2. Update skill references: coder-memory-recall → coder-memory-recall
 3. Keep all other logic unchanged
 4. Install to ~/.claude/hooks/ during installation
 
@@ -188,14 +188,14 @@ should_remind = (
 ### Skills Installation
 ```bash
 # Copy to user's skills directory
-cp -r memory-system/skills/project-memory-store ~/.claude/skills/
-cp -r memory-system/skills/project-memory-recall ~/.claude/skills/
+cp -r memory-system/skills/coder-memory-store ~/.claude/skills/
+cp -r memory-system/skills/coder-memory-recall ~/.claude/skills/
 ```
 
 ### Subagent Installation
 ```bash
 # Copy to user's agents directory
-cp memory-system/subagents/memory-agent/memory-agent.md ~/.claude/agents/
+cp memory-system/subagents/memory-only/memory-only.md ~/.claude/agents/
 ```
 
 ### Hooks Installation
@@ -212,13 +212,13 @@ chmod +x ~/.claude/hooks/memory_*.py
 ```
 memory-system/
 ├── skills/
-│   ├── project-memory-store/
+│   ├── coder-memory-store/
 │   │   └── SKILL.md              # Adapted from coder-memory-store
-│   └── project-memory-recall/
+│   └── coder-memory-recall/
 │       └── SKILL.md              # Adapted from coder-memory-recall
 ├── subagents/
-│   └── memory-agent/
-│       ├── memory-agent.md       # Subagent definition (frontmatter + content)
+│   └── memory-only/
+│       ├── memory-only.md       # Subagent definition (frontmatter + content)
 │       └── README.md             # Explanation for users
 ├── hooks/
 │   ├── memory_store_reminder.py  # Stop hook (adapted)
@@ -241,8 +241,8 @@ memory-system/
 ## Next Steps
 
 1. ✅ Research complete (this document)
-2. Create skills (project-memory-store, project-memory-recall)
-3. Create subagent (memory-agent)
+2. Create skills (coder-memory-store, coder-memory-recall)
+3. Create subagent (memory-only)
 4. Package hooks (adapted for new skill names)
 5. Update install-memory-system.sh
 6. Test full installation

@@ -1,28 +1,28 @@
-# Memory Agent
+# Memory-Only Agent
 
 A specialized Claude Code subagent for memory operations with the vector database.
 
 ## Purpose
 
-The memory-agent is designed to interact ONLY with the Qdrant vector database via MCP memory tools. It has **zero access** to file system tools (Read, Write, Edit, Glob, Bash) to prevent context pollution.
+The memory-only is designed to interact ONLY with the Qdrant vector database via MCP memory tools. It has **zero access** to file system tools (Read, Write, Edit, Glob, Bash) to prevent context pollution.
 
 ## Usage
 
 This agent is automatically invoked by the memory skills:
-- `project-memory-store` - Stores coding patterns and lessons
-- `project-memory-recall` - Retrieves relevant memories
+- `coder-memory-store` - Stores coding patterns and lessons
+- `coder-memory-recall` - Retrieves relevant memories
 
 You typically don't invoke this agent directly - the skills handle that for you.
 
 ## Installation
 
-The installation script (`install-memory-system.sh`) automatically installs this agent to `~/.claude/agents/memory-agent.md`.
+The installation script (`install-memory-system.sh`) automatically installs this agent to `~/.claude/agents/memory-only.md`.
 
 ## How It Works
 
-When a skill like `project-memory-store` runs, it uses:
+When a skill like `coder-memory-store` runs, it uses:
 ```
-Task tool with subagent_type: "memory-agent"
+Task tool with subagent_type: "memory-only"
 ```
 
 This spawns a separate agent context with:
@@ -56,31 +56,29 @@ The agent works with role-based collections:
 
 ## Metadata Structure
 
-All memories use this metadata format:
+All memories use this metadata format (V7 design):
 ```json
 {
-  "memory_type": "episodic|procedural|semantic",
-  "role": "backend|frontend|...",
   "title": "Plain text title",
-  "description": "2-3 sentence summary",
-  "tags": ["#tag1", "#tag2"],
-  "confidence": "high|medium|low",
-  "frequency": 1
+  "preview": "2-3 sentence summary",
+  "content": "[Full formatted markdown document]"
 }
 ```
+
+The `content` field contains the complete formatted markdown including tags, memory type, and role information embedded within the text (not as separate metadata fields).
 
 ## Verification
 
 After installation, verify the agent is available:
 ```bash
-ls ~/.claude/agents/memory-agent.md
+ls ~/.claude/agents/memory-only.md
 ```
 
 ## Troubleshooting
 
-**"memory-agent not found"**
+**"memory-only not found"**
 - Run installation script: `./install-memory-system.sh`
-- Or manually copy: `cp subagents/memory-agent/memory-agent.md ~/.claude/agents/`
+- Or manually copy: `cp subagents/memory-only/memory-only.md ~/.claude/agents/`
 
 **"Cannot access file tools"**
 - This is expected and by design
@@ -88,6 +86,6 @@ ls ~/.claude/agents/memory-agent.md
 
 ## Related Files
 
-- **Skills**: `~/.claude/skills/project-memory-{store,recall}/`
+- **Skills**: `~/.claude/skills/coder-memory-{store,recall}/`
 - **MCP Server**: Configured in `~/.claude/mcp.json` (or similar)
 - **Hooks**: `~/.claude/hooks/memory_*.py` (automation)

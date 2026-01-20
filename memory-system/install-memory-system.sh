@@ -340,8 +340,8 @@ except Exception as e:
 
     # Verify skills installation
     log_info "Verifying skills installation..."
-    if [ -d "$HOME/.claude/skills/project-memory-store" ] && [ -d "$HOME/.claude/skills/project-memory-recall" ]; then
-        log_success "Skills verified (project-memory-store, project-memory-recall)"
+    if [ -d "$HOME/.claude/skills/coder-memory-store" ] && [ -d "$HOME/.claude/skills/coder-memory-recall" ]; then
+        log_success "Skills verified (coder-memory-store, coder-memory-recall)"
     else
         log_error "Skills verification failed"
         return 1
@@ -349,8 +349,8 @@ except Exception as e:
 
     # Verify subagent installation
     log_info "Verifying subagent installation..."
-    if [ -f "$HOME/.claude/agents/memory-agent.md" ]; then
-        log_success "Subagent verified (memory-agent)"
+    if [ -f "$HOME/.claude/agents/memory-only.md" ]; then
+        log_success "Subagent verified (memory-only)"
     else
         log_error "Subagent verification failed"
         return 1
@@ -375,21 +375,21 @@ install_skills() {
     local skills_dir="$HOME/.claude/skills"
     mkdir -p "$skills_dir"
 
-    # Install project-memory-store
-    if [ -d "$skills_dir/project-memory-store" ]; then
-        log_info "project-memory-store already installed, updating..."
-        rm -rf "$skills_dir/project-memory-store"
+    # Install coder-memory-store
+    if [ -d "$skills_dir/coder-memory-store" ]; then
+        log_info "coder-memory-store already installed, updating..."
+        rm -rf "$skills_dir/coder-memory-store"
     fi
-    cp -r "$(pwd)/skills/project-memory-store" "$skills_dir/"
-    log_success "Installed project-memory-store skill"
+    cp -r "$(pwd)/skills/coder-memory-store" "$skills_dir/"
+    log_success "Installed coder-memory-store skill"
 
-    # Install project-memory-recall
-    if [ -d "$skills_dir/project-memory-recall" ]; then
-        log_info "project-memory-recall already installed, updating..."
-        rm -rf "$skills_dir/project-memory-recall"
+    # Install coder-memory-recall
+    if [ -d "$skills_dir/coder-memory-recall" ]; then
+        log_info "coder-memory-recall already installed, updating..."
+        rm -rf "$skills_dir/coder-memory-recall"
     fi
-    cp -r "$(pwd)/skills/project-memory-recall" "$skills_dir/"
-    log_success "Installed project-memory-recall skill"
+    cp -r "$(pwd)/skills/coder-memory-recall" "$skills_dir/"
+    log_success "Installed coder-memory-recall skill"
 
     log_success "Memory skills installation complete"
 }
@@ -401,12 +401,12 @@ install_subagent() {
     local agents_dir="$HOME/.claude/agents"
     mkdir -p "$agents_dir"
 
-    # Install memory-agent
-    if [ -f "$agents_dir/memory-agent.md" ]; then
-        log_info "memory-agent already installed, updating..."
+    # Install memory-only subagent
+    if [ -f "$agents_dir/memory-only.md" ]; then
+        log_info "memory-only already installed, updating..."
     fi
-    cp "$(pwd)/subagents/memory-agent/memory-agent.md" "$agents_dir/"
-    log_success "Installed memory-agent subagent"
+    cp "$(pwd)/subagents/memory-only/memory-only.md" "$agents_dir/"
+    log_success "Installed memory-only subagent"
 
     log_success "Memory subagent installation complete"
 }
@@ -455,13 +455,13 @@ print_next_steps() {
     echo "Installed Components:"
     echo "  - Qdrant: http://localhost:${QDRANT_PORT}"
     echo "  - MCP Server: stdio transport"
-    echo "  - Skills: project-memory-store, project-memory-recall"
-    echo "  - Subagent: memory-agent"
+    echo "  - Skills: coder-memory-store, coder-memory-recall"
+    echo "  - Subagent: memory-only"
     echo "  - Hooks: memory_store_reminder.py, todowrite_memory_recall.py"
     echo ""
     echo "Memory Skills Usage:"
-    echo "  - Use 'project-memory-store' to save coding patterns"
-    echo "  - Use 'project-memory-recall' to retrieve relevant memories"
+    echo "  - Use 'coder-memory-store' to save coding patterns"
+    echo "  - Use 'coder-memory-recall' to retrieve relevant memories"
     echo "  - Hooks automatically trigger skills when appropriate"
     echo ""
 

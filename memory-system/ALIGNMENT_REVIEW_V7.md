@@ -14,7 +14,7 @@
 **Key Findings:**
 1. ✅ **Core architecture matches** - MCP server, Qdrant, role-based collections, two-stage retrieval
 2. ❌ **Critical metadata mismatch** - Skills use 7 fields, MCP enforces 3 fields (design says 3)
-3. ⚠️ **Naming inconsistencies** - "project-memory-*" vs "coder-memory-*", "memory-agent" vs "memory-only"
+3. ⚠️ **Naming inconsistencies** - "project-memory-*" vs "coder-memory-*", "memory-only" vs "memory-only"
 4. ⚠️ **Collection naming differs** - "{role}-patterns" vs just "{role}"
 5. ✅ **Mini search engine implemented correctly** - Two-stage retrieval works as designed
 
@@ -65,9 +65,9 @@ Decision needed: Which is correct - the design or the skills?
 
 | Component | V7 Design | Implementation | Impact |
 |-----------|-----------|----------------|--------|
-| Store skill | `coder-memory-store` | `project-memory-store` | Low - just names |
-| Recall skill | `coder-memory-recall` | `project-memory-recall` | Low - just names |
-| Subagent | `memory-only` | `memory-agent` | Low - just names |
+| Store skill | `coder-memory-store` | `coder-memory-store` | Low - just names |
+| Recall skill | `coder-memory-recall` | `coder-memory-recall` | Low - just names |
+| Subagent | `memory-only` | `memory-only` | Low - just names |
 | MCP server path | `src/qdrant_memory_mcp/__main__.py` | `src/mcp_server/server.py` | Low - works fine |
 
 **Collection Naming (Medium Issue):**
@@ -96,11 +96,11 @@ Not broken, just inconsistent with design principle.
 
 1. V7 design says metadata has **3 fields only** (lines 62-69)
 2. MCP server enforces **3 fields only** (models.py lines 119-133: validates and rejects extra fields)
-3. BUT skills tell agents to use **7 fields** (project-memory-store SKILL.md lines 52-65)
+3. BUT skills tell agents to use **7 fields** (coder-memory-store SKILL.md lines 52-65)
 
 **What happens:**
-- Skill invokes memory-agent
-- memory-agent calls `store_memory(document, metadata)` with 7 fields
+- Skill invokes memory-only
+- memory-only calls `store_memory(document, metadata)` with 7 fields
 - MCP validator raises error: "Unauthorized metadata fields: memory_type, role, tags, confidence, frequency"
 - **Storage fails**
 
@@ -164,7 +164,7 @@ if extra:
 **Tags:** #tag1 #tag2 #tag3
 ```
 
-**Skills Implementation (project-memory-store lines 21-29):**
+**Skills Implementation (coder-memory-store lines 21-29):**
 ```markdown
 **Title:** [Concise title]
 **Description:** [2-3 sentence summary - CRITICAL for search]
@@ -192,8 +192,8 @@ if extra:
 | RETRIEVE | When TodoWrite called | Hook on TodoWrite post-tool-use, invokes `coder-memory-recall` |
 
 **Implementation Status:**
-- ✅ Skills exist (`project-memory-store`, `project-memory-recall`)
-- ✅ Subagent exists (`memory-agent`)
+- ✅ Skills exist (`coder-memory-store`, `coder-memory-recall`)
+- ✅ Subagent exists (`memory-only`)
 - ⚠️ Hooks not visible in reviewed files (need to check hooks directory)
 
 **Note**: Can't verify hooks alignment without reading hook files. Assume they exist per Sprint 5 completion.
@@ -277,7 +277,7 @@ if extra:
 
 3. **Naming inconsistencies**
    - `coder-memory-*` vs `project-memory-*`
-   - `memory-only` vs `memory-agent`
+   - `memory-only` vs `memory-only`
    - Pick one naming scheme and stick with it
 
 ### LOW
@@ -325,7 +325,7 @@ Update MCP to accept 7 fields - contradicts V7 design.
 
 **Standardize naming:**
 - Pick: `coder-memory-*` OR `project-memory-*` (not both)
-- Pick: `memory-only` OR `memory-agent` (not both)
+- Pick: `memory-only` OR `memory-only` (not both)
 - Update all references consistently
 
 ### Priority 3 (Nice to Have)

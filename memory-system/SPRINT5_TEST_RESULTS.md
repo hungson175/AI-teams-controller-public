@@ -43,37 +43,37 @@ cd /home/hungson175/dev/coding-agents/packaging-agent/memory-system
 ### ✅ Step 5: Memory Skills Installation (NEW)
 ```
 [INFO] Installing memory skills...
-[SUCCESS] Installed project-memory-store skill
-[SUCCESS] Installed project-memory-recall skill
+[SUCCESS] Installed coder-memory-store skill
+[SUCCESS] Installed coder-memory-recall skill
 [SUCCESS] Memory skills installation complete
 ```
 
 **Verification**:
 ```bash
 $ ls -la ~/.claude/skills/ | grep project-memory
-drwxrwxr-x  2 hungson175 hungson175  4096 Thg 1  20 08:06 project-memory-recall
-drwxrwxr-x  2 hungson175 hungson175  4096 Thg 1  20 08:06 project-memory-store
+drwxrwxr-x  2 hungson175 hungson175  4096 Thg 1  20 08:06 coder-memory-recall
+drwxrwxr-x  2 hungson175 hungson175  4096 Thg 1  20 08:06 coder-memory-store
 ```
 
 **Files**:
-- `~/.claude/skills/project-memory-store/SKILL.md` ✓
-- `~/.claude/skills/project-memory-recall/SKILL.md` ✓
+- `~/.claude/skills/coder-memory-store/SKILL.md` ✓
+- `~/.claude/skills/coder-memory-recall/SKILL.md` ✓
 
 ### ✅ Step 6: Memory Subagent Installation (NEW)
 ```
 [INFO] Installing memory subagent...
-[SUCCESS] Installed memory-agent subagent
+[SUCCESS] Installed memory-only subagent
 [SUCCESS] Memory subagent installation complete
 ```
 
 **Verification**:
 ```bash
-$ ls -la ~/.claude/agents/ | grep memory-agent
--rw-rw-r--  1 hungson175 hungson175 3319 Thg 1  20 08:06 memory-agent.md
+$ ls -la ~/.claude/agents/ | grep memory-only
+-rw-rw-r--  1 hungson175 hungson175 3319 Thg 1  20 08:06 memory-only.md
 ```
 
 **File**:
-- `~/.claude/agents/memory-agent.md` ✓
+- `~/.claude/agents/memory-only.md` ✓
 
 ### ✅ Step 7: Memory Hooks Installation (NEW)
 ```
@@ -106,10 +106,10 @@ $ ls -la ~/.claude/hooks/ | grep memory
 [WARNING] Voyage API verification failed (key may be invalid or missing)
 
 [INFO] Verifying skills installation...
-[SUCCESS] Skills verified (project-memory-store, project-memory-recall)
+[SUCCESS] Skills verified (coder-memory-store, coder-memory-recall)
 
 [INFO] Verifying subagent installation...
-[SUCCESS] Subagent verified (memory-agent)
+[SUCCESS] Subagent verified (memory-only)
 
 [INFO] Verifying hooks installation...
 [SUCCESS] Hooks verified (memory_store_reminder.py, todowrite_memory_recall.py)
@@ -142,13 +142,13 @@ Next steps:
 Installed Components:
   - Qdrant: http://localhost:16333
   - MCP Server: stdio transport
-  - Skills: project-memory-store, project-memory-recall
-  - Subagent: memory-agent
+  - Skills: coder-memory-store, coder-memory-recall
+  - Subagent: memory-only
   - Hooks: memory_store_reminder.py, todowrite_memory_recall.py
 
 Memory Skills Usage:
-  - Use 'project-memory-store' to save coding patterns
-  - Use 'project-memory-recall' to retrieve relevant memories
+  - Use 'coder-memory-store' to save coding patterns
+  - Use 'coder-memory-recall' to retrieve relevant memories
   - Hooks automatically trigger skills when appropriate
 ```
 
@@ -161,12 +161,12 @@ Memory Skills Usage:
 **First run**: All components installed ✓
 **Second run**:
 ```
-[INFO] project-memory-store already installed, updating...
-[SUCCESS] Installed project-memory-store skill
-[INFO] project-memory-recall already installed, updating...
-[SUCCESS] Installed project-memory-recall skill
-[INFO] memory-agent already installed, updating...
-[SUCCESS] Installed memory-agent subagent
+[INFO] coder-memory-store already installed, updating...
+[SUCCESS] Installed coder-memory-store skill
+[INFO] coder-memory-recall already installed, updating...
+[SUCCESS] Installed coder-memory-recall skill
+[INFO] memory-only already installed, updating...
+[SUCCESS] Installed memory-only subagent
 [INFO] memory_store_reminder.py already installed, updating...
 [SUCCESS] Installed memory_store_reminder.py
 [INFO] todowrite_memory_recall.py already installed, updating...
@@ -181,15 +181,15 @@ Memory Skills Usage:
 
 ### Skills Content Check
 ```bash
-$ head -5 ~/.claude/skills/project-memory-store/SKILL.md
+$ head -5 ~/.claude/skills/coder-memory-store/SKILL.md
 ---
-name: project-memory-store
+name: coder-memory-store
 description: Store universal coding patterns into vector database...
 ---
 
-$ head -5 ~/.claude/skills/project-memory-recall/SKILL.md
+$ head -5 ~/.claude/skills/coder-memory-recall/SKILL.md
 ---
-name: project-memory-recall
+name: coder-memory-recall
 description: Retrieve universal coding patterns from vector database...
 ---
 ```
@@ -198,9 +198,9 @@ description: Retrieve universal coding patterns from vector database...
 
 ### Subagent Content Check
 ```bash
-$ head -10 ~/.claude/agents/memory-agent.md
+$ head -10 ~/.claude/agents/memory-only.md
 ---
-name: memory-agent
+name: memory-only
 description: Specialized agent for memory operations ONLY...
 tools: mcp__memory__search_memory, mcp__memory__get_memory, ...
 model: haiku

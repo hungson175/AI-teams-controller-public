@@ -1,12 +1,12 @@
 ---
-name: project-memory-recall
-description: Retrieve universal coding patterns from vector database. Auto-invokes before complex tasks or when user says "--recall". Searches relevant role collections based on task context.
+name: coder-memory-recall
+description: Retrieve universal coding patterns from GLOBAL vector database (cross-project learning). Auto-invokes before complex tasks or when user says "--recall". Searches relevant role collections based on task context.
 ---
 
 <execution>
-Use Task tool with `subagent_type: "memory-agent"` to keep main context clean.
+Use Task tool with `subagent_type: "memory-only"` to keep main context clean.
 
-The memory-agent has ZERO access to Read/Write/Edit/Glob/Bash - it can ONLY use MCP memory tools. This prevents file reading pollution by design.
+The memory-only agent has ZERO access to Read/Write/Edit/Glob/Bash - it can ONLY use MCP memory tools. This prevents file reading pollution by design.
 </execution>
 
 <selectivity>

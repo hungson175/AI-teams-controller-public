@@ -1,12 +1,12 @@
 ---
-name: project-memory-store
-description: Store universal coding patterns into vector database. Auto-invokes after difficult tasks with broadly-applicable lessons. Trigger with "--store" or when user expresses frustration (strong learning signals).
+name: coder-memory-store
+description: Store universal coding patterns into GLOBAL vector database (cross-project learning). Auto-invokes after difficult tasks with broadly-applicable lessons. Trigger with "--store" or when user expresses frustration (strong learning signals).
 ---
 
 <execution>
-Use Task tool with `subagent_type: "memory-agent"` to keep main context clean.
+Use Task tool with `subagent_type: "memory-only"` to keep main context clean.
 
-The memory-agent has ZERO access to Read/Write/Edit/Glob/Bash - it can ONLY use MCP memory tools. This prevents file reading pollution by design.
+The memory-only agent has ZERO access to Read/Write/Edit/Glob/Bash - it can ONLY use MCP memory tools. This prevents file reading pollution by design.
 </execution>
 
 <selectivity>
