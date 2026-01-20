@@ -11,11 +11,15 @@
 
 ---
 
-## Current Sprint: Sprint 4 (MCP Server)
+## Current Sprint: Sprint 6 (Component 1 Upgrade + Component 3 SQLite)
 
-**Status**: AWAITING BOSS REVIEW (models.py)
+**Status**: STARTED - Dual track execution
 
-**Sprint 4 Objective**: Build COMPLETE MCP server with ALL 8 tools
+**Sprint 6 Objective**: Complete packaging for Components 1 & 3
+
+**Progress**:
+- Track A: ✅ COMPLETE (Component 1 upgraded, commit 932459d, PO verified)
+- Track B: 🔄 IN PROGRESS (SQLite conversion, DEV working)
 
 **Implementation**: Commit: 37834d3 (typo correction complete)
 
@@ -26,25 +30,26 @@
 ✅ Typo corrected: azerol → other-role
 ✅ All 7 approved collections verified
 
-**Current Action**: Boss directive - Complete Memory System (Option A)
-- DEV: Create fully automated installation script
-- DU: Document memory system in README
-- Goal: Zero manual setup, one-command install
-- Success: Fresh Docker test works immediately
+**Current Action**: Sprint 5 - Package Memory Skills & Dependencies
 
-**Completed Since Boss Left:**
-1. ✅ Sprint 4 Boss fixes (40/40 tests, 83% coverage, commit 4df0992)
-2. ✅ Qdrant scoring research (SIMILARITY confirmed, commit 03fb5db)
-3. ✅ Sprint 4 status report created (commit 0f8c447)
-4. ✅ BACKLOG.md cleaned up (Boss feedback: "too long and rambling")
-   - Moved details to backlog/ directory
-   - Applied Progressive Disclosure
-   - Main backlog now SHORT and scannable
+**Problem Identified by Boss**:
+- Memory System depends on EXTERNAL skills (coder-memory-store, coder-memory-recall)
+- Memory System depends on EXTERNAL subagent (memory-only)
+- Not packaged → User installs but can't use system
+- Violates "install once, works immediately" requirement
 
-**Sprint 4 Status:**
-- Code: ✅ COMPLETE (MCP server, tests, Boss fixes)
-- Installation: ❌ PENDING (waiting Boss directive)
-- Documentation: ❌ PENDING (waiting Boss directive)
+**Sprint 5 - COMPLETE** ✅:
+1. ✅ NEW skills: project-memory-store, project-memory-recall (commit 6c6a841)
+2. ✅ NEW subagent: memory-agent (commit 6c6a841)
+3. ✅ Hooks: memory_store_reminder.py, todowrite_memory_recall.py (commit 6c6a841)
+4. ✅ Updated install-memory-system.sh (commit 55a6039)
+5. ✅ Updated documentation (INSTALLATION.md, README)
+
+**Goal**: Zero external dependencies, self-contained packaging
+
+**Previous Sprint Complete**:
+- ✅ Sprint 4: MCP server, tests, Boss fixes
+- ✅ Option A: Installation script + README documentation
 
 **Boss Issues (5 areas to fix):**
 - models.py: query constraints + metadata fields (2 input models)

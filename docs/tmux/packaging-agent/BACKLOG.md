@@ -32,13 +32,17 @@ Rewrite V6 README (Boss: "pretty shitty"). Fix installation instructions, add me
 
 ## P1 - SHOULD DO (Required for MVP)
 
+### Component 1: tmux Team Creator - Packaging Upgrade
+Sprint 6 Track A IN PROGRESS: Upgrade installer to match Memory System quality. Add colored output, verification, prerequisites check, better error handling.
+**Status**: Sprint 6 Track A assigned to DEV
+
 ### Component 2: Memory System
-Sprint 1-3 complete. Sprint 4 MCP server code complete (40/40 tests, 83% coverage, Boss fixes applied). Remaining: Installation script + documentation.
-**Status**: Code done, waiting Boss directive for installation phase
+✅ COMPLETE (Sprint 1-5): MCP server, installation script, skills, subagent, hooks all packaged. Zero external dependencies.
 
 ### Component 3: Web UI - SQLite Conversion
-Convert from PostgreSQL to SQLite for demo. Hardcoded test/test123 user. Better UX but optional if time tight.
-**Priority**: P1 | **Time**: 90 min
+Sprint 6 Track B IN PROGRESS: Convert PostgreSQL to SQLite for demo. Hardcoded test/test123 user. Remove PostgreSQL dependency.
+**Status**: Sprint 6 Track B assigned to DEV
+**Time**: 90 min
 
 ---
 
@@ -77,6 +81,10 @@ Verify tmux-team-creator skill packaging, test install script, verify all 5 temp
 
 ## P3 - POST-LAUNCH
 
+### Overall Integration Test (Docker)
+After ALL components complete: Full integration test in isolated Docker container. Steps: Create Docker on this machine → git clone repo → Follow README installation → Use `--extract dangerously skip permissions` → Verify all 3 components work. Tests real user experience from scratch.
+**Priority**: P3 | **When**: After all packaging complete
+
 - PostgreSQL support documentation
 - Docker-based installation option
 - CI/CD pipeline for releases
@@ -108,6 +116,13 @@ Verify tmux-team-creator skill packaging, test install script, verify all 5 temp
 - **WORK ON**: Public fork at `/home/hungson175/dev/coding-agents/AI-teams-controller-public`
 - Code split across 3 projects: UI, Agent skills/prompts, Memory system
 - Focus: Package existing code, clean sensitive data, create demo video
+
+---
+
+## Design Notes (Non-Actionable Reminders)
+
+### Docker/Docker Compose Packaging - NOT NOW
+**Reminder**: If considering Docker/Docker Compose packaging in future versions - be cautious. Entire system is tmux-based (multi-session coordination). Running tmux sessions inside Docker not tested yet, likely has issues. **Avoid Docker packaging for now.** Consider for later versions only after thorough testing.
 
 ---
 

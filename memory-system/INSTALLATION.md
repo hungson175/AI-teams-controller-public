@@ -89,6 +89,24 @@ python -m src.mcp_server.server
   - VOYAGE_API_KEY (for embeddings)
   - QDRANT_URL (auto-configured)
 
+### 4. Memory Skills
+- **project-memory-store**: Stores coding patterns automatically after task completion
+- **project-memory-recall**: Retrieves relevant memories before complex tasks
+- **Location**: `~/.claude/skills/`
+- **Automatic triggering**: Via hooks (see Hooks section)
+
+### 5. Memory Subagent
+- **memory-agent**: Specialized agent for memory operations only
+- **Tools**: MCP memory tools (search, store, get, list_collections)
+- **Zero file access**: Cannot read/write/edit files (security)
+- **Used by**: Memory skills for storage/retrieval operations
+
+### 6. Memory Hooks
+- **memory_store_reminder.py**: 33% probability reminder after task completion (Stop hook)
+- **todowrite_memory_recall.py**: Triggers memory recall on first TodoWrite
+- **Location**: `~/.claude/hooks/`
+- **Purpose**: Automatic memory integration without manual skill invocation
+
 ---
 
 ## Configuration
@@ -144,6 +162,139 @@ Add to `~/.claude/mcp.json`:
     }
   }
 }
+```
+
+---
+
+## Memory Skills
+
+Memory skills provide automatic storage and retrieval of coding patterns without manual invocation.
+
+### project-memory-store
+
+**Purpose**: Store coding patterns, solutions, and lessons automatically after task completion
+
+**Triggering**: Via `memory_store_reminder.py` hook (33% probability after tasks)
+
+**What it stores**:
+- Bug fixes and solutions
+- Error patterns and resolutions
+- Design decisions and trade-offs
+- Coding patterns that worked well
+
+**Usage**: Automatic - no manual invocation needed. Hook prompts to store when valuable lessons emerge.
+
+### project-memory-recall
+
+**Purpose**: Retrieve relevant memories before complex tasks
+
+**Triggering**: Via `todowrite_memory_recall.py` hook (on first TodoWrite in session)
+
+**What it recalls**:
+- Similar problems solved before
+- Relevant coding patterns
+- Past lessons from related tasks
+
+**Usage**: Automatic - triggered when you start planning complex tasks with TodoWrite.
+
+**Manual invocation** (if needed):
+```bash
+# In Claude Code
+/project-memory-recall
+```
+
+---
+
+## Memory Subagent
+
+The memory-agent is a specialized subagent dedicated to memory operations only.
+
+### Purpose
+
+Handles all memory storage and retrieval operations for memory skills. Isolated from file system for security.
+
+### Capabilities
+
+**Has access to**:
+- MCP memory tools (search_memory, store_memory, get_memory, list_collections)
+- Memory search and retrieval logic
+
+**Does NOT have access to**:
+- File read/write/edit tools
+- Bash commands
+- Any file system operations
+
+### Why Isolated?
+
+Security and specialization:
+- Memory operations require different permissions than code editing
+- Prevents accidental file modifications during memory operations
+- Focuses solely on memory tasks without distractions
+
+### Usage
+
+Memory skills automatically spawn the memory-agent when needed. You don't interact with it directly.
+
+**Example workflow**:
+1. You complete a difficult task
+2. `memory_store_reminder.py` hook prompts (33% chance)
+3. You invoke `/project-memory-store`
+4. Skill spawns memory-agent to handle storage
+5. Memory-agent searches/stores via MCP tools
+6. Done
+
+---
+
+## Hooks
+
+Hooks automate memory integration without requiring manual skill invocation.
+
+### memory_store_reminder.py
+
+**Type**: Stop hook (runs after task completion)
+
+**Trigger**: 33% probability after any task
+
+**Purpose**: Remind you to store valuable lessons without being annoying
+
+**Prompt**:
+```
+Check if any hard-earned lessons or failure patterns warrant storage.
+Be EXTREMELY selective. If storing: store and report in 1 line.
+If not: say 'Nothing worth storing.' and move on.
+```
+
+**Why 33%?**: Balance between capturing important lessons and not interrupting flow.
+
+**Location**: `~/.claude/hooks/memory_store_reminder.py`
+
+### todowrite_memory_recall.py
+
+**Type**: PreToolUse hook (runs before TodoWrite tool)
+
+**Trigger**: First TodoWrite in session (complex task planning detected)
+
+**Purpose**: Automatically recall relevant memories when starting complex work
+
+**Behavior**:
+- Detects first TodoWrite (planning phase)
+- Spawns memory-agent to search for relevant memories
+- Presents findings before you start planning
+- Subsequent TodoWrites don't trigger (only first one)
+
+**Location**: `~/.claude/hooks/todowrite_memory_recall.py`
+
+### Hook Configuration
+
+Hooks are installed automatically by `install-memory-system.sh` to `~/.claude/hooks/`.
+
+**Manual installation** (if needed):
+```bash
+# Copy hooks
+cp hooks/*.py ~/.claude/hooks/
+
+# Verify
+ls ~/.claude/hooks/ | grep memory
 ```
 
 ---

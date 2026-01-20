@@ -49,14 +49,135 @@ Claude Code skill that creates and manages multi-agent tmux teams. Includes 5 te
 **Installation**: `./install-tmux-skill.sh` (when ready)
 
 ### Component 2: Memory System
-MCP server + Qdrant vector database + 2 Claude Code skills (coder-memory-store, coder-memory-recall). Persistent memory shared across all projects.
+MCP server + Qdrant vector database + Memory skills + Memory subagent + Automatic hooks. Persistent memory shared across all projects.
 
-**Status**: Implementation in progress
+**Includes**:
+- 2 Claude Code skills (project-memory-store, project-memory-recall)
+- Specialized memory-agent (file-access isolated for security)
+- 2 automatic hooks (33% reminder, TodoWrite trigger)
+
+**Status**: Ready to install (see Memory System section below)
 
 ### Component 3: Web UI
 Next.js + FastAPI web application for visual team management, monitoring, and voice input.
 
 **Status**: TBD - installation instructions coming
+
+---
+
+## Memory System
+
+### What It Does
+
+Persistent memory shared across **all projects**. Agents store and retrieve knowledge automatically:
+
+- **Technical memory**: Bug solutions, error patterns, code fixes stored in Qdrant vector database
+- **Procedural memory**: Process improvements embedded by Scrum Master
+- **Cross-project learning**: Agent on Project A recalls solutions from Project B
+
+Memory persists locally (not cloud). Agents get smarter over time without losing knowledge between sessions.
+
+### Installation
+
+**One command**:
+```bash
+cd memory-system
+./install-memory-system.sh
+```
+
+The script installs:
+- Qdrant vector database (Docker)
+- Python dependencies (virtual environment)
+- MCP server for Claude Code integration
+- Memory skills (project-memory-store, project-memory-recall)
+- Memory subagent (memory-agent, isolated from file system)
+- Automatic hooks (memory_store_reminder, todowrite_memory_recall)
+- Environment configuration
+
+**Time**: 3-5 minutes
+
+**Fully self-contained**: All components (skills, subagent, hooks) packaged in this repository. Zero external dependencies. Install once, works immediately.
+
+**For detailed installation**, see: [memory-system/INSTALLATION.md](../memory-system/INSTALLATION.md)
+
+### Configuration
+
+**Voyage AI API Key** (required for embeddings):
+```bash
+# Add to memory-system/.env
+VOYAGE_API_KEY=your-key-here
+```
+Get your key: https://www.voyageai.com/
+
+**Qdrant** (auto-configured):
+- Port: 16333 (non-standard to avoid conflicts)
+- URL: http://localhost:16333
+- Data: `memory-system/qdrant_storage/`
+
+### Usage with Claude Code
+
+Add MCP server to `~/.claude/mcp.json`:
+```json
+{
+  "mcpServers": {
+    "memory": {
+      "command": "python",
+      "args": ["-m", "src.mcp_server.server"],
+      "cwd": "/path/to/packaging-agent/memory-system",
+      "env": {
+        "PYTHONPATH": "/path/to/packaging-agent/memory-system"
+      }
+    }
+  }
+}
+```
+
+**Available MCP tools**:
+- `search_memory` - Find relevant past solutions
+- `store_memory` - Save new knowledge
+- `get_memory` - Retrieve specific memory by ID
+- `list_collections` - View memory categories
+
+**Memory Skills** (automatic):
+- `project-memory-store` - Stores lessons after task completion (hook: 33% reminder)
+- `project-memory-recall` - Retrieves relevant memories before complex tasks (hook: first TodoWrite)
+
+**Usage examples**:
+```bash
+# Automatic (via hooks)
+# After completing task -> 33% chance hook prompts to store
+# When you use TodoWrite -> auto-recalls relevant memories
+
+# Manual invocation (if needed)
+/project-memory-store
+/project-memory-recall
+```
+
+**Memory Subagent**:
+- Handles all memory operations (automatically spawned by skills)
+- Zero file access (security isolation)
+- Uses only MCP memory tools
+
+### Troubleshooting
+
+**Qdrant connection failed**:
+```bash
+# Check container
+docker ps | grep qdrant
+
+# Check logs
+docker logs memory-system-qdrant
+
+# Restart
+docker restart memory-system-qdrant
+```
+
+**Voyage API errors**:
+- Verify API key in `memory-system/.env`
+- Check key validity at voyageai.com
+- Check rate limits
+
+**For detailed troubleshooting**, see: [memory-system/INSTALLATION.md](../memory-system/INSTALLATION.md)
 
 ---
 
