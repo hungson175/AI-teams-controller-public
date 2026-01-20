@@ -15,12 +15,9 @@ A production-ready autonomous AI software development system built on Claude Cod
 
 ## Target Audience
 
-**This system is for:**
 - Professional Software Engineers/Managers
 - Users with 3+ months of Claude Code experience
 - Those who understand what the title means
-
-**If you're a "vibecoder" or casual AI user**: STOP. This is not for you. This system requires deep understanding of multi-agent coordination, tmux, vector databases, and production development workflows.
 
 ---
 
