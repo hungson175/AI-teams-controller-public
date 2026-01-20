@@ -30,11 +30,11 @@ Use `search_memory` with query, `roles=["detected_role", "universal"]`, `limit=2
 Note: The `roles` parameter tells MCP which collections to search. Always include "universal" to catch cross-domain patterns.
 
 **Step 4: Analyze previews**
-Review returned previews (title + description + tags). Select 3-5 most relevant based on:
+Review returned previews (title + preview + score). Select 3-5 most relevant based on:
 - Does title match problem domain?
-- Does description indicate relevant solution?
-- Do tags align with task?
-- Is memory type appropriate? (episodic for debugging, procedural for workflows, semantic for patterns)
+- Does preview indicate relevant solution?
+- Does score indicate high relevance?
+- Do embedded tags (in content) align with task?
 
 **Step 5: Retrieve full content**
 Use `batch_get_memories` with selected doc_ids and `roles=["detected_role", "universal"]`.

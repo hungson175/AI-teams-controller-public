@@ -7,37 +7,30 @@
 - Git history manages past work, not whiteboard
 - Context pollution kills AI agent effectiveness
 
-**Last Updated**: 2026-01-20 09:10
+**Last Updated**: 2026-01-20 10:05
 
 ---
 
-## Current Work: Port Assignment & PostgreSQL Removal
+## Current Status: Fixing Metadata Mismatch (P1 Critical)
 
-**Status**: IN PROGRESS
+**Boss Decision**: Option A - V7 design is authoritative (3-field metadata)
 
-**Objective**: Fix port conflicts, remove PostgreSQL, finalize demo install
-
-**Boss Directive** (CRITICAL):
-- Standard ports (3000, 8000) = "stupid as hell" - causes conflicts
-- Use UNUSUAL ports (333X, 170XX ranges)
-- Document ALL ports persistently
-- Add new project to global ~/.claude/CLAUDE.md port registry
-
-**Current Tasks**:
-1. ⏳ DEV: Remove ALL PostgreSQL support (SQLite only) - IN PROGRESS
-2. 🔜 DEV: Finalize demo credentials + auto-install script
+**Current Task** (DEV):
+- Update skills to use 3-field metadata (title, preview, content)
+- Remove 7-field metadata references
+- Move tags/memory_type/role into content markdown
 
 **Recent Completed**:
-- ✅ Sprint 6 Track A: Component 1 installer (commit 932459d)
-- ✅ Sprint 6 Track B: SQLite conversion (commit 6ac0e40)
-- ✅ Port updates in project files (commit 37ebe35)
-- ✅ PORTS.md created (173 lines)
-- ✅ Global CLAUDE.md port registry updated (commit 3eec901)
+- ✅ V7 Design Alignment Review (commit be75884)
+- ✅ PO verification of findings
+- ✅ Boss review and decision
 
-**New Port Assignments**:
-- Frontend: 3337 (was 3334)
-- Backend: 17063 (was 17061)
-- Terminal: 17073 (was 17071)
+**Component Status**:
+- Component 1 (tmux-team-creator): ✅ Ready
+- Component 2 (Memory System): ⏳ **Fixing metadata mismatch** (blocks release)
+- Component 3 (Web UI): ✅ Ready
+
+**Next**: PO verify fix → Boss final review of memory system
 
 ---
 
@@ -45,8 +38,8 @@
 
 | Role | Status | Current Task |
 |------|--------|--------------|
-| PO | ACTIVE | Waiting for DEV to complete PostgreSQL removal |
-| DEV | IMPLEMENTING | Removing ALL PostgreSQL support (database.py, pyproject.toml, .env.example, README) |
+| PO | ACTIVE | Waiting for DEV metadata fix, will verify before Boss final review |
+| DEV | IMPLEMENTING | Fixing metadata mismatch (P1 critical - update skills to 3 fields) |
 | DU | STANDBY | Awaiting assignment |
 
 ---

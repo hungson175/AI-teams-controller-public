@@ -21,7 +21,7 @@ Skip when: Standard practices, project-specific config, routine fixes, vague ins
 **Step 1: Format memory**
 ```
 **Title:** [Concise title]
-**Description:** [2-3 sentence summary - CRITICAL for search]
+**Preview:** [2-3 sentence summary - CRITICAL for search]
 
 **Content:** [What happened, what was tried, what worked/failed, key lesson]
 
@@ -31,8 +31,7 @@ Skip when: Standard practices, project-specific config, routine fixes, vague ins
 **Step 2: Extract metadata**
 Parse the formatted text to extract:
 - `title`: Plain text without markdown (from "**Title:**")
-- `description`: Plain text without markdown (from "**Description:**")
-- `tags`: Array of tags (e.g., ["#backend", "#jwt", "#auth"])
+- `preview`: Plain text without markdown (from "**Preview:**")
 
 **Step 3: Detect role for storage**
 Determine which role collection to store in based on task context. Use role_mapping below. Default to "universal" if unclear.
@@ -50,19 +49,20 @@ Note: The `roles` parameter tells MCP which collections to search. Always includ
 
 **Step 6: Store**
 Use `store_memory` with:
-- `document`: Full formatted text (Title + Description + Content + Tags)
+- `document`: Full formatted text (Title + Preview + Content + Tags)
 - `metadata`:
 ```json
 {
-  "memory_type": "episodic|procedural|semantic",
-  "role": "backend|frontend|devops|ai|...",
   "title": "Plain text title",
-  "description": "2-3 line summary",
-  "tags": ["#tag1", "#tag2"],
-  "confidence": "high|medium|low",
-  "frequency": 1
+  "preview": "2-3 sentence summary",
+  "content": "[Full formatted markdown document]"
 }
 ```
+
+**Notes:**
+- The `content` field contains the complete formatted markdown (Title + Preview + Content + Tags)
+- Tags, memory_type, and role are embedded INSIDE the content markdown, not as separate metadata fields
+- This matches V7 design specification
 </workflow>
 
 <role_mapping>
