@@ -4,7 +4,8 @@
 set -e
 source "$(dirname "$0")/lib/common.sh"
 
-PORT=3334
+# Port 3337 - Unusual port to avoid conflicts with standard dev ports (3000, 8000, etc.)
+PORT=3337
 SERVICE_NAME="ai-teams-frontend"
 LOG_FILE="/tmp/ai-teams-frontend.log"
 # Use absolute path to avoid issues after cd

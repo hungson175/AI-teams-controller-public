@@ -53,17 +53,17 @@ python scripts/init_sqlite_demo.py
 
 **Run backend**:
 ```bash
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --port 17063
 ```
 
-Backend runs on: http://localhost:8000
+Backend runs on: http://localhost:17063
 
 ---
 
 ## API Documentation
 
-**Swagger UI**: http://localhost:8000/docs
-**ReDoc**: http://localhost:8000/redoc
+**Swagger UI**: http://localhost:17063/docs
+**ReDoc**: http://localhost:17063/redoc
 
 ---
 
@@ -72,7 +72,7 @@ Backend runs on: http://localhost:8000
 **Optional**:
 - `DATABASE_URL` - SQLite database path (default: sqlite+aiosqlite:///./aicontroller.db)
 - `SECRET_KEY` - JWT secret (auto-generated for demo)
-- `CORS_ORIGINS` - Allowed origins (default: http://localhost:3000)
+- `CORS_ORIGINS` - Allowed origins (default: http://localhost:3337)
 
 ---
 
@@ -88,10 +88,10 @@ python scripts/init_sqlite_demo.py
 - Verify demo credentials: test@example.com / test123
 - Check database initialized: `ls aicontroller.db`
 
-**"Port 8000 in use"**:
+**"Port 17063 in use"**:
 ```bash
 # Use different port
-uvicorn app.main:app --port 8001
+uvicorn app.main:app --port 17064
 ```
 
 ---

@@ -3,7 +3,8 @@
 set -e
 source "$(dirname "$0")/lib/common.sh"
 
-PORT=17071
+# Port 17073 - Unusual port to avoid conflicts with common services
+PORT=17073
 LOG_FILE="/tmp/ai-teams-terminal.log"
 PROJECT_DIR="$(dirname "$0")/../terminal-service"
 

@@ -21,10 +21,10 @@ show_status() {
     echo ""
 
     # Check each service port
-    if lsof -i :17061 > /dev/null 2>&1; then
-        echo -e "Backend (17061):  ${GREEN}RUNNING${NC}"
+    if lsof -i :17063 > /dev/null 2>&1; then
+        echo -e "Backend (17063):  ${GREEN}RUNNING${NC}"
     else
-        echo -e "Backend (17061):  ${RED}STOPPED${NC}"
+        echo -e "Backend (17063):  ${RED}STOPPED${NC}"
     fi
 
     if pgrep -f "celery.*worker" > /dev/null 2>&1; then
@@ -35,16 +35,16 @@ show_status() {
         echo -e "Celery:           ${RED}STOPPED${NC}"
     fi
 
-    if lsof -i :3334 > /dev/null 2>&1; then
-        echo -e "Frontend (3334):  ${GREEN}RUNNING${NC}"
+    if lsof -i :3337 > /dev/null 2>&1; then
+        echo -e "Frontend (3337):  ${GREEN}RUNNING${NC}"
     else
-        echo -e "Frontend (3334):  ${RED}STOPPED${NC}"
+        echo -e "Frontend (3337):  ${RED}STOPPED${NC}"
     fi
 
-    if lsof -i :17071 > /dev/null 2>&1; then
-        echo -e "Terminal (17071): ${GREEN}RUNNING${NC}"
+    if lsof -i :17073 > /dev/null 2>&1; then
+        echo -e "Terminal (17073): ${GREEN}RUNNING${NC}"
     else
-        echo -e "Terminal (17071): ${RED}STOPPED${NC}"
+        echo -e "Terminal (17073): ${RED}STOPPED${NC}"
     fi
 
     echo ""

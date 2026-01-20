@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:17061'
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:17063'
 
 // Build version: timestamp at build time for cache debugging
 const buildVersion = new Date().toISOString().replace('T', ' ').substring(0, 19)

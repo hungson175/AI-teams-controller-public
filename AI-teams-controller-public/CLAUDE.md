@@ -39,11 +39,13 @@ Use `tm-send ROLE "message"` for ALL cross-role communication. Never use raw tmu
 
 ## Ports
 
+**Note**: Unusual ports chosen to avoid conflicts with common development services (3000, 8000, etc.)
+
 | Service | Port |
 |---------|------|
-| Frontend (Next.js) | 3334 |
-| Backend (FastAPI) | 17061 |
-| Terminal Service | 17071 |
+| Frontend (Next.js) | 3337 |
+| Backend (FastAPI) | 17063 |
+| Terminal Service | 17073 |
 
 ## Service Restart (Use Scripts Only)
 
@@ -69,9 +71,9 @@ Use `tm-send ROLE "message"` for ALL cross-role communication. Never use raw tmu
 ## Production Infrastructure
 
 Services run locally, exposed via Vietnix VPS (14.225.192.6) reverse SSH tunnels:
-- `voice-ui.hungson175.com` → localhost:3334
-- `voice-backend.hungson175.com` → localhost:17061
-- `voice-terminal.hungson175.com` → localhost:17071
+- `voice-ui.hungson175.com` → localhost:3337
+- `voice-backend.hungson175.com` → localhost:17063
+- `voice-terminal.hungson175.com` → localhost:17073
 
 ## Environment Variables (backend/.env)
 

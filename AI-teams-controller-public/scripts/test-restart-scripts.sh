@@ -7,9 +7,9 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/common.sh"
 
-# Test configuration
-BACKEND_PORT=17061
-FRONTEND_PORT=3334
+# Test configuration - Unusual ports to avoid conflicts
+BACKEND_PORT=17063
+FRONTEND_PORT=3337
 TEST_RESULTS=()
 FAILED_TESTS=0
 TOTAL_TESTS=0
@@ -37,18 +37,18 @@ test_backend_single_instance() {
 
     # Count actual Python uvicorn processes (not uv wrapper)
     # uv creates: parent "uv run" + child "python uvicorn"
-    local backend_count=$(pgrep -f "python.*uvicorn.*17061" | wc -l)
+    local backend_count=$(pgrep -f "python.*uvicorn.*17063" | wc -l)
 
     if [ "$backend_count" -eq 0 ]; then
         log_error "No backend process found"
         return 1
     elif [ "$backend_count" -gt 1 ]; then
         log_error "Multiple backend processes detected ($backend_count)"
-        log_error "PIDs: $(pgrep -f 'python.*uvicorn.*17061')"
+        log_error "PIDs: $(pgrep -f 'python.*uvicorn.*17063')"
         return 1
     fi
 
-    log_info "Backend: Single instance verified (PID: $(pgrep -f 'python.*uvicorn.*17061'))"
+    log_info "Backend: Single instance verified (PID: $(pgrep -f 'python.*uvicorn.*17063'))"
     return 0
 }
 
@@ -125,7 +125,7 @@ test_celery_single_worker() {
 test_frontend_single_instance() {
     log_info "Test 5: Frontend - Verify single instance running"
 
-    # Count frontend processes (next-server for this project on port 3334)
+    # Count frontend processes (next-server for this project on port 3337)
     local frontend_count=0
     if lsof -i :$FRONTEND_PORT > /dev/null 2>&1; then
         # Get PIDs listening on frontend port (exclude SSH tunnels)
