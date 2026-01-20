@@ -1,0 +1,13 @@
+# Demo API Keys for Testing
+# WARNING: These are temporary 1-week evaluation keys
+# Boss will revoke these after xAI evaluation period
+# For production use, generate your own keys
+
+# xAI API (Grok LLM)
+XAI_API_KEY=xai-wYwjGJC1kMQrWOAkm8nxyoP8buc8ywmzxjo0yQCzcBySS4Kyrh5zozhMRiYgSCdcqKDYBvbewyWBw1En
+
+# Soniox API (Speech-to-Text)
+SONIOX_API_KEY=06e9ce04e8bc99c1fb45dd07b8778a25ab4ceca15302d2e26a2a87fc34253075
+
+# Voyage AI API (Embeddings for Memory System)
+VOYAGE_API_KEY=pa-8uDrnM6sSPmOAQ3OrZz4n3u5RnuUMijf5BwNJucwC4k

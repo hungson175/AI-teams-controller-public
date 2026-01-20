@@ -240,8 +240,23 @@ configure_environment() {
     if ! grep -q "VOYAGE_API_KEY=.*[a-zA-Z0-9]" .env; then
         log_warning "Voyage API key not found in .env"
 
+        # Check for demo API keys first
+        local demo_keys_file="$SCRIPT_DIR/../config/demo-api-keys.txt"
+        if [ -f "$demo_keys_file" ]; then
+            log_info "Found demo API keys, populating .env..."
+
+            # Extract Voyage key from demo-api-keys.txt
+            local voyage_key=$(grep "^VOYAGE_API_KEY=" "$demo_keys_file" | cut -d'=' -f2)
+
+            if [ -n "$voyage_key" ]; then
+                # Update .env with demo key
+                sed -i "s/VOYAGE_API_KEY=.*/VOYAGE_API_KEY=$voyage_key/" .env
+                log_success "Configured Voyage API key (demo)"
+            else
+                log_warning "Voyage API key not found in demo keys file"
+            fi
         # Check if running interactively
-        if [ -t 0 ]; then
+        elif [ -t 0 ]; then
             echo ""
             read -p "Enter your Voyage AI API key (or press Enter to skip): " voyage_key
 

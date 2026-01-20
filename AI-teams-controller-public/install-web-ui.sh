@@ -107,6 +107,30 @@ install_backend() {
         log_info "Creating .env from .env.example..."
         cp .env.example .env
         log_success ".env file created"
+
+        # Check for demo API keys and populate .env
+        local demo_keys_file="$SCRIPT_DIR/../config/demo-api-keys.txt"
+        if [ -f "$demo_keys_file" ]; then
+            log_info "Found demo API keys, populating .env..."
+
+            # Extract keys from demo-api-keys.txt
+            local xai_key=$(grep "^XAI_API_KEY=" "$demo_keys_file" | cut -d'=' -f2)
+            local soniox_key=$(grep "^SONIOX_API_KEY=" "$demo_keys_file" | cut -d'=' -f2)
+
+            # Update .env with demo keys
+            if [ -n "$xai_key" ]; then
+                sed -i "s|XAI_API_KEY=.*|XAI_API_KEY=$xai_key|" .env
+                log_success "Configured xAI API key (demo)"
+            fi
+
+            if [ -n "$soniox_key" ]; then
+                sed -i "s|SONIOX_API_KEY=.*|SONIOX_API_KEY=$soniox_key|" .env
+                log_success "Configured Soniox API key (demo)"
+            fi
+        else
+            log_warning "Demo API keys not found at: $demo_keys_file"
+            log_warning "You'll need to add API keys to backend/.env manually"
+        fi
     else
         log_info ".env file already exists"
     fi
