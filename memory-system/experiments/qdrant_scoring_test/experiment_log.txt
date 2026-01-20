@@ -1,0 +1,67 @@
+================================================================================
+Qdrant Scoring Experiment: Similarity vs Distance
+================================================================================
+Timestamp: 2026-01-20T07:04:16.729016
+
+Step 1: Fetching a document from Qdrant (backend collection)
+--------------------------------------------------------------------------------
+Document ID: 1
+Document Title: FastMCP: Minimal Python MCP Server
+Document Preview: Use FastMCP for rapid prototyping MCP servers with minimal boilerplate. Zero setup required, decorat...
+
+Document Content Length: 884 characters
+Document Content (first 200 chars):
+**Title:** FastMCP: Minimal Python MCP Server
+**Preview:** Use FastMCP for rapid prototyping MCP servers with minimal boilerplate. Zero setup required, decorator-based tool registration, built-in stdi
+
+Step 2: Searching with EXACT same content as query
+--------------------------------------------------------------------------------
+Query = Document Content (exact match)
+
+Search returned 5 results
+
+Step 3: Analyzing Scores
+--------------------------------------------------------------------------------
+
+Result 1:
+  ID: 1
+  Title: FastMCP: Minimal Python MCP Server
+  Score: 0.9999999
+  *** THIS IS THE EXACT MATCH (same document) ***
+
+Result 2:
+  ID: 1768842547541796
+  Title: Minimal
+  Score: 0.50694346
+
+Result 3:
+  ID: 1768844229709652
+  Title: Minimal
+  Score: 0.50694346
+
+Result 4:
+  ID: 1768844033674151
+  Title: Minimal
+  Score: 0.50694346
+
+Result 5:
+  ID: 1768842233637443
+  Title: Minimal
+  Score: 0.50694346
+
+================================================================================
+CONCLUSION
+================================================================================
+
+Exact Match Score: 0.9999999
+
+✓ Score ≈ 1.0 → Qdrant returns SIMILARITY scores
+  - 1.0 = perfect match (highest similarity)
+  - 0.0 = no similarity (lowest)
+  - Higher scores = better matches
+
+ANSWER: Qdrant returns SIMILARITY scores for COSINE distance
+
+================================================================================
+Experiment Complete
+================================================================================
