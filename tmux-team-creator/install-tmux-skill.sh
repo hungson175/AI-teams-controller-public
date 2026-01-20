@@ -206,34 +206,59 @@ verify_installation() {
     log_success "Installation verification complete"
 }
 
-# Install slash command
+# Install slash commands
 install_command() {
-    log_info "Installing /create-tmux-team command..."
+    log_info "Installing commands..."
 
     local COMMAND_DIR="$HOME/.claude/commands"
-    local COMMAND_FILE="$SCRIPT_DIR/commands/create-tmux-team.md"
-
-    if [ ! -f "$COMMAND_FILE" ]; then
-        log_warning "Command file not found: $COMMAND_FILE (skipping)"
-        return 0
-    fi
+    local COMMANDS_SOURCE1="$SCRIPT_DIR/commands"
+    local COMMANDS_SOURCE2="$SCRIPT_DIR/sample_team/commands"
 
     mkdir -p "$COMMAND_DIR"
 
-    # Check if command already exists
-    if [ -f "$COMMAND_DIR/create-tmux-team.md" ]; then
-        log_info "Command already installed, updating..."
+    local installed_count=0
+
+    # Install commands from commands/ directory
+    if [ -d "$COMMANDS_SOURCE1" ]; then
+        for cmd_file in "$COMMANDS_SOURCE1"/*.md; do
+            if [ -f "$cmd_file" ]; then
+                local cmd_name=$(basename "$cmd_file" .md)
+                cp "$cmd_file" "$COMMAND_DIR/"
+                if [ -f "$COMMAND_DIR/$(basename "$cmd_file")" ]; then
+                    log_success "Command installed: /$cmd_name"
+                    ((installed_count++))
+                else
+                    log_warning "Command installation may have failed: /$cmd_name"
+                fi
+            fi
+        done
     fi
 
-    # Copy command file
-    cp "$COMMAND_FILE" "$COMMAND_DIR/"
-
-    if [ -f "$COMMAND_DIR/create-tmux-team.md" ]; then
-        log_success "Command installed: /create-tmux-team"
-    else
-        log_warning "Command installation may have failed (file not found after copy)"
-        return 1
+    # Install commands from sample_team/commands/ directory
+    if [ -d "$COMMANDS_SOURCE2" ]; then
+        for cmd_file in "$COMMANDS_SOURCE2"/*.md; do
+            if [ -f "$cmd_file" ]; then
+                local cmd_name=$(basename "$cmd_file" .md)
+                # Skip if already installed from commands/ directory
+                if [ ! -f "$COMMAND_DIR/$(basename "$cmd_file")" ]; then
+                    cp "$cmd_file" "$COMMAND_DIR/"
+                    if [ -f "$COMMAND_DIR/$(basename "$cmd_file")" ]; then
+                        log_success "Command installed: /$cmd_name"
+                        ((installed_count++))
+                    else
+                        log_warning "Command installation may have failed: /$cmd_name"
+                    fi
+                fi
+            fi
+        done
     fi
+
+    if [ $installed_count -eq 0 ]; then
+        log_warning "No commands found to install"
+        return 0
+    fi
+
+    log_success "Installed $installed_count command(s)"
 }
 
 # Print next steps
