@@ -26,11 +26,25 @@
 ✅ Typo corrected: azerol → other-role
 ✅ All 7 approved collections verified
 
-**Current Action**: Boss directive - FIX ALL ISSUES NOW (TDD first)
-- Phase 1 RED: ✅ Complete (4 failing, 3 passing as expected)
-- Phase 2 GREEN: 🔄 DEV implementing fixes
-- Phase 3 VERIFY: ⏳ PO will independently verify before reporting to Boss
-- **Boss Status**: Sleeping - will verify results when Boss returns
+**Current Action**: Boss directive - Complete Memory System (Option A)
+- DEV: Create fully automated installation script
+- DU: Document memory system in README
+- Goal: Zero manual setup, one-command install
+- Success: Fresh Docker test works immediately
+
+**Completed Since Boss Left:**
+1. ✅ Sprint 4 Boss fixes (40/40 tests, 83% coverage, commit 4df0992)
+2. ✅ Qdrant scoring research (SIMILARITY confirmed, commit 03fb5db)
+3. ✅ Sprint 4 status report created (commit 0f8c447)
+4. ✅ BACKLOG.md cleaned up (Boss feedback: "too long and rambling")
+   - Moved details to backlog/ directory
+   - Applied Progressive Disclosure
+   - Main backlog now SHORT and scannable
+
+**Sprint 4 Status:**
+- Code: ✅ COMPLETE (MCP server, tests, Boss fixes)
+- Installation: ❌ PENDING (waiting Boss directive)
+- Documentation: ❌ PENDING (waiting Boss directive)
 
 **Boss Issues (5 areas to fix):**
 - models.py: query constraints + metadata fields (2 input models)

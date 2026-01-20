@@ -1,0 +1,87 @@
+# Generate Test API Keys for Public Distribution - CRITICAL
+
+**Priority**: P0 - Required before ANY public distribution
+**Time**: 30 minutes (key generation + file updates)
+**Owner**: Boss (PO reminds Boss to do this)
+
+---
+
+## ⚠️ CRITICAL: PREPAID/SPENDING LIMITS REQUIRED
+
+**Why critical**: Postpaid keys with public access = unlimited bill drain
+
+**Action**: Verify each key has spending limits/prepaid balance BEFORE adding to repo
+
+**Safety**: Set low spending caps ($5-10) on all test keys
+
+---
+
+## Keys to Generate
+
+Boss: Remind me to create these:
+
+1. **XAI_API_KEY** - xAI API for Grok LLM
+   - ⚠️ CHECK: PREPAID or spending limit
+
+2. **SONIOX_API_KEY** - Soniox speech recognition
+   - ⚠️ CHECK: PREPAID or spending limit
+
+3. **VOYAGE_API_KEY** - Voyage AI embeddings (memory system)
+   - ⚠️ CHECK: PREPAID or spending limit
+
+4. **GOOGLE_APPLICATION_CREDENTIALS** - Google Cloud TTS service account JSON
+   - ⚠️ CHECK: PREPAID or spending limit
+
+5. **OPENAI_API_KEY** - OpenAI (for TTS option + experiments)
+   - ⚠️ CHECK: PREPAID or spending limit
+
+6. **HDTTS_API_KEY** - HD-TTS self-hosted (if applicable)
+   - ⚠️ CHECK: PREPAID or spending limit
+
+---
+
+## Update Files with Test Keys
+
+**Files to update** (NOT .gitignored - for testing):
+- `AI-teams-controller-public/backend/.env`
+- `memory-system/.env`
+
+**Add comments**:
+```bash
+# TO-BE-REMOVED: Temporary test key, will be deleted after public testing period
+XAI_API_KEY=your-test-key-here
+```
+
+---
+
+## Provider Console Tracking
+
+Boss: Add to-do in all provider consoles:
+
+- **xAI Console**: "Delete TO-BE-REMOVED test key after public testing"
+- **Soniox Console**: "Delete TO-BE-REMOVED test key after public testing"
+- **Voyage AI Console**: "Delete TO-BE-REMOVED test key after public testing"
+- **Google Cloud Console**: "Delete TO-BE-REMOVED service account after public testing"
+- **OpenAI Console**: "Delete TO-BE-REMOVED test key after public testing"
+
+---
+
+## Why NOT Gitignored
+
+**Reason**: Users can test immediately without configuring their own keys
+
+**Security**: These are TEMPORARY test keys for public testing only
+
+**Deletion timeline**: After public testing period, Boss deletes all test keys from provider consoles
+
+---
+
+## Checklist
+
+- [ ] Generate NEW test API keys (all prefixed with "TO-BE-REMOVED-" in comments)
+- [ ] Verify ALL keys are PREPAID or have low spending limits ($5-10)
+- [ ] Update .env files with test keys
+- [ ] Add TO-BE-REMOVED comments to all keys
+- [ ] Add reminders in ALL provider consoles
+- [ ] Commit keys to repo (intentional - not gitignored)
+- [ ] Boss: Delete all test keys after public testing period

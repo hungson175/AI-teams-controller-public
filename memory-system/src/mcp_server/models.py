@@ -24,7 +24,7 @@ class SearchMemoryInput(BaseModel):
     )
     roles: Optional[List[str]] = Field(
         default=None,
-        description="List of roles to search (e.g., ['backend', 'frontend']). If None, searches all roles."
+        description="List of roles to search (e.g., ['backend', 'frontend','qa']). If None, searches all roles."
     )
     limit: int = Field(
         default=20,
@@ -104,7 +104,7 @@ class StoreMemoryInput(BaseModel):
 
     document: str = Field(
         ...,
-        description="Full formatted memory text with Title, Description, Content, and Tags sections",
+        description="Full **Markdown** formatted memory text with Title, Description, Content, and Tags sections",
         min_length=10
     )
     role: str = Field(
