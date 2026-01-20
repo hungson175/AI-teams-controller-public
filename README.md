@@ -33,7 +33,12 @@ A production-ready autonomous AI software development system built on Claude Cod
 
 ## Quick Start
 
-**Prerequisites**: Python 3.11+, Node.js 20+, pnpm, tmux, Docker, Claude Code CLI
+**Prerequisites**:
+- Python 3.11+, Node.js 20+, pnpm, tmux, Docker, Claude Code CLI
+
+**System Requirements**:
+- **sudo access** (required to install dependencies like unzip)
+- OR ensure these packages pre-installed: unzip, bash 4.0+
 
 ⚠️ **Important**: Claude Code must run as non-root user.
 
