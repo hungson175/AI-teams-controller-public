@@ -5,6 +5,8 @@ Reminds Claude to recall relevant memories when planning complex tasks.
 
 Detection logic:
 - Triggers on first TodoWrite call (oldTodos empty)
+- ONLY activates if task count >3 (Boss requirement)
+- Tasks ≤3: Don't activate (simple task, no need)
 - Blocks with instruction to invoke memory-recall skill
 - No cooldown for multi-session tmux workflow
 """
@@ -15,6 +17,7 @@ import sys
 def is_first_todowrite_call(tool_input, tool_response):
     """
     Detect if this is the first TodoWrite call for a new task.
+    ONLY activates if task count >3 (Boss requirement).
 
     Returns: (is_first, reason)
     """
@@ -28,8 +31,13 @@ def is_first_todowrite_call(tool_input, tool_response):
     if not todos:
         return False, "No todos provided"
 
-    # oldTodos is empty and we have todos - this is a first call!
-    return True, f"First call detected: {len(todos)} todos created"
+    # Check task count >3 (Boss requirement: only activate for complex tasks)
+    task_count = len(todos)
+    if task_count <= 3:
+        return False, f"Task count ≤3 ({task_count} tasks) - no need for memory-recall"
+
+    # oldTodos is empty, have todos, and task count >3 - activate!
+    return True, f"First call detected: {task_count} todos created (>3 threshold)"
 
 
 def main():
