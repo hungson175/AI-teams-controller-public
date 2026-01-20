@@ -14,25 +14,26 @@
 **PO MUST REMIND BOSS EVERY SESSION** until Boss confirms review complete.
 
 **What Boss needs to review**:
-- project-memory-store implementation
-- project-memory-recall implementation
-- memory-agent subagent architecture
+- coder-memory-store implementation
+- coder-memory-recall implementation
+- memory-only subagent architecture
 
 **Questions Boss must answer**:
 1. Is using MCP for memory skills stable enough?
 2. Is using subagent approach stable enough?
-3. What is the ROM (role/responsibility) of the memory-agent subagent?
+3. What is the ROM (role/responsibility) of the memory-only subagent?
 4. Should we keep current architecture or redesign?
 
-**Current Implementation**:
-- ✅ Aligned with V7 design (metadata fix complete, commit 5a8de15)
+**Current Implementation** (GLOBAL cross-project learning):
+- ✅ V7-aligned (metadata: 3 fields, commit 5a8de15)
+- ✅ Correctly named (GLOBAL: coder-memory-*, commit afba44a)
 - ✅ V7 alignment review available (memory-system/ALIGNMENT_REVIEW_V7.md)
-- project-memory-store: Uses Task tool → memory-agent subagent → MCP tools
-- project-memory-recall: Uses Task tool → memory-agent subagent → MCP tools
-- memory-agent: ONLY has MCP memory tools (zero file access)
+- coder-memory-store: Uses Task tool → memory-only subagent → MCP tools
+- coder-memory-recall: Uses Task tool → memory-only subagent → MCP tools
+- memory-only: ONLY has MCP memory tools (zero file access)
 
 **Location**: memory-system/skills/, memory-system/subagents/
-**Status**: ⚠️ **READY FOR BOSS REVIEW** - Technical alignment complete, architecture review pending
+**Status**: ✅ **READY FOR BOSS ARCHITECTURE REVIEW** - V7-aligned, correctly named, waiting for Boss decision
 
 ---
 
@@ -59,6 +60,34 @@ Rewrite V6 README (Boss: "pretty shitty"). Fix installation instructions, add me
 ---
 
 ## P1 - SHOULD DO (Required for MVP)
+
+### Single-Command Online Installer
+Implement unified installer that handles all 3 components with one command.
+
+**Research Complete**: `docs/research/2026-01-20-single-command-installation-patterns.md` (commit 6f1b94f)
+
+**Approach**: Hybrid pattern
+- Support both: `curl -fsSL url/install.sh | bash` AND `git clone + ./install.sh`
+- Unified installer orchestrates all 3 components
+- Progressive installation options:
+  - Minimal: Just tmux-team-creator skill (no Docker)
+  - Standard: Tmux + Memory system (Qdrant + MCP)
+  - Complete: All 3 components (tmux + memory + web UI)
+
+**Component Independence**: Each can install standalone
+
+**Implementation**:
+- Create `install-all.sh` master installer
+- Orchestrates existing component installers
+- Interactive prompts for component selection
+- Dependency checking, error handling, idempotency
+- Color-coded logging (info/success/warning/error)
+
+**Reference Projects**: Coolify (curl|bash), Sentry (bash+Docker Compose), n8n (Docker single command)
+
+**Priority**: P1 | **Effort**: 4-6 hours | **Blocker**: None (research complete)
+
+---
 
 ### Component 1: Cleanup Team Templates
 Remove unnecessary team templates from tmux-team-creator skill:

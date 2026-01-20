@@ -1,6 +1,6 @@
 ---
 name: memory-only
-description: Specialized agent for memory operations ONLY. Use this agent when you need to store, search, retrieve, or manage memories in the Qdrant vector database. This agent has ZERO access to file system tools (Read, Write, Edit, Glob, Bash) - it can ONLY use MCP memory tools. Use for coder-memory-store and coder-memory-recall skills.
+description: Specialized agent for memory operations ONLY. Use this agent when you need to store, search, retrieve, or manage memories in the Qdrant vector database. This agent has ZERO access to file system tools (Read, Write, Edit, Glob, Bash) - it can ONLY use MCP memory tools. Use for memory-store and memory-recall skills.
 tools: mcp__memory__search_memory, mcp__memory__get_memory, mcp__memory__batch_get_memories, mcp__memory__store_memory, mcp__memory__update_memory, mcp__memory__delete_memory, mcp__memory__list_collections
 model: haiku
 color: blue

@@ -65,8 +65,8 @@ Decision needed: Which is correct - the design or the skills?
 
 | Component | V7 Design | Implementation | Impact |
 |-----------|-----------|----------------|--------|
-| Store skill | `coder-memory-store` | `coder-memory-store` | Low - just names |
-| Recall skill | `coder-memory-recall` | `coder-memory-recall` | Low - just names |
+| Store skill | `memory-store` | `memory-store` | Low - just names |
+| Recall skill | `memory-recall` | `memory-recall` | Low - just names |
 | Subagent | `memory-only` | `memory-only` | Low - just names |
 | MCP server path | `src/qdrant_memory_mcp/__main__.py` | `src/mcp_server/server.py` | Low - works fine |
 
@@ -96,7 +96,7 @@ Not broken, just inconsistent with design principle.
 
 1. V7 design says metadata has **3 fields only** (lines 62-69)
 2. MCP server enforces **3 fields only** (models.py lines 119-133: validates and rejects extra fields)
-3. BUT skills tell agents to use **7 fields** (coder-memory-store SKILL.md lines 52-65)
+3. BUT skills tell agents to use **7 fields** (memory-store SKILL.md lines 52-65)
 
 **What happens:**
 - Skill invokes memory-only
@@ -164,7 +164,7 @@ if extra:
 **Tags:** #tag1 #tag2 #tag3
 ```
 
-**Skills Implementation (coder-memory-store lines 21-29):**
+**Skills Implementation (memory-store lines 21-29):**
 ```markdown
 **Title:** [Concise title]
 **Description:** [2-3 sentence summary - CRITICAL for search]
@@ -189,10 +189,10 @@ if extra:
 | Trigger | When | How |
 |---------|------|-----|
 | STORE | After task completes | Hook: `~/.claude/hooks/memory_store_reminder.py`, random 1/3 chance |
-| RETRIEVE | When TodoWrite called | Hook on TodoWrite post-tool-use, invokes `coder-memory-recall` |
+| RETRIEVE | When TodoWrite called | Hook on TodoWrite post-tool-use, invokes `memory-recall` |
 
 **Implementation Status:**
-- ✅ Skills exist (`coder-memory-store`, `coder-memory-recall`)
+- ✅ Skills exist (`memory-store`, `memory-recall`)
 - ✅ Subagent exists (`memory-only`)
 - ⚠️ Hooks not visible in reviewed files (need to check hooks directory)
 

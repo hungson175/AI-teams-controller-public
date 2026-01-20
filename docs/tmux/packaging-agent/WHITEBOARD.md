@@ -7,20 +7,27 @@
 - Git history manages past work, not whiteboard
 - Context pollution kills AI agent effectiveness
 
-**Last Updated**: 2026-01-20 11:15
+**Last Updated**: 2026-01-20 15:20
 
 ---
 
-## Current Status: Metadata Fix Complete - Memory System Ready
+## Current Status: GLOBAL Memory Rename Complete
 
-**Just Completed** (2026-01-20 11:09):
-- ✅ Metadata mismatch fixed (commit 5a8de15)
-- ✅ Skills updated to 3-field metadata (title, preview, content)
-- ✅ PO independent verification passed
+**Just Completed** (2026-01-20 15:17):
+- ✅ Skills renamed: project-memory-* → coder-memory-* (commit afba44a)
+- ✅ Subagent renamed: memory-agent → memory-only
+- ✅ All references updated (install script, hooks, docs)
+- ✅ PO verification passed
+- ✅ Matches V7 design exactly
+
+**Correct Names** (GLOBAL cross-project learning):
+- coder-memory-store (NOT project-memory-store)
+- coder-memory-recall (NOT project-memory-recall)
+- memory-only subagent (NOT memory-agent)
 
 **Component Status**:
 - Component 1 (tmux-team-creator): ✅ Ready
-- Component 2 (Memory System): ✅ **Ready for Boss final review**
+- Component 2 (Memory System): ✅ **Ready for Boss final architecture review**
 - Component 3 (Web UI): ✅ Ready
 
 **All 3 Components Packaged and Ready**

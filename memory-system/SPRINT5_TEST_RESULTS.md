@@ -43,21 +43,21 @@ cd /home/hungson175/dev/coding-agents/packaging-agent/memory-system
 ### ✅ Step 5: Memory Skills Installation (NEW)
 ```
 [INFO] Installing memory skills...
-[SUCCESS] Installed coder-memory-store skill
-[SUCCESS] Installed coder-memory-recall skill
+[SUCCESS] Installed memory-store skill
+[SUCCESS] Installed memory-recall skill
 [SUCCESS] Memory skills installation complete
 ```
 
 **Verification**:
 ```bash
 $ ls -la ~/.claude/skills/ | grep project-memory
-drwxrwxr-x  2 hungson175 hungson175  4096 Thg 1  20 08:06 coder-memory-recall
-drwxrwxr-x  2 hungson175 hungson175  4096 Thg 1  20 08:06 coder-memory-store
+drwxrwxr-x  2 hungson175 hungson175  4096 Thg 1  20 08:06 memory-recall
+drwxrwxr-x  2 hungson175 hungson175  4096 Thg 1  20 08:06 memory-store
 ```
 
 **Files**:
-- `~/.claude/skills/coder-memory-store/SKILL.md` ✓
-- `~/.claude/skills/coder-memory-recall/SKILL.md` ✓
+- `~/.claude/skills/memory-store/SKILL.md` ✓
+- `~/.claude/skills/memory-recall/SKILL.md` ✓
 
 ### ✅ Step 6: Memory Subagent Installation (NEW)
 ```
@@ -106,7 +106,7 @@ $ ls -la ~/.claude/hooks/ | grep memory
 [WARNING] Voyage API verification failed (key may be invalid or missing)
 
 [INFO] Verifying skills installation...
-[SUCCESS] Skills verified (coder-memory-store, coder-memory-recall)
+[SUCCESS] Skills verified (memory-store, memory-recall)
 
 [INFO] Verifying subagent installation...
 [SUCCESS] Subagent verified (memory-only)
@@ -142,13 +142,13 @@ Next steps:
 Installed Components:
   - Qdrant: http://localhost:16333
   - MCP Server: stdio transport
-  - Skills: coder-memory-store, coder-memory-recall
+  - Skills: memory-store, memory-recall
   - Subagent: memory-only
   - Hooks: memory_store_reminder.py, todowrite_memory_recall.py
 
 Memory Skills Usage:
-  - Use 'coder-memory-store' to save coding patterns
-  - Use 'coder-memory-recall' to retrieve relevant memories
+  - Use 'memory-store' to save coding patterns
+  - Use 'memory-recall' to retrieve relevant memories
   - Hooks automatically trigger skills when appropriate
 ```
 
@@ -161,10 +161,10 @@ Memory Skills Usage:
 **First run**: All components installed ✓
 **Second run**:
 ```
-[INFO] coder-memory-store already installed, updating...
-[SUCCESS] Installed coder-memory-store skill
-[INFO] coder-memory-recall already installed, updating...
-[SUCCESS] Installed coder-memory-recall skill
+[INFO] memory-store already installed, updating...
+[SUCCESS] Installed memory-store skill
+[INFO] memory-recall already installed, updating...
+[SUCCESS] Installed memory-recall skill
 [INFO] memory-only already installed, updating...
 [SUCCESS] Installed memory-only subagent
 [INFO] memory_store_reminder.py already installed, updating...
@@ -181,15 +181,15 @@ Memory Skills Usage:
 
 ### Skills Content Check
 ```bash
-$ head -5 ~/.claude/skills/coder-memory-store/SKILL.md
+$ head -5 ~/.claude/skills/memory-store/SKILL.md
 ---
-name: coder-memory-store
+name: memory-store
 description: Store universal coding patterns into vector database...
 ---
 
-$ head -5 ~/.claude/skills/coder-memory-recall/SKILL.md
+$ head -5 ~/.claude/skills/memory-recall/SKILL.md
 ---
-name: coder-memory-recall
+name: memory-recall
 description: Retrieve universal coding patterns from vector database...
 ---
 ```

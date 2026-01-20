@@ -340,8 +340,8 @@ except Exception as e:
 
     # Verify skills installation
     log_info "Verifying skills installation..."
-    if [ -d "$HOME/.claude/skills/coder-memory-store" ] && [ -d "$HOME/.claude/skills/coder-memory-recall" ]; then
-        log_success "Skills verified (coder-memory-store, coder-memory-recall)"
+    if [ -d "$HOME/.claude/skills/memory-store" ] && [ -d "$HOME/.claude/skills/memory-recall" ]; then
+        log_success "Skills verified (memory-store, memory-recall)"
     else
         log_error "Skills verification failed"
         return 1
@@ -375,21 +375,21 @@ install_skills() {
     local skills_dir="$HOME/.claude/skills"
     mkdir -p "$skills_dir"
 
-    # Install coder-memory-store
-    if [ -d "$skills_dir/coder-memory-store" ]; then
-        log_info "coder-memory-store already installed, updating..."
-        rm -rf "$skills_dir/coder-memory-store"
+    # Install memory-store
+    if [ -d "$skills_dir/memory-store" ]; then
+        log_info "memory-store already installed, updating..."
+        rm -rf "$skills_dir/memory-store"
     fi
-    cp -r "$(pwd)/skills/coder-memory-store" "$skills_dir/"
-    log_success "Installed coder-memory-store skill"
+    cp -r "$(pwd)/skills/memory-store" "$skills_dir/"
+    log_success "Installed memory-store skill"
 
-    # Install coder-memory-recall
-    if [ -d "$skills_dir/coder-memory-recall" ]; then
-        log_info "coder-memory-recall already installed, updating..."
-        rm -rf "$skills_dir/coder-memory-recall"
+    # Install memory-recall
+    if [ -d "$skills_dir/memory-recall" ]; then
+        log_info "memory-recall already installed, updating..."
+        rm -rf "$skills_dir/memory-recall"
     fi
-    cp -r "$(pwd)/skills/coder-memory-recall" "$skills_dir/"
-    log_success "Installed coder-memory-recall skill"
+    cp -r "$(pwd)/skills/memory-recall" "$skills_dir/"
+    log_success "Installed memory-recall skill"
 
     log_success "Memory skills installation complete"
 }
@@ -455,13 +455,13 @@ print_next_steps() {
     echo "Installed Components:"
     echo "  - Qdrant: http://localhost:${QDRANT_PORT}"
     echo "  - MCP Server: stdio transport"
-    echo "  - Skills: coder-memory-store, coder-memory-recall"
+    echo "  - Skills: memory-store, memory-recall"
     echo "  - Subagent: memory-only"
     echo "  - Hooks: memory_store_reminder.py, todowrite_memory_recall.py"
     echo ""
     echo "Memory Skills Usage:"
-    echo "  - Use 'coder-memory-store' to save coding patterns"
-    echo "  - Use 'coder-memory-recall' to retrieve relevant memories"
+    echo "  - Use 'memory-store' to save coding patterns"
+    echo "  - Use 'memory-recall' to retrieve relevant memories"
     echo "  - Hooks automatically trigger skills when appropriate"
     echo ""
 

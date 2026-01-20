@@ -8,14 +8,14 @@
 
 ## Original Skills Analysis
 
-### 1. coder-memory-store
+### 1. memory-store
 
-**Location**: `~/.claude/skills/coder-memory-store/SKILL.md`
+**Location**: `~/.claude/skills/memory-store/SKILL.md`
 
 **Structure**:
 ```markdown
 ---
-name: coder-memory-store
+name: memory-store
 description: [One-line description]
 ---
 
@@ -47,9 +47,9 @@ Use Task tool with `subagent_type: "memory-only"`
 - Metadata structure: memory_type, role, title, description, tags, confidence, frequency
 - 11 role collections: universal, backend, frontend, devops, ai, security, mobile, pm, scrum-master, qa, quant
 
-### 2. coder-memory-recall
+### 2. memory-recall
 
-**Location**: `~/.claude/skills/coder-memory-recall/SKILL.md`
+**Location**: `~/.claude/skills/memory-recall/SKILL.md`
 
 **Structure**: Similar to store with different workflow
 
@@ -130,7 +130,7 @@ should_remind = (
 
 **Function**:
 - Triggers on first TodoWrite call (oldTodos empty)
-- Blocks with instruction to invoke coder-memory-recall
+- Blocks with instruction to invoke memory-recall
 - Ensures memories are recalled when planning complex tasks
 
 **Key Features**:
@@ -145,8 +145,8 @@ should_remind = (
 ### For Skills
 
 **Create NEW skills** (not copies):
-- `coder-memory-store` (adapted from coder-memory-store)
-- `coder-memory-recall` (adapted from coder-memory-recall)
+- `memory-store` (adapted from memory-store)
+- `memory-recall` (adapted from memory-recall)
 
 **Changes needed**:
 1. Rename in frontmatter
@@ -176,8 +176,8 @@ should_remind = (
 - `memory-system/hooks/todowrite_memory_recall.py`
 
 **Changes needed**:
-1. Update skill references: coder-memory-store → coder-memory-store
-2. Update skill references: coder-memory-recall → coder-memory-recall
+1. Update skill references: memory-store → memory-store
+2. Update skill references: memory-recall → memory-recall
 3. Keep all other logic unchanged
 4. Install to ~/.claude/hooks/ during installation
 
@@ -188,8 +188,8 @@ should_remind = (
 ### Skills Installation
 ```bash
 # Copy to user's skills directory
-cp -r memory-system/skills/coder-memory-store ~/.claude/skills/
-cp -r memory-system/skills/coder-memory-recall ~/.claude/skills/
+cp -r memory-system/skills/memory-store ~/.claude/skills/
+cp -r memory-system/skills/memory-recall ~/.claude/skills/
 ```
 
 ### Subagent Installation
@@ -212,10 +212,10 @@ chmod +x ~/.claude/hooks/memory_*.py
 ```
 memory-system/
 ├── skills/
-│   ├── coder-memory-store/
-│   │   └── SKILL.md              # Adapted from coder-memory-store
-│   └── coder-memory-recall/
-│       └── SKILL.md              # Adapted from coder-memory-recall
+│   ├── memory-store/
+│   │   └── SKILL.md              # Adapted from memory-store
+│   └── memory-recall/
+│       └── SKILL.md              # Adapted from memory-recall
 ├── subagents/
 │   └── memory-only/
 │       ├── memory-only.md       # Subagent definition (frontmatter + content)
@@ -241,7 +241,7 @@ memory-system/
 ## Next Steps
 
 1. ✅ Research complete (this document)
-2. Create skills (coder-memory-store, coder-memory-recall)
+2. Create skills (memory-store, memory-recall)
 3. Create subagent (memory-only)
 4. Package hooks (adapted for new skill names)
 5. Update install-memory-system.sh

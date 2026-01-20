@@ -10,8 +10,8 @@
 
 ### Issue 1: External Skills Dependencies
 Memory System requires:
-- `coder-memory-store` (in ~/.claude/skills/ - NOT packaged)
-- `coder-memory-recall` (in ~/.claude/skills/ - NOT packaged)
+- `memory-store` (in ~/.claude/skills/ - NOT packaged)
+- `memory-recall` (in ~/.claude/skills/ - NOT packaged)
 
 **Problem**: User installs this package but skills don't exist → System doesn't work
 
@@ -37,14 +37,14 @@ Create NEW skills specific to this package (reference old ones):
 **File Structure**:
 ```
 memory-system/skills/
-├── coder-memory-store/
+├── memory-store/
 │   └── SKILL.md
-└── coder-memory-recall/
+└── memory-recall/
     └── SKILL.md
 ```
 
 **Requirements**:
-- NEW skill names: `coder-memory-store`, `coder-memory-recall`
+- NEW skill names: `memory-store`, `memory-recall`
 - Reference original skills but adapted for this package
 - Self-contained (no external dependencies)
 - Work with packaged MCP server
@@ -126,8 +126,8 @@ Update INSTALLATION.md and README to reflect:
 ## References
 
 ### Original Skills
-- `~/.claude/skills/coder-memory-store/` (reference for NEW skill)
-- `~/.claude/skills/coder-memory-recall/` (reference for NEW skill)
+- `~/.claude/skills/memory-store/` (reference for NEW skill)
+- `~/.claude/skills/memory-recall/` (reference for NEW skill)
 
 ### Original Subagent
 - `memory-only` subagent definition (reference for NEW subagent)
@@ -138,7 +138,7 @@ Update INSTALLATION.md and README to reflect:
 
 ## Acceptance Criteria
 
-1. ✅ NEW skills created (`coder-memory-store`, `coder-memory-recall`)
+1. ✅ NEW skills created (`memory-store`, `memory-recall`)
 2. ✅ NEW subagent defined and packaged
 3. ✅ Installation script installs skills + subagent + hooks
 4. ✅ One command: `./install-memory-system.sh` → everything works

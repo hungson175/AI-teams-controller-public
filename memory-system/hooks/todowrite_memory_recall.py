@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-PostToolUse:TodoWrite hook to trigger coder-memory-recall skill.
+PostToolUse:TodoWrite hook to trigger memory-recall skill.
 Reminds Claude to recall relevant memories when planning complex tasks.
 
 Detection logic:
 - Triggers on first TodoWrite call (oldTodos empty)
-- Blocks with instruction to invoke coder-memory-recall skill
+- Blocks with instruction to invoke memory-recall skill
 - No cooldown for multi-session tmux workflow
 """
 import json
@@ -50,10 +50,10 @@ def main():
             sys.exit(0)
 
         # This is a first TodoWrite call - trigger recall!
-        # Block and instruct Claude to invoke coder-memory-recall skill
+        # Block and instruct Claude to invoke memory-recall skill
         output = {
             "decision": "block",
-            "reason": "Call coder-memory-recall skill to recall relevant memories for this task",
+            "reason": "Call memory-recall skill to recall relevant memories for this task",
             "hookSpecificOutput": {
                 "hookEventName": "PostToolUse:TodoWrite",
                 "additionalContext": f"Task started with {len(tool_input.get('todos', []))} todos"

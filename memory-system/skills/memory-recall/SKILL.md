@@ -1,5 +1,5 @@
 ---
-name: coder-memory-recall
+name: memory-recall
 description: Retrieve coding patterns from GLOBAL vector database (cross-project learning). Auto-invokes when TodoWrite has >3 tasks or when user says "--recall". Searches relevant role collections based on task context.
 ---
 

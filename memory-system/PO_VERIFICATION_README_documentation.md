@@ -54,7 +54,7 @@ Following Boss directive: Independent verification required before reporting com
 - MCP configuration example (mcp.json)
 - Correct paths and command format
 - Available MCP tools listed (4 tools)
-- Automatic skills mentioned (coder-memory-store, coder-memory-recall)
+- Automatic skills mentioned (memory-store, memory-recall)
 - Clear integration instructions
 
 ### Requirement 6: Troubleshooting

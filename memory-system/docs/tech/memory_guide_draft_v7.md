@@ -187,7 +187,7 @@ sequenceDiagram
 - **Perfect timing** - Right before execution
 
 **Implementation:**
-- Skill: `coder-memory-recall`
+- Skill: `memory-recall`
 - Subagent: `memory-only` (MCP tools only, no file access)
 - Hook on TodoWrite post-tool-use ([docs](#references))
 
@@ -210,8 +210,8 @@ sequenceDiagram
 graph TB
     A[Claude Code] --> B[Skills]
     A --> C[Hooks]
-    B --> D[coder-memory-recall]
-    B --> E[coder-memory-store]
+    B --> D[memory-recall]
+    B --> E[memory-store]
     C --> F[Post TodoWrite]
     C --> G[Post Completion]
     D --> H[memory-only subagent]
@@ -235,7 +235,7 @@ graph TB
 **One-command install includes:**
 - MCP server
 - Docker + Qdrant (auto-start)
-- Skills (`coder-memory-recall`, `coder-memory-store`)
+- Skills (`memory-recall`, `memory-store`)
 - Subagent (`memory-only`)
 - Configuration (`~/.claude.json`)
 

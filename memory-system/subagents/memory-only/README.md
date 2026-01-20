@@ -9,8 +9,8 @@ The memory-only is designed to interact ONLY with the Qdrant vector database via
 ## Usage
 
 This agent is automatically invoked by the memory skills:
-- `coder-memory-store` - Stores coding patterns and lessons
-- `coder-memory-recall` - Retrieves relevant memories
+- `memory-store` - Stores coding patterns and lessons
+- `memory-recall` - Retrieves relevant memories
 
 You typically don't invoke this agent directly - the skills handle that for you.
 
@@ -20,7 +20,7 @@ The installation script (`install-memory-system.sh`) automatically installs this
 
 ## How It Works
 
-When a skill like `coder-memory-store` runs, it uses:
+When a skill like `memory-store` runs, it uses:
 ```
 Task tool with subagent_type: "memory-only"
 ```
@@ -86,6 +86,6 @@ ls ~/.claude/agents/memory-only.md
 
 ## Related Files
 
-- **Skills**: `~/.claude/skills/coder-memory-{store,recall}/`
+- **Skills**: `~/.claude/skills/memory-{store,recall}/`
 - **MCP Server**: Configured in `~/.claude/mcp.json` (or similar)
 - **Hooks**: `~/.claude/hooks/memory_*.py` (automation)

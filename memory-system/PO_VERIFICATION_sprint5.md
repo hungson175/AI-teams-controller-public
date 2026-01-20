@@ -22,8 +22,8 @@
 ### 1. Skills Packaging ✅
 
 **Files Created**:
-- `skills/coder-memory-store/SKILL.md` (commit 6c6a841)
-- `skills/coder-memory-recall/SKILL.md` (commit 6c6a841)
+- `skills/memory-store/SKILL.md` (commit 6c6a841)
+- `skills/memory-recall/SKILL.md` (commit 6c6a841)
 
 **Verification**:
 - ✅ Frontmatter correct (name, description)
@@ -69,8 +69,8 @@
 ```bash
 mkdir -p "$HOME/.claude/skills"
 # Check if exists, update if needed (rm -rf then cp)
-cp -r "$(pwd)/skills/coder-memory-store" "$skills_dir/"
-cp -r "$(pwd)/skills/coder-memory-recall" "$skills_dir/"
+cp -r "$(pwd)/skills/memory-store" "$skills_dir/"
+cp -r "$(pwd)/skills/memory-recall" "$skills_dir/"
 ```
 **Status**: ✅ CORRECT
 - Idempotent (updates existing)
@@ -165,13 +165,13 @@ done
 **Requirement**: "Install ONCE → Everything works immediately"
 
 **Before Sprint 5**:
-- ❌ Skills: External dependency (coder-memory-store, coder-memory-recall)
+- ❌ Skills: External dependency (memory-store, memory-recall)
 - ❌ Subagent: External dependency (memory-only)
 - ❌ Hooks: Not packaged
 - ❌ Result: User installs but can't use system
 
 **After Sprint 5**:
-- ✅ Skills: Packaged (coder-memory-store, coder-memory-recall)
+- ✅ Skills: Packaged (memory-store, memory-recall)
 - ✅ Subagent: Packaged (memory-only)
 - ✅ Hooks: Packaged (memory_store_reminder.py, todowrite_memory_recall.py)
 - ✅ Installation: One command installs EVERYTHING
@@ -219,7 +219,7 @@ done
 
 **Sprint 5**:
 - ✅ Research (SPRINT5_RESEARCH_FINDINGS.md)
-- ✅ Skills creation (coder-memory-store, coder-memory-recall)
+- ✅ Skills creation (memory-store, memory-recall)
 - ✅ Subagent creation (memory-only)
 - ✅ Hooks packaging (2 hooks)
 - ✅ Installation script update

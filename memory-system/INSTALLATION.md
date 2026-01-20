@@ -90,8 +90,8 @@ python -m src.mcp_server.server
   - QDRANT_URL (auto-configured)
 
 ### 4. Memory Skills
-- **coder-memory-store**: Stores coding patterns automatically after task completion
-- **coder-memory-recall**: Retrieves relevant memories before complex tasks
+- **memory-store**: Stores coding patterns automatically after task completion
+- **memory-recall**: Retrieves relevant memories before complex tasks
 - **Location**: `~/.claude/skills/`
 - **Automatic triggering**: Via hooks (see Hooks section)
 
@@ -170,7 +170,7 @@ Add to `~/.claude/mcp.json`:
 
 Memory skills provide automatic storage and retrieval of coding patterns without manual invocation.
 
-### coder-memory-store
+### memory-store
 
 **Purpose**: Store coding patterns, solutions, and lessons automatically after task completion
 
@@ -184,7 +184,7 @@ Memory skills provide automatic storage and retrieval of coding patterns without
 
 **Usage**: Automatic - no manual invocation needed. Hook prompts to store when valuable lessons emerge.
 
-### coder-memory-recall
+### memory-recall
 
 **Purpose**: Retrieve relevant memories before complex tasks
 
@@ -200,7 +200,7 @@ Memory skills provide automatic storage and retrieval of coding patterns without
 **Manual invocation** (if needed):
 ```bash
 # In Claude Code
-/coder-memory-recall
+/memory-recall
 ```
 
 ---
@@ -238,7 +238,7 @@ Memory skills automatically spawn the memory-only when needed. You don't interac
 **Example workflow**:
 1. You complete a difficult task
 2. `memory_store_reminder.py` hook prompts (33% chance)
-3. You invoke `/coder-memory-store`
+3. You invoke `/memory-store`
 4. Skill spawns memory-only to handle storage
 5. Memory-agent searches/stores via MCP tools
 6. Done

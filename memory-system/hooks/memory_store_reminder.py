@@ -86,7 +86,7 @@ def should_remind(input_data, state):
     #     try:
     #         with open(transcript_path, 'r') as f:
     #             transcript = f.read()
-    #             if '"skill">coder-memory-store' in transcript:
+    #             if '"skill">memory-store' in transcript:
     #                 return False, "Memory-store already invoked in this session"
     #     except Exception:
     #         pass
@@ -119,7 +119,7 @@ def main():
             # Block Claude from stopping and provide the reminder
             output = {
                 "decision": "block",
-                "reason": "Check if any hard-earned lessons or failure patterns warrant storage (coder-memory-store). Be EXTREMELY selective. If storing: store and report in 1 line. If not: say 'Nothing worth storing.' and move on. NO explanations or analysis."
+                "reason": "Check if any hard-earned lessons or failure patterns warrant storage (memory-store). Be EXTREMELY selective. If storing: store and report in 1 line. If not: say 'Nothing worth storing.' and move on. NO explanations or analysis."
             }
             print(json.dumps(output))
             sys.exit(0)
