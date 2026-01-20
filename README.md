@@ -1,7 +1,7 @@
 # AI Teams Controller - Autonomous Multi-Agent Development System
 
 **Built by**: Hung Son
-**Demo Video**: [Link TBD]
+**Demo Video**: https://www.youtube.com/watch?v=bBhs13kKtjs
 
 ---
 
