@@ -109,6 +109,21 @@ Next.js + FastAPI web application for visual team management, monitoring, and vo
 
 ---
 
+## Troubleshooting
+
+**"tm-send: command not found" after installation**:
+
+Add `~/.local/bin` to your PATH:
+```bash
+# Add to ~/.bashrc or ~/.zshrc
+export PATH="$HOME/.local/bin:$PATH"
+
+# Reload shell
+source ~/.bashrc  # or source ~/.zshrc
+```
+
+---
+
 ## Installation Instructions for Claude Code
 
 **See**: [docs/README/INSTALLATION-FOR-CLAUDE-CODE.md](./docs/README/INSTALLATION-FOR-CLAUDE-CODE.md)
