@@ -78,6 +78,9 @@ temp/
 *.sqlite
 *.sqlite3
 
+# Qdrant vector database storage (local dev)
+memory-system/qdrant_storage/
+
 # Claude Code conversation history
 *.jsonl
 history.jsonl

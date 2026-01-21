@@ -1,7 +1,10 @@
 # AI Teams Controller - Autonomous Multi-Agent Development System
 
 **Built by**: Hung Son
+
 **Demo Video**: https://www.youtube.com/watch?v=bBhs13kKtjs
+
+**Note**: The strongest part of this system is the invisible memory - read [the design doc](./docs/memory_design_v7.md) if interested.
 
 ---
 
@@ -64,7 +67,9 @@ If you want voice control, provide your own xAI API key. See [Installation Guide
 ## What's Included
 
 **1. tmux Team Creator**: Claude Code skill for multi-agent teams
+
 **2. Memory System**: Vector DB + MCP server for persistent learning
+
 **3. Web UI**: Optional Next.js/FastAPI interface with voice input
 
 ---
