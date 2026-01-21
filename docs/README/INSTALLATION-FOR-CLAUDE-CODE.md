@@ -86,7 +86,7 @@ cd packaging-agent/memory-system/
 **Files involved**:
 - Frontend: Next.js application
 - Backend: FastAPI application
-- Database: PostgreSQL
+- Database: SQLite (demo mode) or PostgreSQL
 
 **Installation** (when ready):
 ```bash
@@ -97,7 +97,22 @@ cd packaging-agent/AI-teams-controller-public/
 **Services started**:
 - Frontend: http://localhost:3334
 - Backend: http://localhost:17061
-- Database: PostgreSQL on localhost:5432
+- Database: SQLite (default) or PostgreSQL on localhost:5432
+
+**Voice Input Setup (Optional)**:
+
+⚠️ **IMPORTANT**: If you want to use voice input features, you MUST provide your own xAI API key.
+
+**How to set up**:
+1. Get your xAI API key from https://console.x.ai/
+2. Set environment variable in Web UI backend:
+   ```bash
+   # Add to backend/.env file:
+   XAI_API_KEY=your-xai-api-key-here
+   ```
+3. Restart the backend service
+
+**Why?**: The previously embedded API key was revoked for security reasons. Voice input requires xAI's Grok model for speech-to-text processing.
 
 **This section will be completed when web UI installation script is ready.**
 

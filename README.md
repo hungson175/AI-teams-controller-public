@@ -7,62 +7,39 @@
 
 ## What This Is
 
-A production-ready autonomous AI software development system built on Claude Code. Real working multi-agent teams that coordinate via tmux, maintain persistent memory across all projects, and provide an optional web UI for team management.
+Autonomous AI development system built on Claude Code. Multi-agent teams coordinate via tmux, maintain persistent memory, with optional web UI.
 
-**This is not a demo.** It's a system I built and use daily for real development work.
+**This is not a demo.** It's a production system I use daily.
 
----
-
-## Target Audience
-
-- Professional Software Engineers/Managers
-- Users with 3+ months of Claude Code experience
-- Those who understand what the title means
+**Target Audience**: Professional engineers with 3+ months Claude Code experience.
 
 ---
 
 ## Key Features
 
-- **Multi-Agent Coordination**: Teams of AI agents working together via tmux sessions
-- **Self-Improving**: Two types of memory - technical solutions in vector DB, procedural improvements embedded by Scrum Master
-- **3 Teams**: Scrum, Light, McKinsey
-- **Voice Input Support**: Natural voice commands to AI teams
-- **Web UI**: Visual control interface (optional - agents work via pure tmux too)
+- **Multi-Agent Teams**: AI agents working together via tmux (Scrum, Light, McKinsey templates)
+- **Self-Improving Memory**: Technical solutions in vector DB + procedural improvements
+- **Voice Input**: Natural voice commands (requires your xAI API key)
+- **Web UI**: Optional visual control interface
 
 ---
 
 ## Quick Start
 
-**Prerequisites**:
-- Python 3.11+, Node.js 20+, pnpm, tmux, Docker, Claude Code CLI
-
-**System Requirements**:
-- **sudo access** (required to install dependencies like unzip)
-- OR ensure these packages pre-installed: unzip, bash 4.0+
-
-⚠️ **Important**: Claude Code must run as non-root user.
-
-If you're root (common in LXD/Docker containers), create non-root user first:
-```bash
-# Create user and switch to it
-useradd -m -s /bin/bash developer
-su - developer
-```
+**Prerequisites**: Python 3.11+, Node.js 20+, pnpm, tmux, Docker, Claude Code CLI
 
 **Installation**:
 1. Clone this repository
-2. Open project in Claude Code with required flags:
+2. Open in Claude Code:
    ```bash
    claude --settings ~/.claude/settings.json --dangerously-skip-permissions
    ```
-3. Ask Claude Code: "Read docs/README/INSTALLATION-FOR-CLAUDE-CODE.md and install the system"
-4. Claude Code will read the installation guide and handle everything
+3. Ask Claude: "Read docs/README/INSTALLATION-FOR-CLAUDE-CODE.md and install the system"
 
-⚠️ **Important**: The `--dangerously-skip-permissions` flag is required for installation to work.
+**Voice Input Setup** (Optional):
+If you want voice control, provide your own xAI API key. See [Installation Guide](./docs/README/INSTALLATION-FOR-CLAUDE-CODE.md) for details.
 
-**Why Claude Code handles installation?** AI-guided setup adapts to your system and resolves issues automatically. Better than rigid bash scripts.
-
-**For detailed installation instructions**, see: [docs/README/INSTALLATION-FOR-CLAUDE-CODE.md](./docs/README/INSTALLATION-FOR-CLAUDE-CODE.md)
+**Detailed instructions**: [docs/README/INSTALLATION-FOR-CLAUDE-CODE.md](./docs/README/INSTALLATION-FOR-CLAUDE-CODE.md)
 
 ---
 
@@ -86,49 +63,17 @@ su - developer
 
 ## What's Included
 
-This repository contains three installable components:
-
-### Component 1: tmux Team Creator Skill
-Claude Code skill that creates and manages multi-agent tmux teams. Includes team templates, tm-send communication tool, and workflow documentation.
-
-### Component 2: Memory System
-MCP server + Qdrant vector database + Memory skills + Memory subagent + Automatic hooks. Persistent memory shared across all projects.
-
-**What it does**:
-- Technical memory: Bug solutions stored in vector DB
-- Procedural memory: Process improvements by Scrum Master
-- Cross-project learning: Knowledge persists across all your projects
-
-### Component 3: Web UI
-Next.js + FastAPI web application for visual team management, monitoring, and voice input.
-
-**Features**:
-- SQLite demo mode (default, no PostgreSQL required)
-- Demo credentials: test@example.com / test123
-- Voice input integration
+**1. tmux Team Creator**: Claude Code skill for multi-agent teams
+**2. Memory System**: Vector DB + MCP server for persistent learning
+**3. Web UI**: Optional Next.js/FastAPI interface with voice input
 
 ---
 
 ## Troubleshooting
 
-**"tm-send: command not found" after installation**:
+**"tm-send not found"**: Add `~/.local/bin` to PATH in `~/.bashrc` or `~/.zshrc`
 
-Add `~/.local/bin` to your PATH:
-```bash
-# Add to ~/.bashrc or ~/.zshrc
-export PATH="$HOME/.local/bin:$PATH"
-
-# Reload shell
-source ~/.bashrc  # or source ~/.zshrc
-```
-
----
-
-## Installation Instructions for Claude Code
-
-**See**: [docs/README/INSTALLATION-FOR-CLAUDE-CODE.md](./docs/README/INSTALLATION-FOR-CLAUDE-CODE.md)
-
-This file contains detailed step-by-step instructions designed for Claude Code to read and execute. Includes installation for all three components.
+**More help**: See [Installation Guide](./docs/README/INSTALLATION-FOR-CLAUDE-CODE.md)
 
 ---
 
