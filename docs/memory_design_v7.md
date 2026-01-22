@@ -97,7 +97,9 @@ For external APIs, always check rate limits before deployment
 Tags: #backend #api #best-practice
 ```
 
-**Procedural:** Very special - agents self-update their markdown files. See [ACE paper](#references).
+**Procedural (Team Workflow):**
+
+The current system handles knowledge memory (bugs, patterns) but lacks procedural memory for workflow improvement. For multi-agent teams, the Scrum Master maintains `TEAM_PLAYBOOK.md` based on ACE (Agentic Context Engineering) paper - a self-evolving lessons file with format `[category-ID] helpful=N harmful=N :: lesson content`. After each retrospective, SM updates counters based on observations; lessons with `helpful >= 10, harmful = 0` get promoted to role prompts permanently. This enables teams to improve their process over time, not just their knowledge base.
 
 ---
 
