@@ -7,6 +7,8 @@
 **Note**: The strongest part of this system is the invisible memory - read [the design doc](./docs/memory_design_v7.md) if interested.
 
 ---
+<img width="1699" height="1394" alt="image" src="https://github.com/user-attachments/assets/9818a63e-9d2d-41ea-bc1b-b7cf19b62eb6" />
+
 
 ## What This Is
 
